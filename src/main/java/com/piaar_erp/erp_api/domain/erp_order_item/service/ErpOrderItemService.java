@@ -3,6 +3,7 @@ package com.piaar_erp.erp_api.domain.erp_order_item.service;
 import java.util.List;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
+import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,26 @@ public class ErpOrderItemService {
     }
 
     /**
-     * <b>DB Insert Related Method</b>
+     * <b>DB Insert Or Update Related Method</b>
      * <p>
-     * 배송준비 엑셀 파일의 하나의 데이터를 저장한다.
+     * 피아르 엑셀 데이터를 저장 or 수정한다.
      *
      * @param itemEntities : List::ErpOrderItemEntity::
-     * @return List::ErpOrderItemEntity::
      * @see ErpOrderItemRepository#saveAll
      */
-    public List<ErpOrderItemEntity> saveItemList(List<ErpOrderItemEntity> itemEntities) {
-        return erpOrderItemRepository.saveAll(itemEntities);
+    public void saveListAndModify(List<ErpOrderItemEntity> itemEntities) {
+        erpOrderItemRepository.saveAll(itemEntities);
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 피아르 엑셀 데이터를 모두 조회한다.
+     *
+     * @return List::ErpOrderItemProj::
+     * @see ErpOrderItemRepository#findAllMappingDataByPiaarOptionCode
+     */
+    public List<ErpOrderItemProj> findAllMappingDataByPiaarOptionCode() {
+        return erpOrderItemRepository.findAllMappingDataByPiaarOptionCode();
     }
 }

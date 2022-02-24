@@ -86,12 +86,12 @@ public class ProductDto {
     /**
      * <b>Convert Method</b>
      * <p>
-     * List::ProductEntity:: => List::ProductGetDto::
+     * List::ProductEntity:: => List::ProductDto::
      * 
      * @param entities : List::ProductEntity::
      * @return List::ProductGetDto::
      */
-    public static List<ProductDto> toDtos(List<ProductEntity> entities) {
+    public static List<ProductDto> toDto(List<ProductEntity> entities) {
         List<ProductDto> productDtos = entities.stream().map(entity -> {
             ProductDto productDto = ProductDto.builder()
                 .cid(entity.getCid())

@@ -64,10 +64,10 @@ public class ErpOrderItemApi {
      * @see erpOrderItemBusinessService#saveItemList
      */
     @PostMapping("/list")
-    public ResponseEntity<?> storeErpOrderItem(@RequestBody List<ErpOrderItemDto> itemDtos) {
+    public ResponseEntity<?> saveList(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
 
-        erpOrderItemBusinessService.saveItemList(itemDtos);
+        erpOrderItemBusinessService.saveList(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -77,19 +77,19 @@ public class ErpOrderItemApi {
     /**
      * Search erp order item.
      * <p>
-     * <b>GET : API URL => /api/v1/delivery-ready/erp-order-item/list</b>
+     * <b>GET : API URL => /api/v1/erp-order-item/list</b>
      * 
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getErpOrderItemByUserId
      */
-    // @GetMapping("/list")
-    // public ResponseEntity<?> getErpOrderItemByUserId() {
-    //     Message message = new Message();
+    @GetMapping("/list")
+    public ResponseEntity<?> searchList() {
+        Message message = new Message();
 
-    //     message.setData(erpOrderItemBusinessService.getErpOrderItemByUserId());
-    //     message.setStatus(HttpStatus.OK);
-    //     message.setMessage("success");
+        message.setData(erpOrderItemBusinessService.searchList());
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
 
-    //     return new ResponseEntity<>(message, message.getStatus());
-    // }
+        return new ResponseEntity<>(message, message.getStatus());
+    }
 }

@@ -2,7 +2,6 @@ package com.piaar_erp.erp_api.domain.product.entity;
 
 import com.piaar_erp.erp_api.domain.product.dto.ProductDto;
 import lombok.*;
-import lombok.experimental.Accessors;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
