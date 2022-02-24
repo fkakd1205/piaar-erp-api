@@ -125,14 +125,6 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemBusinessService#getErpOrderItemForm
      */
     public List<ErpOrderItemVo> uploadErpOrderExcel(MultipartFile file) {
-        // if (!userService.isUserLogin()) {
-        //     throw new InvalidUserException("로그인이 필요한 서비스 입니다.");
-        // }
-
-        // if (!userService.isManager()) {
-        //     throw new AccessDeniedException("접근 권한이 없습니다.");
-        // }
-
         Workbook workbook = null;
         try {
             workbook = WorkbookFactory.create(file.getInputStream());
@@ -249,15 +241,6 @@ public class ErpOrderItemBusinessService {
     }
 
     public void saveList(List<ErpOrderItemDto> orderItemDtos) {
-        // if (!userService.isUserLogin()) {
-        //     throw new InvalidUserException("로그인이 필요한 서비스 입니다.");
-        // }
-
-        // if (!userService.isManager()) {
-        //     throw new AccessDeniedException("접근 권한이 없습니다.");
-        // }
-
-        // UUID USER_ID = userService.getUserId();
         UUID USER_ID = UUID.randomUUID();
 
         List<ErpOrderItemEntity> orderItemEntities = orderItemDtos.stream()
@@ -287,14 +270,6 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemVo#toVo
      */
     public List<ErpOrderItemVo> searchList() {
-        // if (!userService.isUserLogin()) {
-        //     throw new InvalidUserException("로그인이 필요한 서비스 입니다.");
-        // }
-
-        // if (!userService.isManager()) {
-        //     throw new AccessDeniedException("접근 권한이 없습니다.");
-        // }
-
         // 등록된 모든 엑셀 데이터를 조회한다
         List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findAllMappingDataByPiaarOptionCode();
         List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
