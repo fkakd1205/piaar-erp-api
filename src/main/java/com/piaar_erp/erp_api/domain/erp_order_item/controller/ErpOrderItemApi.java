@@ -82,14 +82,14 @@ public class ErpOrderItemApi {
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getErpOrderItemByUserId
      */
-    @GetMapping("/list")
-    public ResponseEntity<?> getErpOrderItemByUserId() {
-        Message message = new Message();
+    // @GetMapping("/list")
+    // public ResponseEntity<?> getErpOrderItemByUserId() {
+    //     Message message = new Message();
 
-        message.setData(erpOrderItemBusinessService.getErpOrderItemByUserId());
-        message.setStatus(HttpStatus.OK);
-        message.setMessage("success");
+    //     message.setData(erpOrderItemBusinessService.getErpOrderItemByUserId());
+    //     message.setStatus(HttpStatus.OK);
+    //     message.setMessage("success");
 
-        return new ResponseEntity<>(message, message.getStatus());
-    }
+    //     return new ResponseEntity<>(message, message.getStatus());
+    // }
 }
