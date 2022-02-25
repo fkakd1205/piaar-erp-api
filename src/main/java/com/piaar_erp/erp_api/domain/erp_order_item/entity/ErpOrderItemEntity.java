@@ -190,6 +190,8 @@ public class ErpOrderItemEntity {
     private UUID createdBy;
 
     public static ErpOrderItemEntity toEntity(ErpOrderItemDto dto) {
+        if(dto == null) return null;
+
         ErpOrderItemEntity entity = ErpOrderItemEntity.builder()
                 .cid(dto.getCid())
                 .id(dto.getId())

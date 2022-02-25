@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 public class ErpOrderHeaderDto {
     private Integer cid;
     private UUID id;
-    private ErpOrderHeaderDetailDto headerDetail = new ErpOrderHeaderDetailDto();
+    private ErpOrderHeaderDetailDto headerDetail;
 
     @Setter
     private LocalDateTime createdAt;
@@ -32,6 +32,8 @@ public class ErpOrderHeaderDto {
     private LocalDateTime updatedAt;
 
     public static ErpOrderHeaderDto toDto(ErpOrderHeaderEntity entity) {
+        if(entity == null) return null;
+
         ErpOrderHeaderDto dto = ErpOrderHeaderDto.builder()
             .cid(entity.getCid())
             .id(entity.getId())

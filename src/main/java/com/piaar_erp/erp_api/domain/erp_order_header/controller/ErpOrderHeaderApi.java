@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,13 +50,33 @@ public class ErpOrderHeaderApi {
      * <b>GET : API URL => /api/v1/erp-order-header/list</b>
      *
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderHeaderBusinessService#searchAll
+     * @see ErpOrderHeaderBusinessService#searchOne
      */
     @GetMapping("/list")
-    public ResponseEntity<?> searchAll() {
+    public ResponseEntity<?> searchOne() {
         Message message = new Message();
 
-        message.setData(erpOrderHeaderBusinessService.searchAll());
+        message.setData(erpOrderHeaderBusinessService.searchOne());
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Create one api for product.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-header</b>
+     * 
+     * @param headerDto : ErpOrderHeaderDto
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderHeaderBusinessService#changeOne
+     */
+    @PutMapping("")
+    public ResponseEntity<?> changeOne(@RequestBody ErpOrderHeaderDto headerDto) {
+        Message message = new Message();
+
+        erpOrderHeaderBusinessService.changeOne(headerDto);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 

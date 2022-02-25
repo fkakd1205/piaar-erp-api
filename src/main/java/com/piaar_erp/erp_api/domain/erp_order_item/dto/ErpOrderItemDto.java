@@ -79,6 +79,8 @@ public class ErpOrderItemDto {
     private Integer optionStockUnit;
 
     public static ErpOrderItemDto toDto(ErpOrderItemEntity entity) {
+        if(entity == null) return null;
+
         ErpOrderItemDto dto = ErpOrderItemDto.builder()
                 .cid(entity.getCid())
                 .id(entity.getId())

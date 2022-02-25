@@ -14,9 +14,8 @@ import java.util.stream.Collectors;
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
-import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
-import com.piaar_erp.erp_api.domain.exception.ExcelFileUploadException;
+import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
 import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
 import com.piaar_erp.erp_api.domain.product_option.service.ProductOptionService;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
@@ -35,17 +34,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ErpOrderItemBusinessService {
-    private ErpOrderItemRepository erpOrderItemRepository;
     private ErpOrderItemService erpOrderItemService;
     private ProductOptionService productOptionService;
 
     @Autowired
     public ErpOrderItemBusinessService(
-        ErpOrderItemRepository erpOrderItemRepository,
         ErpOrderItemService erpOrderItemService,
         ProductOptionService productOptionService
     ) {
-        this.erpOrderItemRepository = erpOrderItemRepository;
         this.erpOrderItemService = erpOrderItemService;
         this.productOptionService = productOptionService;
     }
@@ -103,7 +99,7 @@ public class ErpOrderItemBusinessService {
      * <p>
      * 
      * @param file : MultipartFile
-     * @throws ExcelFileUploadException
+     * @throws CustomExcelFileUploadException
      */
     public void isExcelFile(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename().toLowerCase());
@@ -111,7 +107,7 @@ public class ErpOrderItemBusinessService {
         if (EXTENSIONS_EXCEL.contains(extension)) {
             return;
         }
-        throw new ExcelFileUploadException("This is not an excel file.");
+        throw new CustomExcelFileUploadException("This is not an excel file.");
     }
 
     /**
@@ -121,7 +117,7 @@ public class ErpOrderItemBusinessService {
      * 
      * @param file : MultipartFile
      * @return List::ErpOrderItemVo::
-     * @throws ExcelFileUploadException
+     * @throws CustomExcelFileUploadException
      * @see ErpOrderItemBusinessService#getErpOrderItemForm
      */
     public List<ErpOrderItemVo> uploadErpOrderExcel(MultipartFile file) {
@@ -129,7 +125,7 @@ public class ErpOrderItemBusinessService {
         try {
             workbook = WorkbookFactory.create(file.getInputStream());
         } catch (IOException e) {
-            throw new ExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
+            throw new CustomExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
         }
 
         Sheet sheet = workbook.getSheetAt(0);
@@ -138,11 +134,11 @@ public class ErpOrderItemBusinessService {
         try{
             vos = this.getErpOrderItemForm(sheet);
         } catch (NullPointerException e) {
-            throw new ExcelFileUploadException("엑셀 파일 데이터에 올바르지 않은 값이 존재합니다.");
+            throw new CustomExcelFileUploadException("엑셀 파일 데이터에 올바르지 않은 값이 존재합니다.");
         } catch (IllegalStateException e) {
-            throw new ExcelFileUploadException("피아르 엑셀 양식과 데이터 타입이 다른 값이 존재합니다.\n올바른 엑셀 파일을 업로드해주세요.");
+            throw new CustomExcelFileUploadException("피아르 엑셀 양식과 데이터 타입이 다른 값이 존재합니다.\n올바른 엑셀 파일을 업로드해주세요.");
         } catch (IllegalArgumentException e) {
-            throw new ExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
+            throw new CustomExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
         }
 
         return vos;
@@ -158,7 +154,7 @@ public class ErpOrderItemBusinessService {
             String headerName = cell != null ? cell.getStringCellValue() : null;
             // 지정된 양식이 아니라면
             if (!PIAAR_ERP_ORDER_HEADER_NAME_LIST.get(i).equals(headerName)) {
-                throw new ExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
+                throw new CustomExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
             }
         }
 

@@ -44,7 +44,7 @@ public class ErpOrderHeaderEntity {
 
     @Type(type = "json")
     @Column(name = "header_detail", columnDefinition = "json")
-    private ErpOrderHeaderDetailDto headerDetail = new ErpOrderHeaderDetailDto();
+    private ErpOrderHeaderDetailDto headerDetail;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -57,6 +57,8 @@ public class ErpOrderHeaderEntity {
     private LocalDateTime updatedAt;
 
     public static ErpOrderHeaderEntity toEntity(ErpOrderHeaderDto dto) {
+        if(dto == null) return null;
+
         ErpOrderHeaderEntity entity = ErpOrderHeaderEntity.builder()
             .cid(dto.getCid())
             .id(dto.getId())

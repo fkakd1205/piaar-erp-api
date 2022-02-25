@@ -53,6 +53,8 @@ public class ProductOptionDto {
      * @return ProductOptionGetDto
      */
     public static ProductOptionDto toDto(ProductOptionEntity entity) {
+        if(entity == null) return null;
+        
         ProductOptionDto dto = ProductOptionDto.builder()
                 .cid(entity.getCid())
                 .id(entity.getId())
