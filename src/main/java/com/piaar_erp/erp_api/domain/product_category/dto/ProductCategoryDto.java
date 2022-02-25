@@ -27,6 +27,8 @@ public class ProductCategoryDto {
      * @return ProductCategoryGetDto
      */
     public static ProductCategoryDto toDto(ProductCategoryEntity entity) {
+        if(entity == null) return null;
+        
         ProductCategoryDto dto = ProductCategoryDto.builder()
                 .cid(entity.getCid())
                 .id(entity.getId())

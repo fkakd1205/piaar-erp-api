@@ -66,11 +66,11 @@ public class ErpOrderItemVo {
     private String optionManagementName;
     private Integer optionStockUnit;
 
-    private String soldYn;
-    private LocalDateTime soldAt;
-    private String releasedYn;
-    private LocalDateTime releasedAt;
-    private String stockReflectedYn;
+    private String salesYn;
+    private LocalDateTime salesAt;
+    private String releaseYn;
+    private LocalDateTime releaseAt;
+    private String stockReflectYn;
     private LocalDateTime createdAt;
     private UUID createdBy;
     private Integer deliveryReadyFileCid;
@@ -118,11 +118,11 @@ public class ErpOrderItemVo {
                 .managementMemo18(proj.getErpOrderItem().getManagementMemo18())
                 .managementMemo19(proj.getErpOrderItem().getManagementMemo19())
                 .managementMemo20(proj.getErpOrderItem().getManagementMemo20())
-                .soldYn(proj.getErpOrderItem().getSoldYn())
-                .soldAt(proj.getErpOrderItem().getSoldAt())
-                .releasedYn(proj.getErpOrderItem().getReleasedYn())
-                .releasedAt(proj.getErpOrderItem().getReleasedAt())
-                .stockReflectedYn(proj.getErpOrderItem().getStockReflectedYn())
+                .salesYn(proj.getErpOrderItem().getSalesYn())
+                .salesAt(proj.getErpOrderItem().getSalesAt())
+                .releaseYn(proj.getErpOrderItem().getReleaseYn())
+                .releaseAt(proj.getErpOrderItem().getReleaseAt())
+                .stockReflectYn(proj.getErpOrderItem().getStockReflectYn())
                 .createdAt(proj.getErpOrderItem().getCreatedAt())
                 .createdBy(proj.getErpOrderItem().getCreatedBy())
                 .categoryName(proj.getCategoryName())

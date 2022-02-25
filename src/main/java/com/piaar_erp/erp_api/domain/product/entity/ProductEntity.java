@@ -99,6 +99,8 @@ public class ProductEntity {
     private Integer productCategoryCid;
 
     public static ProductEntity toEntity(ProductDto productDto) {
+        if(productDto == null) return null;
+
         ProductEntity entity = ProductEntity.builder()
             .id(UUID.randomUUID())
             .code(productDto.getCode())

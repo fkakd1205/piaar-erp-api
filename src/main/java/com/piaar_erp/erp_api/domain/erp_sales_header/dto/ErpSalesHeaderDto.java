@@ -1,9 +1,9 @@
-package com.piaar_erp.erp_api.domain.erp_order_header.dto;
+package com.piaar_erp.erp_api.domain.erp_sales_header.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.piaar_erp.erp_api.domain.erp_order_header.entity.ErpOrderHeaderEntity;
+import com.piaar_erp.erp_api.domain.erp_sales_header.entity.ErpSalesHeaderEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +17,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain=true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErpOrderHeaderDto {
+public class ErpSalesHeaderDto {
     private Integer cid;
     private UUID id;
-    private ErpOrderHeaderDetailDto headerDetail;
+    private ErpSalesHeaderDetailDto headerDetail;
 
     @Setter
     private LocalDateTime createdAt;
@@ -31,10 +31,10 @@ public class ErpOrderHeaderDto {
     @Setter
     private LocalDateTime updatedAt;
 
-    public static ErpOrderHeaderDto toDto(ErpOrderHeaderEntity entity) {
+    public static ErpSalesHeaderDto toDto(ErpSalesHeaderEntity entity) {
         if(entity == null) return null;
 
-        ErpOrderHeaderDto dto = ErpOrderHeaderDto.builder()
+        ErpSalesHeaderDto dto = ErpSalesHeaderDto.builder()
             .cid(entity.getCid())
             .id(entity.getId())
             .headerDetail(entity.getHeaderDetail())

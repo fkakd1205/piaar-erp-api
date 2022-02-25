@@ -44,6 +44,8 @@ public class ProductCategoryEntity {
      * @return ProductCategoryEntity
      */
     public static ProductCategoryEntity toEntity(ProductCategoryDto reqDto) {
+        if(reqDto == null) return null;
+
         ProductCategoryEntity entity = ProductCategoryEntity.builder()
             .id(reqDto.getId())
             .name(reqDto.getName())

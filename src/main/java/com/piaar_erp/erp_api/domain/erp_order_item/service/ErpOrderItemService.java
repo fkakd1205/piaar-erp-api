@@ -1,6 +1,7 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
@@ -42,5 +43,18 @@ public class ErpOrderItemService {
      */
     public List<ErpOrderItemProj> findAllMappingDataByPiaarOptionCode() {
         return erpOrderItemRepository.findAllMappingDataByPiaarOptionCode();
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * id 값들과 대응하는 엑셀 데이터를 모두 조회한다.
+     * 
+     * @param idList : List::UUID::
+     * @return List::ErpOrderItemEntity::
+     * @see ErpOrderItemRepository#qfindAllByIdList
+     */
+    public List<ErpOrderItemEntity> findAllByIdList(List<UUID> idList) {
+        return erpOrderItemRepository.qfindAllByIdList(idList);
     }
 }

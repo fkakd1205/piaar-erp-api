@@ -1,7 +1,7 @@
-package com.piaar_erp.erp_api.domain.erp_order_header.controller;
+package com.piaar_erp.erp_api.domain.erp_sales_header.controller;
 
-import com.piaar_erp.erp_api.domain.erp_order_header.dto.ErpOrderHeaderDto;
-import com.piaar_erp.erp_api.domain.erp_order_header.service.ErpOrderHeaderBusinessService;
+import com.piaar_erp.erp_api.domain.erp_sales_header.dto.ErpSalesHeaderDto;
+import com.piaar_erp.erp_api.domain.erp_sales_header.service.ErpSalesHeaderBusinessService;
 import com.piaar_erp.erp_api.domain.message.dto.Message;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,29 +15,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/erp-order-header")
-public class ErpOrderHeaderApi {
-    private ErpOrderHeaderBusinessService erpOrderHeaderBusinessService;
+@RequestMapping("/api/v1/erp-sales-header")
+public class ErpSalesHeaderApi {
+    private ErpSalesHeaderBusinessService erpSalesHeaderBusinessService;
 
     @Autowired
-    public ErpOrderHeaderApi(ErpOrderHeaderBusinessService erpOrderHeaderBusinessService) {
-        this.erpOrderHeaderBusinessService = erpOrderHeaderBusinessService;
+    public ErpSalesHeaderApi(ErpSalesHeaderBusinessService erpSalesHeaderBusinessService) {
+        this.erpSalesHeaderBusinessService = erpSalesHeaderBusinessService;
     }
 
     /**
-     * Create one api for erp order header.
+     * Create one api for erp sales header.
      * <p>
-     * <b>POST : API URL => /api/v1/erp-order-header</b>
+     * <b>POST : API URL => /api/v1/erp-sales-header</b>
      * 
-     * @param headerDto : ErpOrderHeaderDto
+     * @param headerDto : ErpSalesHeaderDto
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderHeaderBusinessService#saveOne
+     * @see ErpSalesHeaderBusinessService#saveOne
      */
     @PostMapping("")
-    public ResponseEntity<?> saveOne(@RequestBody ErpOrderHeaderDto headerDto) {
+    public ResponseEntity<?> saveOne(@RequestBody ErpSalesHeaderDto headerDto) {
         Message message = new Message();
 
-        erpOrderHeaderBusinessService.saveOne(headerDto);
+        erpSalesHeaderBusinessService.saveOne(headerDto);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -45,18 +45,18 @@ public class ErpOrderHeaderApi {
     }
 
     /**
-     * Search one api for erp order header.
+     * Search one api for erp sales header.
      * <p>
-     * <b>GET : API URL => /api/v1/erp-order-header</b>
+     * <b>GET : API URL => /api/v1/erp-sales-header</b>
      *
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderHeaderBusinessService#searchOne
+     * @see ErpSalesHeaderBusinessService#searchOne
      */
     @GetMapping("")
     public ResponseEntity<?> searchOne() {
         Message message = new Message();
 
-        message.setData(erpOrderHeaderBusinessService.searchOne());
+        message.setData(erpSalesHeaderBusinessService.searchOne());
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -66,17 +66,17 @@ public class ErpOrderHeaderApi {
     /**
      * Create one api for product.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-order-header</b>
+     * <b>PUT : API URL => /api/v1/erp-sales-header</b>
      * 
-     * @param headerDto : ErpOrderHeaderDto
+     * @param headerDto : ErpSalesHeaderDto
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderHeaderBusinessService#updateOne
+     * @see ErpSalesHeaderBusinessService#updateOne
      */
     @PutMapping("")
-    public ResponseEntity<?> updateOne(@RequestBody ErpOrderHeaderDto headerDto) {
+    public ResponseEntity<?> updateOne(@RequestBody ErpSalesHeaderDto headerDto) {
         Message message = new Message();
 
-        erpOrderHeaderBusinessService.updateOne(headerDto);
+        erpSalesHeaderBusinessService.updateOne(headerDto);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 

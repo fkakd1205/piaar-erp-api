@@ -1,4 +1,4 @@
-package com.piaar_erp.erp_api.domain.erp_order_header.entity;
+package com.piaar_erp.erp_api.domain.erp_sales_header.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,8 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.piaar_erp.erp_api.domain.erp_order_header.dto.ErpOrderHeaderDetailDto;
-import com.piaar_erp.erp_api.domain.erp_order_header.dto.ErpOrderHeaderDto;
+import com.piaar_erp.erp_api.domain.erp_sales_header.dto.ErpSalesHeaderDetailDto;
+import com.piaar_erp.erp_api.domain.erp_sales_header.dto.ErpSalesHeaderDto;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
 import org.hibernate.annotations.Type;
@@ -25,13 +25,13 @@ import lombok.ToString;
 
 @Entity
 @Builder
-@Table(name = "erp_order_header")
+@Table(name = "erp_sales_header")
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @TypeDef(name = "json", typeClass = JsonStringType.class)
-public class ErpOrderHeaderEntity {
+public class ErpSalesHeaderEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class ErpOrderHeaderEntity {
 
     @Type(type = "json")
     @Column(name = "header_detail", columnDefinition = "json")
-    private ErpOrderHeaderDetailDto headerDetail;
+    private ErpSalesHeaderDetailDto headerDetail;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -56,10 +56,10 @@ public class ErpOrderHeaderEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public static ErpOrderHeaderEntity toEntity(ErpOrderHeaderDto dto) {
+    public static ErpSalesHeaderEntity toEntity(ErpSalesHeaderDto dto) {
         if(dto == null) return null;
 
-        ErpOrderHeaderEntity entity = ErpOrderHeaderEntity.builder()
+        ErpSalesHeaderEntity entity = ErpSalesHeaderEntity.builder()
             .cid(dto.getCid())
             .id(dto.getId())
             .headerDetail(dto.getHeaderDetail())

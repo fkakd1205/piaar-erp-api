@@ -63,11 +63,11 @@ public class ErpOrderItemDto {
     private String managementMemo18;     // 관리메모18
     private String managementMemo19;     // 관리메모19
     private String managementMemo20;     // 관리메모20
-    private String soldYn;
-    private LocalDateTime soldAt;
-    private String releasedYn;
-    private LocalDateTime releasedAt;
-    private String stockReflectedYn;
+    private String salesYn;
+    private LocalDateTime salesAt;
+    private String releaseYn;
+    private LocalDateTime releaseAt;
+    private String stockReflectYn;
     private LocalDateTime createdAt;
     private UUID createdBy;
 
@@ -79,6 +79,8 @@ public class ErpOrderItemDto {
     private Integer optionStockUnit;
 
     public static ErpOrderItemDto toDto(ErpOrderItemEntity entity) {
+        if(entity == null) return null;
+
         ErpOrderItemDto dto = ErpOrderItemDto.builder()
                 .cid(entity.getCid())
                 .id(entity.getId())
@@ -122,11 +124,11 @@ public class ErpOrderItemDto {
                 .managementMemo18(entity.getManagementMemo18())
                 .managementMemo19(entity.getManagementMemo19())
                 .managementMemo20(entity.getManagementMemo20())
-                .soldYn(entity.getSoldYn())
-                .soldAt(entity.getSoldAt())
-                .releasedYn(entity.getReleasedYn())
-                .releasedAt(entity.getReleasedAt())
-                .stockReflectedYn(entity.getStockReflectedYn())
+                .salesYn(entity.getSalesYn())
+                .salesAt(entity.getSalesAt())
+                .releaseYn(entity.getReleaseYn())
+                .releaseAt(entity.getReleaseAt())
+                .stockReflectYn(entity.getStockReflectYn())
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .build();

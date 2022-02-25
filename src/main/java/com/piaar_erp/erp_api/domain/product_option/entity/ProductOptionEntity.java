@@ -99,6 +99,8 @@ public class ProductOptionEntity {
      * @return ProductOptionEntity
      */
     public static ProductOptionEntity toEntity(ProductOptionDto productOptionDto) {
+        if(productOptionDto == null) return null;
+
         ProductOptionEntity productOptionEntity = ProductOptionEntity.builder()
                 .id(UUID.randomUUID())
                 .code(productOptionDto.getCode())
