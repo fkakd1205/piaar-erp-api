@@ -1,4 +1,4 @@
-package com.piaar_erp.erp_api.domain.erp_order_header.dto;
+package com.piaar_erp.erp_api.domain.erp_sales_header.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

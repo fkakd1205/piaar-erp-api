@@ -163,24 +163,24 @@ public class ErpOrderItemEntity {
     private String managementMemo20; // 관리메모20
 
     @Setter
-    @Column(name = "sold_yn", columnDefinition = "n")
-    private String soldYn;
+    @Column(name = "sales_yn", columnDefinition = "n")
+    private String salesYn;
 
     @Setter
-    @Column(name = "sold_at")
-    private LocalDateTime soldAt;
+    @Column(name = "sales_at")
+    private LocalDateTime salesAt;
 
     @Setter
-    @Column(name = "released_yn", columnDefinition = "n")
-    private String releasedYn;
+    @Column(name = "release_yn", columnDefinition = "n")
+    private String releaseYn;
 
     @Setter
-    @Column(name = "released_at")
-    private LocalDateTime releasedAt;
+    @Column(name = "release_at")
+    private LocalDateTime releaseAt;
     
     @Setter
-    @Column(name = "stock_reflected_yn", columnDefinition = "n")
-    private String stockReflectedYn;
+    @Column(name = "stock_reflect_yn", columnDefinition = "n")
+    private String stockReflectYn;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -235,13 +235,13 @@ public class ErpOrderItemEntity {
                 .managementMemo18(dto.getManagementMemo18())
                 .managementMemo19(dto.getManagementMemo19())
                 .managementMemo20(dto.getManagementMemo20())
-                .soldYn(dto.getSoldYn())
-                .soldAt(dto.getSoldAt())
-                .releasedYn(dto.getReleasedYn())
-                .releasedAt(dto.getReleasedAt())
+                .salesYn(dto.getSalesYn())
+                .salesAt(dto.getSalesAt())
+                .releaseYn(dto.getReleaseYn())
+                .releaseAt(dto.getReleaseAt())
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
-                .stockReflectedYn(dto.getStockReflectedYn())
+                .stockReflectYn(dto.getStockReflectYn())
                 .build();
 
         return entity;

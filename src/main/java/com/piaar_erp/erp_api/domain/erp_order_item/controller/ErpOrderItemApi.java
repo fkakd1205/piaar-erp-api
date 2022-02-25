@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -92,4 +93,45 @@ public class ErpOrderItemApi {
 
         return new ResponseEntity<>(message, message.getStatus());
     }
+
+    /**
+     * Update erp order item to sales item.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-item/sales</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#updateListToSales
+     */
+    @PutMapping("/sales")
+    public ResponseEntity<?> updateListToSales(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.updateListToSales(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Update erp order item to release item.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-item/release</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#updateListToRelease
+     */
+    @PutMapping("/release")
+    public ResponseEntity<?> updateListToRelease(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+ 
+        erpOrderItemBusinessService.updateListToRelease(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
 }

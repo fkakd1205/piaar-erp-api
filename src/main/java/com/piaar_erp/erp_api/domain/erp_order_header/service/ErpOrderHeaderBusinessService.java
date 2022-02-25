@@ -43,6 +43,7 @@ public class ErpOrderHeaderBusinessService {
      *
      * @return ErpOrderHeaderDto
      * @see ErpOrderHeaderService#findAll
+     * @see ErpOrderHeaderDto#toDto
      */
     public ErpOrderHeaderDto searchOne() {
         ErpOrderHeaderEntity headerEntity = erpOrderHeaderService.findAll().stream().findFirst().orElse(null);
@@ -56,10 +57,11 @@ public class ErpOrderHeaderBusinessService {
      * 저장된 erp order header를 변경한다.
      * 
      * @param headerDto : ErpOrderHeaderDto
-     * @see ErpOrderHeaderEntity#toEntity
+     * @see ErpOrderHeaderBusinessService#searchOne
      * @see CustomDateUtils#getCurrentDateTime
+     * @see ErpOrderHeaderEntity#toEntity
      */
-    public void changeOne(ErpOrderHeaderDto headerDto) {
+    public void updateOne(ErpOrderHeaderDto headerDto) {
         ErpOrderHeaderDto dto = this.searchOne();
         
         if(dto == null) {

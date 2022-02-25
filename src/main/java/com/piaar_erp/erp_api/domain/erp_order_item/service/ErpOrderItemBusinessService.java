@@ -243,9 +243,9 @@ public class ErpOrderItemBusinessService {
                 .map(r -> {
                     r.setId(UUID.randomUUID())
                             .setUniqueCode(UUID.randomUUID())
-                            .setSoldYn("n")
-                            .setReleasedYn("n")
-                            .setStockReflectedYn("n")
+                            .setSalesYn("n")
+                            .setReleaseYn("n")
+                            .setStockReflectYn("n")
                             .setCreatedAt(CustomDateUtils.getCurrentDateTime())
                             .setCreatedBy(USER_ID);
 
@@ -275,6 +275,16 @@ public class ErpOrderItemBusinessService {
         return ErpOrderItemVos;
     }
 
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 조회된 피아르 엑셀 데이터에서 옵션코드 값과 대응하는 옵션데이터를 조회한다.
+     * 옵션데이터의 재고수량을 피아르 엑셀 데이터에 추가한다.
+     * 
+     * @param itemVos : List::ErpOrderItemVo::
+     * @return List::ErpOrderItemVo::
+     * @see ProductOptionService#searchListByProductListOptionCode
+     */
     public List<ErpOrderItemVo> getOptionStockUnit(List<ErpOrderItemVo> itemVos) {
         List<String> optionCodes = itemVos.stream().map(r -> r.getOptionCode()).collect(Collectors.toList());
         List<ProductOptionDto> optionGetDtos = productOptionService.searchListByProductListOptionCode(optionCodes);
@@ -291,5 +301,47 @@ public class ErpOrderItemBusinessService {
         }).collect(Collectors.toList());
 
         return erpOrderItemVos;
+    }
+
+    /**
+     * <b>DB Update Related Method</b>
+     * <p>
+     * 엑셀 데이터의 salesYn(판매 여부)을 y(판매 O)로 업데이트한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see CustomDateUtils#getCurrentDateTime
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void updateListToSales(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.forEach(entity -> {
+            entity.setSalesYn("y").setSalesAt(CustomDateUtils.getCurrentDateTime());
+        });
+
+        erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
+     * <b>DB Update Related Method</b>
+     * <p>
+     * 엑셀 데이터의 releaseYn(출고 여부)을 y(출고 O)로 업데이트한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see CustomDateUtils#getCurrentDateTime
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void updateListToRelease(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.forEach(entity -> {
+            entity.setReleaseYn("y").setReleaseAt(CustomDateUtils.getCurrentDateTime());
+        });
+
+        erpOrderItemService.saveListAndModify(entities);
     }
 }
