@@ -13,9 +13,12 @@ import java.util.stream.Collectors;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
+import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.exception.ExcelFileUploadException;
+import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
+import com.piaar_erp.erp_api.domain.product_option.service.ProductOptionService;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
 
 import org.apache.commons.io.FilenameUtils;
@@ -34,14 +37,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class ErpOrderItemBusinessService {
     private ErpOrderItemRepository erpOrderItemRepository;
     private ErpOrderItemService erpOrderItemService;
+    private ProductOptionService productOptionService;
 
     @Autowired
     public ErpOrderItemBusinessService(
         ErpOrderItemRepository erpOrderItemRepository,
-        ErpOrderItemService erpOrderItemService
+        ErpOrderItemService erpOrderItemService,
+        ProductOptionService productOptionService
     ) {
         this.erpOrderItemRepository = erpOrderItemRepository;
         this.erpOrderItemService = erpOrderItemService;
+        this.productOptionService = productOptionService;
     }
 
     // Excel file extension.
@@ -97,7 +103,7 @@ public class ErpOrderItemBusinessService {
      * <p>
      * 
      * @param file : MultipartFile
-     * @throws FileUploadException
+     * @throws ExcelFileUploadException
      */
     public void isExcelFile(MultipartFile file) {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename().toLowerCase());
@@ -111,32 +117,34 @@ public class ErpOrderItemBusinessService {
     /**
      * <b>Upload Excel File</b>
      * <p>
-     * 엑셀 파일을 업로드하여 화면에 출력한다.
+     * 피아르 엑셀 파일을 업로드한다.
      * 
      * @param file : MultipartFile
      * @return List::ErpOrderItemVo::
-     * @throws IOException
+     * @throws ExcelFileUploadException
      * @see ErpOrderItemBusinessService#getErpOrderItemForm
      */
     public List<ErpOrderItemVo> uploadErpOrderExcel(MultipartFile file) {
-        // if (!userService.isUserLogin()) {
-        //     throw new InvalidUserException("로그인이 필요한 서비스 입니다.");
-        // }
-
-        // if (!userService.isManager()) {
-        //     throw new AccessDeniedException("접근 권한이 없습니다.");
-        // }
-
         Workbook workbook = null;
         try {
             workbook = WorkbookFactory.create(file.getInputStream());
         } catch (IOException e) {
-            throw new IllegalArgumentException();
+            throw new ExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
         }
 
         Sheet sheet = workbook.getSheetAt(0);
 
-        List<ErpOrderItemVo> vos = this.getErpOrderItemForm(sheet);
+        List<ErpOrderItemVo> vos = new ArrayList<>();
+        try{
+            vos = this.getErpOrderItemForm(sheet);
+        } catch (NullPointerException e) {
+            throw new ExcelFileUploadException("엑셀 파일 데이터에 올바르지 않은 값이 존재합니다.");
+        } catch (IllegalStateException e) {
+            throw new ExcelFileUploadException("피아르 엑셀 양식과 데이터 타입이 다른 값이 존재합니다.\n올바른 엑셀 파일을 업로드해주세요.");
+        } catch (IllegalArgumentException e) {
+            throw new ExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
+        }
+
         return vos;
     }
 
@@ -150,7 +158,7 @@ public class ErpOrderItemBusinessService {
             String headerName = cell != null ? cell.getStringCellValue() : null;
             // 지정된 양식이 아니라면
             if (!PIAAR_ERP_ORDER_HEADER_NAME_LIST.get(i).equals(headerName)) {
-                throw new IllegalArgumentException();
+                throw new ExcelFileUploadException("피아르 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
             }
         }
 
@@ -232,16 +240,7 @@ public class ErpOrderItemBusinessService {
         return itemVos;
     }
 
-    public void saveItemList(List<ErpOrderItemDto> orderItemDtos) {
-        // if (!userService.isUserLogin()) {
-        //     throw new InvalidUserException("로그인이 필요한 서비스 입니다.");
-        // }
-
-        // if (!userService.isManager()) {
-        //     throw new AccessDeniedException("접근 권한이 없습니다.");
-        // }
-
-        // UUID USER_ID = userService.getUserId();
+    public void saveList(List<ErpOrderItemDto> orderItemDtos) {
         UUID USER_ID = UUID.randomUUID();
 
         List<ErpOrderItemEntity> orderItemEntities = orderItemDtos.stream()
@@ -257,6 +256,44 @@ public class ErpOrderItemBusinessService {
                     return ErpOrderItemEntity.toEntity(r);
                 }).collect(Collectors.toList());
 
-        erpOrderItemService.saveItemList(orderItemEntities);
+        erpOrderItemService.saveListAndModify(orderItemEntities);
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 유저가 업로드한 엑셀을 전체 가져온다.
+     * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
+     *
+     * @return List::ErpOrderItemVo::
+     * @see ErpOrderItemService#findAllMappingDataByPiaarOptionCode
+     * @see ErpOrderItemVo#toVo
+     */
+    public List<ErpOrderItemVo> searchList() {
+        // 등록된 모든 엑셀 데이터를 조회한다
+        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findAllMappingDataByPiaarOptionCode();
+        List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
+
+        // 옵션재고수량 추가
+        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemVos);
+        return ErpOrderItemVos;
+    }
+
+    public List<ErpOrderItemVo> getOptionStockUnit(List<ErpOrderItemVo> itemVos) {
+        List<String> optionCodes = itemVos.stream().map(r -> r.getOptionCode()).collect(Collectors.toList());
+        List<ProductOptionDto> optionGetDtos = productOptionService.searchListByProductListOptionCode(optionCodes);
+
+        // 옵션 재고수량을 StockSumUnit(총 입고 수량 - 총 출고 수량)으로 변경
+        List<ErpOrderItemVo> erpOrderItemVos = itemVos.stream().map(itemVo -> {
+            // 옵션 코드와 동일한 상품의 재고수량을 변경한다
+            optionGetDtos.stream().forEach(option -> {
+                if (itemVo.getOptionCode().equals(option.getCode())) {
+                    itemVo.setOptionStockUnit(option.getStockSumUnit());
+                }
+            });
+            return itemVo;
+        }).collect(Collectors.toList());
+
+        return erpOrderItemVos;
     }
 }

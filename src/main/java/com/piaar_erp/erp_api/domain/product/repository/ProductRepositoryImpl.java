@@ -33,7 +33,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         JPQLQuery customQuery = query.from(qProductEntity)
                 .select(qProductEntity)
                 ;
-                
 
         QueryResults<ProductEntity> result = customQuery.fetchResults();
         return result.getResults();
