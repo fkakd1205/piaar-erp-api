@@ -1,4 +1,4 @@
-package com.piaar_erp.erp_api.domain.erp_order_header.entity;
+package com.piaar_erp.erp_api.domain.erp_release_complete_header.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,8 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.piaar_erp.erp_api.domain.erp_order_header.dto.ErpOrderHeaderDetailDto;
-import com.piaar_erp.erp_api.domain.erp_order_header.dto.ErpOrderHeaderDto;
+import com.piaar_erp.erp_api.domain.erp_release_complete_header.dto.ErpReleaseCompleteHeaderDetailDto;
+import com.piaar_erp.erp_api.domain.erp_release_complete_header.dto.ErpReleaseCompleteHeaderDto;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 
 import org.hibernate.annotations.Type;
@@ -27,14 +27,14 @@ import lombok.experimental.Accessors;
 
 @Entity
 @Builder
-@Table(name = "erp_order_header")
+@Table(name = "erp_release_complete_header")
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
 @TypeDef(name = "json", typeClass = JsonStringType.class)
-public class ErpOrderHeaderEntity {
+public class ErpReleaseCompleteHeaderEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +47,7 @@ public class ErpOrderHeaderEntity {
 
     @Type(type = "json")
     @Column(name = "header_detail", columnDefinition = "json")
-    private ErpOrderHeaderDetailDto headerDetail;
+    private ErpReleaseCompleteHeaderDetailDto headerDetail;
 
     @Setter
     @Column(name = "created_at")
@@ -62,10 +62,10 @@ public class ErpOrderHeaderEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public static ErpOrderHeaderEntity toEntity(ErpOrderHeaderDto dto) {
+    public static ErpReleaseCompleteHeaderEntity toEntity(ErpReleaseCompleteHeaderDto dto) {
         if(dto == null) return null;
 
-        ErpOrderHeaderEntity entity = ErpOrderHeaderEntity.builder()
+        ErpReleaseCompleteHeaderEntity entity = ErpReleaseCompleteHeaderEntity.builder()
             .cid(dto.getCid())
             .id(dto.getId())
             .headerDetail(dto.getHeaderDetail())
