@@ -45,7 +45,7 @@ public class ErpDeliveryHeaderApi {
     }
 
     /**
-     * Search one api for erp order header.
+     * Search one api for erp delivery header.
      * <p>
      * <b>GET : API URL => /api/v1/erp-delivery-header</b>
      *

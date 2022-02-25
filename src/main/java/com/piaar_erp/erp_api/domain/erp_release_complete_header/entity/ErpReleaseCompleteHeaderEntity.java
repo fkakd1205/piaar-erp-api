@@ -21,7 +21,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @Entity
 @Builder
@@ -30,6 +32,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 @TypeDef(name = "json", typeClass = JsonStringType.class)
 public class ErpReleaseCompleteHeaderEntity {
     
@@ -46,13 +49,16 @@ public class ErpReleaseCompleteHeaderEntity {
     @Column(name = "header_detail", columnDefinition = "json")
     private ErpReleaseCompleteHeaderDetailDto headerDetail;
 
+    @Setter
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Setter
     @Type(type = "uuid-char")
     @Column(name = "created_by")
     private UUID createdBy;
 
+    @Setter
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
