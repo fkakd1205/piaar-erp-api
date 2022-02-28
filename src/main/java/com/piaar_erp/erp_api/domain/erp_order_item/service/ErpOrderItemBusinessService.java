@@ -278,6 +278,44 @@ public class ErpOrderItemBusinessService {
     /**
      * <b>DB Select Related Method</b>
      * <p>
+     * 유저가 업로드한 엑셀 중 판매 처리된 데이터를 가져온다.
+     * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
+     *
+     * @return List::ErpOrderItemVo::
+     * @see ErpOrderItemService#findSalesListMappingDataByPiaarOptionCode
+     * @see ErpOrderItemVo#toVo
+     */
+    public List<ErpOrderItemVo> searchSalesList() {
+        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findSalesListMappingDataByPiaarOptionCode();
+        List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
+
+        // 옵션재고수량 추가
+        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemVos);
+        return ErpOrderItemVos;
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 유저가 업로드한 엑셀 중 출고 처리된 데이터를 가져온다.
+     * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
+     *
+     * @return List::ErpOrderItemVo::
+     * @see ErpOrderItemService#findReleaseListMappingDataByPiaarOptionCode
+     * @see ErpOrderItemVo#toVo
+     */
+    public List<ErpOrderItemVo> searchReleaseList() {
+        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findReleaseListMappingDataByPiaarOptionCode();
+        List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
+
+        // 옵션재고수량 추가
+        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemVos);
+        return ErpOrderItemVos;
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
      * 조회된 피아르 엑셀 데이터에서 옵션코드 값과 대응하는 옵션데이터를 조회한다.
      * 옵션데이터의 재고수량을 피아르 엑셀 데이터에 추가한다.
      * 
@@ -327,6 +365,26 @@ public class ErpOrderItemBusinessService {
     /**
      * <b>DB Update Related Method</b>
      * <p>
+     * 엑셀 데이터의 salesYn(판매 여부)을 n(판매 X)로 업데이트한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void updateListToSalesCancel(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.forEach(entity -> {
+            entity.setSalesYn("n").setSalesAt(null);
+        });
+
+        erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
+     * <b>DB Update Related Method</b>
+     * <p>
      * 엑셀 데이터의 releaseYn(출고 여부)을 y(출고 O)로 업데이트한다.
      * 
      * @param itemDtos : List::ErpOrderItemDto::
@@ -340,6 +398,26 @@ public class ErpOrderItemBusinessService {
 
         entities.forEach(entity -> {
             entity.setReleaseYn("y").setReleaseAt(CustomDateUtils.getCurrentDateTime());
+        });
+
+        erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
+     * <b>DB Update Related Method</b>
+     * <p>
+     * 엑셀 데이터의 releaseYn(출고 여부)을 n(출고 X)로 업데이트한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void updateListToReleaseCancel(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.forEach(entity -> {
+            entity.setReleaseYn("n").setReleaseAt(null);
         });
 
         erpOrderItemService.saveListAndModify(entities);

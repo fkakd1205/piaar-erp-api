@@ -18,4 +18,20 @@ public interface ErpOrderItemRepository extends JpaRepository<ErpOrderItemEntity
         + "LEFT JOIN ProductCategoryEntity pc ON p.productCategoryCid = pc.cid"
     )
     List<ErpOrderItemProj> findAllMappingDataByPiaarOptionCode();
+
+    @Query("SELECT item AS erpOrderItem, p.defaultName AS prodDefaultName, p.managementName AS prodManagementName, po.defaultName AS optionDefaultName, po.managementName AS optionManagementName, pc.name AS categoryName FROM ErpOrderItemEntity item\n"
+        + "LEFT JOIN ProductOptionEntity po ON item.optionCode = po.code\n"
+        + "LEFT JOIN ProductEntity p ON po.productCid = p.cid\n"
+        + "LEFT JOIN ProductCategoryEntity pc ON p.productCategoryCid = pc.cid\n"
+        + "WHERE item.salesYn = 'y'"
+    )
+    List<ErpOrderItemProj> findSalesListMappingDataByPiaarOptionCode();
+
+    @Query("SELECT item AS erpOrderItem, p.defaultName AS prodDefaultName, p.managementName AS prodManagementName, po.defaultName AS optionDefaultName, po.managementName AS optionManagementName, pc.name AS categoryName FROM ErpOrderItemEntity item\n"
+        + "LEFT JOIN ProductOptionEntity po ON item.optionCode = po.code\n"
+        + "LEFT JOIN ProductEntity p ON po.productCid = p.cid\n"
+        + "LEFT JOIN ProductCategoryEntity pc ON p.productCategoryCid = pc.cid\n"
+        + "WHERE item.releaseYn = 'y'"
+    )
+    List<ErpOrderItemProj> findReleaseListMappingDataByPiaarOptionCode();
 }

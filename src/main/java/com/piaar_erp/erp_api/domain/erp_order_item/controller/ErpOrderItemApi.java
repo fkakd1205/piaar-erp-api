@@ -62,7 +62,7 @@ public class ErpOrderItemApi {
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
-     * @see erpOrderItemBusinessService#saveItemList
+     * @see erpOrderItemBusinessService#saveList
      */
     @PostMapping("/list")
     public ResponseEntity<?> saveList(@RequestBody List<ErpOrderItemDto> itemDtos) {
@@ -81,13 +81,51 @@ public class ErpOrderItemApi {
      * <b>GET : API URL => /api/v1/erp-order-item/list</b>
      * 
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#getErpOrderItemByUserId
+     * @see ErpOrderItemBusinessService#searchList
      */
     @GetMapping("/list")
     public ResponseEntity<?> searchList() {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchList());
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Search erp order sales item.
+     * <p>
+     * <b>GET : API URL => /api/v1/erp-order-item/sales/list</b>
+     * 
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#searchSalesList
+     */
+    @GetMapping("/sales/list")
+    public ResponseEntity<?> searchSalesList() {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.searchSalesList());
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Search erp order release item.
+     * <p>
+     * <b>GET : API URL => /api/v1/erp-order-item/release/list</b>
+     * 
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#searchReleaseList
+     */
+    @GetMapping("/release/list")
+    public ResponseEntity<?> searchReleaseList() {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.searchReleaseList());
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -115,6 +153,26 @@ public class ErpOrderItemApi {
     }
 
     /**
+     * Update erp order item to sales item.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-item/sales/cancel</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#updateListToSalesCancel
+     */
+    @PutMapping("/sales/cancel")
+    public ResponseEntity<?> updateListToSalesCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.updateListToSalesCancel(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
      * Update erp order item to release item.
      * <p>
      * <b>PUT : API URL => /api/v1/erp-order-item/release</b>
@@ -128,6 +186,26 @@ public class ErpOrderItemApi {
         Message message = new Message();
  
         erpOrderItemBusinessService.updateListToRelease(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Update erp order item to release item.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-item/release/cancel</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#updateListToReleaseCancel
+     */
+    @PutMapping("/release/cancel")
+    public ResponseEntity<?> updateListToReleaseCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+ 
+        erpOrderItemBusinessService.updateListToReleaseCancel(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 

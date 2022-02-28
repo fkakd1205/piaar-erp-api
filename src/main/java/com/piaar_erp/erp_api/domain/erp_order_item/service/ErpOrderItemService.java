@@ -43,6 +43,31 @@ public class ErpOrderItemService {
      */
     public List<ErpOrderItemProj> findAllMappingDataByPiaarOptionCode() {
         return erpOrderItemRepository.findAllMappingDataByPiaarOptionCode();
+        // return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode();
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 피아르 엑셀 데이터 중 판매 데이터를 조회한다.
+     *
+     * @return List::ErpOrderItemProj::
+     * @see ErpOrderItemRepository#findSalesListMappingDataByPiaarOptionCode
+     */
+    public List<ErpOrderItemProj> findSalesListMappingDataByPiaarOptionCode() {
+        return erpOrderItemRepository.findSalesListMappingDataByPiaarOptionCode();
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 피아르 엑셀 데이터 중 출고 데이터를 조회한다.
+     *
+     * @return List::ErpOrderItemProj::
+     * @see ErpOrderItemRepository#findReleaseListMappingDataByPiaarOptionCode
+     */
+    public List<ErpOrderItemProj> findReleaseListMappingDataByPiaarOptionCode() {
+        return erpOrderItemRepository.findReleaseListMappingDataByPiaarOptionCode();
     }
 
     /**
