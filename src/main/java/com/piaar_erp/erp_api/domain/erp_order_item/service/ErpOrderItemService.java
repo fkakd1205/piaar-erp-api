@@ -1,6 +1,8 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
@@ -42,8 +44,8 @@ public class ErpOrderItemService {
      * @see ErpOrderItemRepository#findAllMappingDataByPiaarOptionCode
      */
     public List<ErpOrderItemProj> findAllMappingDataByPiaarOptionCode() {
-        return erpOrderItemRepository.findAllMappingDataByPiaarOptionCode();
-        // return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode();
+        Map<String, Object> params = new HashMap<>();
+        return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode(params);
     }
 
     /**
@@ -52,10 +54,13 @@ public class ErpOrderItemService {
      * 피아르 엑셀 데이터 중 판매 데이터를 조회한다.
      *
      * @return List::ErpOrderItemProj::
-     * @see ErpOrderItemRepository#findSalesListMappingDataByPiaarOptionCode
+     * @see ErpOrderItemRepository#qfindAllMappingDataByPiaarOptionCode
      */
     public List<ErpOrderItemProj> findSalesListMappingDataByPiaarOptionCode() {
-        return erpOrderItemRepository.findSalesListMappingDataByPiaarOptionCode();
+        Map<String, Object> params = new HashMap<>();
+        params.put("salesYn", "y");
+
+        return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode(params);
     }
 
     /**
@@ -64,10 +69,13 @@ public class ErpOrderItemService {
      * 피아르 엑셀 데이터 중 출고 데이터를 조회한다.
      *
      * @return List::ErpOrderItemProj::
-     * @see ErpOrderItemRepository#findReleaseListMappingDataByPiaarOptionCode
+     * @see ErpOrderItemRepository#qfindAllMappingDataByPiaarOptionCode
      */
     public List<ErpOrderItemProj> findReleaseListMappingDataByPiaarOptionCode() {
-        return erpOrderItemRepository.findReleaseListMappingDataByPiaarOptionCode();
+        Map<String, Object> params = new HashMap<>();
+        params.put("releaseYn", "y");
+
+        return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode(params);
     }
 
     /**
