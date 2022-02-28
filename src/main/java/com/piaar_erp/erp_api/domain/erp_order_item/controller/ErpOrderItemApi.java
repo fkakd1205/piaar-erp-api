@@ -212,4 +212,23 @@ public class ErpOrderItemApi {
         return new ResponseEntity<>(message, message.getStatus());
     }
 
+    /**
+     * Get combined delivery item of erp order item.
+     * <p>
+     * <b>POST : API URL => /api/v1/erp-order-item/combined</b>
+     * 
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#getCombinedDelivery
+     */
+    @PostMapping("/combined")
+    public ResponseEntity<?> getCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.getCombinedDelivery(itemDtos));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
 }
