@@ -1,6 +1,8 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
@@ -39,10 +41,11 @@ public class ErpOrderItemService {
      * 피아르 엑셀 데이터를 모두 조회한다.
      *
      * @return List::ErpOrderItemProj::
-     * @see ErpOrderItemRepository#findAllMappingDataByPiaarOptionCode
+     * @see ErpOrderItemRepository#qfindAllM2OJ
+     * 
      */
-    public List<ErpOrderItemProj> findAllMappingDataByPiaarOptionCode() {
-        return erpOrderItemRepository.findAllMappingDataByPiaarOptionCode();
+    public List<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params) {
+        return erpOrderItemRepository.qfindAllM2OJ(params);
     }
 
     /**

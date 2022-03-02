@@ -7,13 +7,18 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
+import com.piaar_erp.erp_api.domain.erp_order_item.vo.CombinedDeliveryErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
 import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
@@ -261,13 +266,15 @@ public class ErpOrderItemBusinessService {
      * 유저가 업로드한 엑셀을 전체 가져온다.
      * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
      *
+     * @param params : Map::String, Object::
      * @return List::ErpOrderItemVo::
-     * @see ErpOrderItemService#findAllMappingDataByPiaarOptionCode
+     * @see ErpOrderItemService#findAllM2OJ
      * @see ErpOrderItemVo#toVo
+     * @see ErpOrderItemBusinessService#getOptionStockUnit
      */
-    public List<ErpOrderItemVo> searchList() {
+    public List<ErpOrderItemVo> searchList(Map<String, Object> params) {
         // 등록된 모든 엑셀 데이터를 조회한다
-        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findAllMappingDataByPiaarOptionCode();
+        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findAllM2OJ(params);
         List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
 
         // 옵션재고수량 추가
@@ -327,6 +334,26 @@ public class ErpOrderItemBusinessService {
     /**
      * <b>DB Update Related Method</b>
      * <p>
+     * 엑셀 데이터의 salesYn(판매 여부)을 n(판매 X)로 업데이트한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void updateListToSalesCancel(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.forEach(entity -> {
+            entity.setSalesYn("n").setSalesAt(null);
+        });
+
+        erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
+     * <b>DB Update Related Method</b>
+     * <p>
      * 엑셀 데이터의 releaseYn(출고 여부)을 y(출고 O)로 업데이트한다.
      * 
      * @param itemDtos : List::ErpOrderItemDto::
@@ -343,5 +370,73 @@ public class ErpOrderItemBusinessService {
         });
 
         erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
+     * <b>DB Update Related Method</b>
+     * <p>
+     * 엑셀 데이터의 releaseYn(출고 여부)을 n(출고 X)로 업데이트한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void updateListToReleaseCancel(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.forEach(entity -> {
+            entity.setReleaseYn("n").setReleaseAt(null);
+        });
+
+        erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
+     * <b>Data Processing Related Method</b>
+     * <p>
+     * 엑셀 데이터의 
+     * 
+     * @param dtos : List::ErpOrderItemDto::
+     * @return  List::ErpOrderItemVo::
+     */
+    public List<CombinedDeliveryErpOrderItemVo> getCombinedDelivery(List<ErpOrderItemDto> dtos) {
+        List<CombinedDeliveryErpOrderItemVo> combinedDelivery = new ArrayList<>();
+        Set<String> deliverySet = new HashSet<>();  // 수취인+전화번호+주소 를 담는 Set
+        
+        // 수취인 > 전화번호 > 주소 > 상품명 > 옵션명 으로 정렬
+        dtos.sort(Comparator.comparing(ErpOrderItemDto::getReceiver)
+                .thenComparing(ErpOrderItemDto::getReceiverContact1)
+                .thenComparing(ErpOrderItemDto::getDestination)
+                .thenComparing(ErpOrderItemDto::getProdName)
+                .thenComparing(ErpOrderItemDto::getOptionName));
+
+        for (int i = 0; i < dtos.size(); i++) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(dtos.get(i).getReceiver());
+            sb.append(dtos.get(i).getReceiverContact1());
+            sb.append(dtos.get(i).getDestination());
+
+            String resultStr = sb.toString();
+            List<ErpOrderItemDto> newCombinedList = new ArrayList<>();
+            CombinedDeliveryErpOrderItemVo itemVo = new CombinedDeliveryErpOrderItemVo();
+
+            // 새로운 데이터라면
+            if (deliverySet.add(resultStr)) {
+                newCombinedList.add(dtos.get(i));
+                itemVo = CombinedDeliveryErpOrderItemVo.builder().combinedDeliveryItems(newCombinedList).build();
+                combinedDelivery.add(itemVo);
+            } else { // 중복된다면
+                // 이전 데이터에 현재 데이터를 추가한다
+                newCombinedList = combinedDelivery.get(combinedDelivery.size() - 1).getCombinedDeliveryItems();
+                newCombinedList.add(dtos.get(i));
+
+                itemVo = CombinedDeliveryErpOrderItemVo.builder().combinedDeliveryItems(newCombinedList).build();
+
+                // 이전 결합배송 리스트를 수정한다
+                combinedDelivery.set(combinedDelivery.size() - 1, itemVo);
+            }
+        }
+        return combinedDelivery;
     }
 }

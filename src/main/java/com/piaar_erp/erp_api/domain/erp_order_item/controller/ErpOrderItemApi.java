@@ -1,6 +1,7 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.service.ErpOrderItemBusinessService;
@@ -62,7 +63,7 @@ public class ErpOrderItemApi {
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
-     * @see erpOrderItemBusinessService#saveItemList
+     * @see erpOrderItemBusinessService#saveList
      */
     @PostMapping("/list")
     public ResponseEntity<?> saveList(@RequestBody List<ErpOrderItemDto> itemDtos) {
@@ -80,14 +81,15 @@ public class ErpOrderItemApi {
      * <p>
      * <b>GET : API URL => /api/v1/erp-order-item/list</b>
      * 
+     * @param params : Map::String, Object::
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#getErpOrderItemByUserId
+     * @see ErpOrderItemBusinessService#searchList
      */
     @GetMapping("/list")
-    public ResponseEntity<?> searchList() {
+    public ResponseEntity<?> searchList(@RequestParam Map<String, Object> params) {
         Message message = new Message();
 
-        message.setData(erpOrderItemBusinessService.searchList());
+        message.setData(erpOrderItemBusinessService.searchList(params));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -115,6 +117,26 @@ public class ErpOrderItemApi {
     }
 
     /**
+     * Update erp order item to sales item.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-item/sales/cancel</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#updateListToSalesCancel
+     */
+    @PutMapping("/sales/cancel")
+    public ResponseEntity<?> updateListToSalesCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.updateListToSalesCancel(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
      * Update erp order item to release item.
      * <p>
      * <b>PUT : API URL => /api/v1/erp-order-item/release</b>
@@ -128,6 +150,45 @@ public class ErpOrderItemApi {
         Message message = new Message();
  
         erpOrderItemBusinessService.updateListToRelease(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Update erp order item to release item.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-item/release/cancel</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#updateListToReleaseCancel
+     */
+    @PutMapping("/release/cancel")
+    public ResponseEntity<?> updateListToReleaseCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+ 
+        erpOrderItemBusinessService.updateListToReleaseCancel(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Get combined delivery item of erp order item.
+     * <p>
+     * <b>POST : API URL => /api/v1/erp-order-item/combined</b>
+     * 
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#getCombinedDelivery
+     */
+    @PostMapping("/combined")
+    public ResponseEntity<?> getCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.getCombinedDelivery(itemDtos));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
