@@ -41,9 +41,8 @@ public class ErpOrderItemEntity {
     @Column(name = "id")
     private UUID id;
 
-    @Type(type = "uuid-char")
     @Column(name = "unique_code")
-    private UUID uniqueCode; // 피아르 고유코드
+    private String uniqueCode; // 피아르 고유코드
 
     @Column(name = "order_number1")
     private String orderNumber1; // 주문번호1

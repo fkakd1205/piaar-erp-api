@@ -194,7 +194,7 @@ public class ErpOrderItemBusinessService {
             }
 
             ErpOrderItemVo excelVo = ErpOrderItemVo.builder()
-                    .uniqueCode(UUID.randomUUID())
+                    .uniqueCode(UUID.randomUUID().toString())
                     .orderNumber1(row.getCell(1) != null ? row.getCell(1).getStringCellValue() : "")
                     .orderNumber2(row.getCell(2) != null ? row.getCell(2).getStringCellValue() : "")
                     .orderNumber3(row.getCell(3) != null ? row.getCell(3).getStringCellValue() : "")
@@ -247,7 +247,7 @@ public class ErpOrderItemBusinessService {
         List<ErpOrderItemEntity> orderItemEntities = orderItemDtos.stream()
                 .map(r -> {
                     r.setId(UUID.randomUUID())
-                            .setUniqueCode(UUID.randomUUID())
+                            .setUniqueCode(UUID.randomUUID().toString())
                             .setSalesYn("n")
                             .setReleaseYn("n")
                             .setStockReflectYn("n")
