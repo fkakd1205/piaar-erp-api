@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ErpOrderItemRepositoryCustom {
     List<ErpOrderItemEntity> qfindAllByIdList(List<UUID> idList);
-    List<ErpOrderItemProj> qfindAllMappingDataByPiaarOptionCode(Map<String, Object> params);
+    List<ErpOrderItemProj> qfindAllM2OJ(Map<String, Object> params);
 }

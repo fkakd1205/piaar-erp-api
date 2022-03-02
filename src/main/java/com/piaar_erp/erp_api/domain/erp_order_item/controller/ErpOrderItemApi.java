@@ -1,6 +1,7 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.service.ErpOrderItemBusinessService;
@@ -80,52 +81,15 @@ public class ErpOrderItemApi {
      * <p>
      * <b>GET : API URL => /api/v1/erp-order-item/list</b>
      * 
+     * @param params : Map::String, Object::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#searchList
      */
     @GetMapping("/list")
-    public ResponseEntity<?> searchList() {
+    public ResponseEntity<?> searchList(@RequestParam Map<String, Object> params) {
         Message message = new Message();
 
-        message.setData(erpOrderItemBusinessService.searchList());
-        message.setStatus(HttpStatus.OK);
-        message.setMessage("success");
-
-        return new ResponseEntity<>(message, message.getStatus());
-    }
-
-    /**
-     * Search erp order sales item.
-     * <p>
-     * <b>GET : API URL => /api/v1/erp-order-item/sales/list</b>
-     * 
-     * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#searchSalesList
-     */
-    @GetMapping("/sales/list")
-    public ResponseEntity<?> searchSalesList() {
-        Message message = new Message();
-
-        message.setData(erpOrderItemBusinessService.searchSalesList());
-        message.setStatus(HttpStatus.OK);
-        message.setMessage("success");
-
-        return new ResponseEntity<>(message, message.getStatus());
-    }
-
-    /**
-     * Search erp order release item.
-     * <p>
-     * <b>GET : API URL => /api/v1/erp-order-item/release/list</b>
-     * 
-     * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#searchReleaseList
-     */
-    @GetMapping("/release/list")
-    public ResponseEntity<?> searchReleaseList() {
-        Message message = new Message();
-
-        message.setData(erpOrderItemBusinessService.searchReleaseList());
+        message.setData(erpOrderItemBusinessService.searchList(params));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 

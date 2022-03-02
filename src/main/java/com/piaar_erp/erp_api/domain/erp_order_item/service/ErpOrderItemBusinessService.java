@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -265,51 +266,15 @@ public class ErpOrderItemBusinessService {
      * 유저가 업로드한 엑셀을 전체 가져온다.
      * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
      *
+     * @param params : Map::String, Object::
      * @return List::ErpOrderItemVo::
-     * @see ErpOrderItemService#findAllMappingDataByPiaarOptionCode
+     * @see ErpOrderItemService#findAllM2OJ
      * @see ErpOrderItemVo#toVo
+     * @see ErpOrderItemBusinessService#getOptionStockUnit
      */
-    public List<ErpOrderItemVo> searchList() {
+    public List<ErpOrderItemVo> searchList(Map<String, Object> params) {
         // 등록된 모든 엑셀 데이터를 조회한다
-        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findAllMappingDataByPiaarOptionCode();
-        List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
-
-        // 옵션재고수량 추가
-        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemVos);
-        return ErpOrderItemVos;
-    }
-
-    /**
-     * <b>DB Select Related Method</b>
-     * <p>
-     * 유저가 업로드한 엑셀 중 판매 처리된 데이터를 가져온다.
-     * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
-     *
-     * @return List::ErpOrderItemVo::
-     * @see ErpOrderItemService#findSalesListMappingDataByPiaarOptionCode
-     * @see ErpOrderItemVo#toVo
-     */
-    public List<ErpOrderItemVo> searchSalesList() {
-        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findSalesListMappingDataByPiaarOptionCode();
-        List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
-
-        // 옵션재고수량 추가
-        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemVos);
-        return ErpOrderItemVos;
-    }
-
-    /**
-     * <b>DB Select Related Method</b>
-     * <p>
-     * 유저가 업로드한 엑셀 중 출고 처리된 데이터를 가져온다.
-     * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
-     *
-     * @return List::ErpOrderItemVo::
-     * @see ErpOrderItemService#findReleaseListMappingDataByPiaarOptionCode
-     * @see ErpOrderItemVo#toVo
-     */
-    public List<ErpOrderItemVo> searchReleaseList() {
-        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findReleaseListMappingDataByPiaarOptionCode();
+        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findAllM2OJ(params);
         List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
 
         // 옵션재고수량 추가

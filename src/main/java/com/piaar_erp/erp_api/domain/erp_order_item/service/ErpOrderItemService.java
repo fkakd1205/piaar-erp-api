@@ -41,41 +41,11 @@ public class ErpOrderItemService {
      * 피아르 엑셀 데이터를 모두 조회한다.
      *
      * @return List::ErpOrderItemProj::
-     * @see ErpOrderItemRepository#findAllMappingDataByPiaarOptionCode
+     * @see ErpOrderItemRepository#qfindAllM2OJ
+     * 
      */
-    public List<ErpOrderItemProj> findAllMappingDataByPiaarOptionCode() {
-        Map<String, Object> params = new HashMap<>();
-        return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode(params);
-    }
-
-    /**
-     * <b>DB Select Related Method</b>
-     * <p>
-     * 피아르 엑셀 데이터 중 판매 데이터를 조회한다.
-     *
-     * @return List::ErpOrderItemProj::
-     * @see ErpOrderItemRepository#qfindAllMappingDataByPiaarOptionCode
-     */
-    public List<ErpOrderItemProj> findSalesListMappingDataByPiaarOptionCode() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("salesYn", "y");
-
-        return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode(params);
-    }
-
-    /**
-     * <b>DB Select Related Method</b>
-     * <p>
-     * 피아르 엑셀 데이터 중 출고 데이터를 조회한다.
-     *
-     * @return List::ErpOrderItemProj::
-     * @see ErpOrderItemRepository#qfindAllMappingDataByPiaarOptionCode
-     */
-    public List<ErpOrderItemProj> findReleaseListMappingDataByPiaarOptionCode() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("releaseYn", "y");
-
-        return erpOrderItemRepository.qfindAllMappingDataByPiaarOptionCode(params);
+    public List<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params) {
+        return erpOrderItemRepository.qfindAllM2OJ(params);
     }
 
     /**
