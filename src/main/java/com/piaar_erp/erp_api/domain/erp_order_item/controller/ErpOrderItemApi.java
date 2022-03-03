@@ -185,6 +185,7 @@ public class ErpOrderItemApi {
      * <p>
      * <b>POST : API URL => /api/v1/erp-order-item/combined</b>
      * 
+     * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getCombinedDelivery
      */
@@ -193,6 +194,26 @@ public class ErpOrderItemApi {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.getCombinedDelivery(itemDtos));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Get merged combined delivery item of erp order item.
+     * <p>
+     * <b>POST : API URL => /api/v1/erp-order-item/combined/merge</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#getMergeCombinedDelivery
+     */
+    @PostMapping("/combined/merge")
+    public ResponseEntity<?> getMergeCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.getMergeCombinedDelivery(itemDtos));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 

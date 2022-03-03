@@ -64,7 +64,7 @@ public class ErpOrderItemVo {
     private String prodManagementName;
     private String optionDefaultName;
     private String optionManagementName;
-    private Integer optionStockUnit;
+    private String optionStockUnit;
 
     private String salesYn;
     private LocalDateTime salesAt;

@@ -1,6 +1,7 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.repository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -91,12 +92,13 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
     }
 
     private BooleanExpression withinDateRange(Map<String, Object> params) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         LocalDateTime startDate = null;
         LocalDateTime endDate = null;
         
         if (params.get("startDate") != null && params.get("endDate") != null) {
-            startDate = LocalDateTime.parse(params.get("startDate").toString());
-            endDate = LocalDateTime.parse(params.get("endDate").toString());
+            startDate = LocalDateTime.parse(params.get("startDate").toString(), formatter);
+            endDate = LocalDateTime.parse(params.get("endDate").toString(), formatter);
 
             return qErpOrderItemEntity.createdAt.between(startDate, endDate);
         } else {
