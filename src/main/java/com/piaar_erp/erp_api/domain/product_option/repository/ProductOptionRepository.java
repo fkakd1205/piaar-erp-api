@@ -1,7 +1,6 @@
 package com.piaar_erp.erp_api.domain.product_option.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.Tuple;
 
@@ -12,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductOptionRepository extends JpaRepository<ProductOptionEntity, Integer> {
+public interface ProductOptionRepository extends JpaRepository<ProductOptionEntity, Integer>, ProductOptionRepositoryCustom{
 
     /**
      * ProductOption 데이터의 code들에 대응하는 옵션데이터를 조회한다.
