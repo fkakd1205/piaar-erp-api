@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -103,13 +104,13 @@ public class ErpOrderItemApi {
     /**
      * Update erp order item to sales item.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-order-item/sales</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/sales</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#updateListToSales
      */
-    @PutMapping("/sales")
+    @PatchMapping("/sales")
     public ResponseEntity<?> updateListToSales(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
 
@@ -123,13 +124,13 @@ public class ErpOrderItemApi {
     /**
      * Update erp order item to sales item.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-order-item/sales/cancel</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/sales/cancel</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#updateListToSalesCancel
      */
-    @PutMapping("/sales/cancel")
+    @PatchMapping("/sales/cancel")
     public ResponseEntity<?> updateListToSalesCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
 
@@ -143,13 +144,13 @@ public class ErpOrderItemApi {
     /**
      * Update erp order item to release item.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-order-item/release</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/release</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#updateListToRelease
      */
-    @PutMapping("/release")
+    @PatchMapping("/release")
     public ResponseEntity<?> updateListToRelease(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
  
@@ -163,13 +164,13 @@ public class ErpOrderItemApi {
     /**
      * Update erp order item to release item.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-order-item/release/cancel</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/release/cancel</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#updateListToReleaseCancel
      */
-    @PutMapping("/release/cancel")
+    @PatchMapping("/release/cancel")
     public ResponseEntity<?> updateListToReleaseCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
  
