@@ -12,6 +12,7 @@ import javax.persistence.Tuple;
 import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
 import com.piaar_erp.erp_api.domain.product_option.dto.ReceiveReleaseSumOnlyDto;
 import com.piaar_erp.erp_api.domain.product_option.entity.ProductOptionEntity;
+import com.piaar_erp.erp_api.domain.product_option.proj.ProductOptionProj;
 import com.piaar_erp.erp_api.domain.product_option.repository.ProductOptionRepository;
 
 @Service
@@ -25,6 +26,30 @@ public class ProductOptionService {
         this.productOptionRepository = productOptionRepository;
     }
 
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * ProductOption 데이터를 모두 조회한다.
+     *
+     * @return List::ProductOptionEntity::
+     * @see ProductOptionRepository#findAll
+     */
+    public List<ProductOptionEntity> findAll() {
+        return productOptionRepository.findAll();
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * ProductOption 데이터를 모두 조회한다.
+     * 해당 ProductOption와 연관관계에 놓여있는 Many To One JOIN(m2oj) 상태를 조회한다.
+     *
+     * @return List::ProductOptionProj::
+     * @see ProductOptionRepository#qfindAllM2OJ
+     */
+    public List<ProductOptionProj> qfindAllM2OJ() {
+        return productOptionRepository.qfindAllM2OJ();
+    }
 
     /**
      * <b>DB Select Related Method</b>
