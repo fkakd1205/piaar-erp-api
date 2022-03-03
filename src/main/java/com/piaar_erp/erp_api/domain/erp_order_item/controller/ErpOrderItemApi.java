@@ -102,19 +102,19 @@ public class ErpOrderItemApi {
     }
 
     /**
-     * Update erp order item to sales item.
+     * Change erp order item to sales item.
      * <p>
-     * <b>PATCH : API URL => /api/v1/erp-order-item/sales</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/list/sales-yn/sales</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#updateListToSales
+     * @see ErpOrderItemBusinessService#changeListToSales
      */
-    @PatchMapping("/sales")
-    public ResponseEntity<?> updateListToSales(@RequestBody List<ErpOrderItemDto> itemDtos) {
+    @PatchMapping("/list/sales-yn/sales")
+    public ResponseEntity<?> changeListToSales(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
 
-        erpOrderItemBusinessService.updateListToSales(itemDtos);
+        erpOrderItemBusinessService.changeListToSales(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -122,19 +122,19 @@ public class ErpOrderItemApi {
     }
 
     /**
-     * Update erp order item to sales item.
+     * Change erp order item to sales item.
      * <p>
-     * <b>PATCH : API URL => /api/v1/erp-order-item/sales/cancel</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/list/sales-yn/cancel</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#updateListToSalesCancel
+     * @see ErpOrderItemBusinessService#changeListToSalesCancel
      */
-    @PatchMapping("/sales/cancel")
-    public ResponseEntity<?> updateListToSalesCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
+    @PatchMapping("/list/sales-yn/cancel")
+    public ResponseEntity<?> changeListToSalesCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
 
-        erpOrderItemBusinessService.updateListToSalesCancel(itemDtos);
+        erpOrderItemBusinessService.changeListToSalesCancel(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -142,19 +142,19 @@ public class ErpOrderItemApi {
     }
 
     /**
-     * Update erp order item to release item.
+     * Change erp order item to release item.
      * <p>
-     * <b>PATCH : API URL => /api/v1/erp-order-item/release</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/list/release-yn/release</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#updateListToRelease
+     * @see ErpOrderItemBusinessService#changeListToRelease
      */
-    @PatchMapping("/release")
-    public ResponseEntity<?> updateListToRelease(@RequestBody List<ErpOrderItemDto> itemDtos) {
+    @PatchMapping("/list/release-yn/release")
+    public ResponseEntity<?> changeListToRelease(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
  
-        erpOrderItemBusinessService.updateListToRelease(itemDtos);
+        erpOrderItemBusinessService.changeListToRelease(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -162,19 +162,19 @@ public class ErpOrderItemApi {
     }
 
     /**
-     * Update erp order item to release item.
+     * Change erp order item to release item.
      * <p>
-     * <b>PATCH : API URL => /api/v1/erp-order-item/release/cancel</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-item/list/release-yn/cancel</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#updateListToReleaseCancel
+     * @see ErpOrderItemBusinessService#changeListToReleaseCancel
      */
-    @PatchMapping("/release/cancel")
-    public ResponseEntity<?> updateListToReleaseCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
+    @PatchMapping("/list/release-yn/cancel")
+    public ResponseEntity<?> changeListToReleaseCancel(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
  
-        erpOrderItemBusinessService.updateListToReleaseCancel(itemDtos);
+        erpOrderItemBusinessService.changeListToReleaseCancel(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
@@ -240,6 +240,26 @@ public class ErpOrderItemApi {
 
         return new ResponseEntity<>(message, message.getStatus());
     }
-    
 
+    @PatchMapping("/list/option-code/all")
+    public ResponseEntity<?> changeAllOptionCode(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.changeAllOptionCode(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @PatchMapping("/list/option-code/release")
+    public ResponseEntity<?> changeReleaseOptionCode(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.changeReleaseOptionCode(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
 }

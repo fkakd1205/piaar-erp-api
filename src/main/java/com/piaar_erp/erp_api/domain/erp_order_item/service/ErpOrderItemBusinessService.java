@@ -21,6 +21,7 @@ import com.piaar_erp.erp_api.domain.erp_order_header.service.ErpOrderHeaderServi
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
+import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.CombinedDeliveryErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
@@ -41,9 +42,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import ch.qos.logback.classic.db.names.ColumnName;
-import java_cup.runtime.lr_parser;
 
 @Service
 public class ErpOrderItemBusinessService {
@@ -260,6 +258,7 @@ public class ErpOrderItemBusinessService {
                     r.setId(UUID.randomUUID())
                             .setUniqueCode(UUID.randomUUID().toString())
                             .setSalesYn("n")
+                            .setReleaseOptionCode(r.getOptionCode())
                             .setReleaseYn("n")
                             .setStockReflectYn("n")
                             .setCreatedAt(CustomDateUtils.getCurrentDateTime())
@@ -333,7 +332,7 @@ public class ErpOrderItemBusinessService {
      * @see CustomDateUtils#getCurrentDateTime
      * @see ErpOrderItemService#saveListAndModify
      */
-    public void updateListToSales(List<ErpOrderItemDto> itemDtos) {
+    public void changeListToSales(List<ErpOrderItemDto> itemDtos) {
         List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
@@ -353,7 +352,7 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#findAllByIdList
      * @see ErpOrderItemService#saveListAndModify
      */
-    public void updateListToSalesCancel(List<ErpOrderItemDto> itemDtos) {
+    public void changeListToSalesCancel(List<ErpOrderItemDto> itemDtos) {
         List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
@@ -374,7 +373,7 @@ public class ErpOrderItemBusinessService {
      * @see CustomDateUtils#getCurrentDateTime
      * @see ErpOrderItemService#saveListAndModify
      */
-    public void updateListToRelease(List<ErpOrderItemDto> itemDtos) {
+    public void changeListToRelease(List<ErpOrderItemDto> itemDtos) {
         List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
@@ -394,7 +393,7 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#findAllByIdList
      * @see ErpOrderItemService#saveListAndModify
      */
-    public void updateListToReleaseCancel(List<ErpOrderItemDto> itemDtos) {
+    public void changeListToReleaseCancel(List<ErpOrderItemDto> itemDtos) {
         List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
@@ -522,6 +521,24 @@ public class ErpOrderItemBusinessService {
         itemDtos.stream().forEach(dto -> {
             ErpOrderItemEntity.toEntity(dto);
             erpOrderItemService.delete(dto.getId());
+        });
+    }
+
+    public void changeAllOptionCode(List<ErpOrderItemDto> itemDtos) {
+        itemDtos.stream().forEach(dto -> {
+            ErpOrderItemEntity entity = erpOrderItemService.searchOne(dto.getId());
+            entity.setOptionCode(dto.getOptionCode()).setReleaseOptionCode(dto.getOptionCode());
+
+            erpOrderItemService.saveAndModify(entity);
+        });
+    }
+
+    public void changeReleaseOptionCode(List<ErpOrderItemDto> itemDtos) {
+        itemDtos.stream().forEach(dto -> {
+            ErpOrderItemEntity entity = erpOrderItemService.searchOne(dto.getId());
+            entity.setReleaseOptionCode(dto.getReleaseOptionCode());
+
+            erpOrderItemService.saveAndModify(entity);
         });
     }
 }

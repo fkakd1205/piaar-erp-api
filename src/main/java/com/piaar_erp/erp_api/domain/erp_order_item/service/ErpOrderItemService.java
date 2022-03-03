@@ -2,11 +2,13 @@ package com.piaar_erp.erp_api.domain.erp_order_item.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
+import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,18 @@ public class ErpOrderItemService {
         ErpOrderItemRepository erpOrderItemRepository
     ) {
         this.erpOrderItemRepository = erpOrderItemRepository;
+    }
+
+    /**
+     * <b>DB Insert Or Update Related Method</b>
+     * <p>
+     * 피아르 엑셀 데이터를 저장 or 수정한다.
+     *
+     * @param itemEntity : ErpOrderItemEntity
+     * @see ErpOrderItemRepository#save
+     */
+    public void saveAndModify(ErpOrderItemEntity itemEntity) {
+        erpOrderItemRepository.save(itemEntity);
     }
 
     /**
@@ -73,5 +87,15 @@ public class ErpOrderItemService {
         erpOrderItemRepository.findById(id).ifPresent(item -> {
             erpOrderItemRepository.delete(item);
         });
+    }
+
+    public ErpOrderItemEntity searchOne(UUID id) {
+        Optional<ErpOrderItemEntity> entityOpt = erpOrderItemRepository.findById(id);
+
+        if(entityOpt.isPresent()){
+            return entityOpt.get();
+        }else{
+            throw new CustomNotFoundDataException("존재하지 않는 데이터입니다.");
+        }
     }
 }

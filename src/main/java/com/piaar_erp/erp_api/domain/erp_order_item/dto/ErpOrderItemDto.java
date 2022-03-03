@@ -157,6 +157,9 @@ public class ErpOrderItemDto {
     private String salesYn;
     
     private LocalDateTime salesAt;
+
+    @Size(max = 20)
+    private String releaseOptionCode;
     
     @Size(max = 1)
     private String releaseYn;
@@ -224,6 +227,7 @@ public class ErpOrderItemDto {
                 .managementMemo20(entity.getManagementMemo20())
                 .salesYn(entity.getSalesYn())
                 .salesAt(entity.getSalesAt())
+                .releaseOptionCode(entity.getReleaseOptionCode())
                 .releaseYn(entity.getReleaseYn())
                 .releaseAt(entity.getReleaseAt())
                 .stockReflectYn(entity.getStockReflectYn())
