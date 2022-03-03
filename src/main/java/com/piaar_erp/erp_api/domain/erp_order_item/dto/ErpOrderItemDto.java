@@ -3,7 +3,16 @@ package com.piaar_erp.erp_api.domain.erp_order_item.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
+
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
+
+import org.hibernate.validator.constraints.Length;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,51 +32,140 @@ import lombok.experimental.Accessors;
 public class ErpOrderItemDto {
     private Integer cid;
     private UUID id;
-    private UUID uniqueCode;      // 피아르 고유코드
+    
+    @Size(max = 36)
+    private String uniqueCode;      // 피아르 고유코드
+
+    @Size(max = 36)
     private String orderNumber1;        // 주문번호1
+    
+    @Size(max = 36)
     private String orderNumber2;        // 주문번호2
+
+    @Size(max = 36)
     private String orderNumber3;        // 주문번호3
+
+    @Size(max = 300)
     private String prodName;        // 상품명 / 필수값
+    
+    @Size(max = 300)
     private String optionName;      // 옵션명 / 필수값
+
+    @PositiveOrZero
     private Integer unit;       // 수량 / 필수값
+    
+    @Size(max = 20)
     private String receiver;        // 수취인명 / 필수값
+
+    @Size(max = 20)
     private String receiverContact1;        // 전화번호1 / 필수값
+
+    @Size(max = 20)
     private String receiverContact2;        // 전화번호2
+
+    @Size(max = 200)
     private String destination;     // 주소 / 필수값
+
+    @Size(max = 10)
     private String zipCode;     // 우편번호
+
+    @Size(max = 45)
     private String transportType;       // 배송방식
+
+    @Size(max = 200)
     private String deliveryMessage;     // 배송메세지
+
+    @Size(max = 36)
     private String prodUniqueNumber1;       // 상품고유번호1
+
+    @Size(max = 36)
     private String prodUniqueNumber2;       // 상품고유번호2
+
+    @Size(max = 36)
     private String optionUniqueNumber1;     // 옵션고유번호1
+
+    @Size(max = 36)
     private String optionUniqueNumber2;     // 옵션고유번호2
+
+    @Size(max = 20)
     private String prodCode;        // 피아르 상품코드
+
+    @Size(max = 20)
     private String optionCode;      // 피아르 옵션코드
+
+    @Size(max = 200)
     private String managementMemo1;     // 관리메모1
+
+    @Size(max = 200)
     private String managementMemo2;     // 관리메모2
+
+    @Size(max = 200)
     private String managementMemo3;     // 관리메모3
+
+    @Size(max = 200)
     private String managementMemo4;     // 관리메모4
+
+    @Size(max = 200)
     private String managementMemo5;     // 관리메모5
+    
+    @Size(max = 200)
     private String managementMemo6;     // 관리메모6
+    
+    @Size(max = 200)
     private String managementMemo7;     // 관리메모7
+    
+    @Size(max = 200)
     private String managementMemo8;     // 관리메모8
+    
+    @Size(max = 200)
     private String managementMemo9;     // 관리메모9
+    
+    @Size(max = 200)
     private String managementMemo10;     // 관리메모10
+    
+    @Size(max = 200)
     private String managementMemo11;     // 관리메모11
+    
+    @Size(max = 200)
     private String managementMemo12;     // 관리메모12
+    
+    @Size(max = 200)
     private String managementMemo13;     // 관리메모13
+    
+    @Size(max = 200)
     private String managementMemo14;     // 관리메모14
+    
+    @Size(max = 200)
     private String managementMemo15;     // 관리메모15
+    
+    @Size(max = 200)
     private String managementMemo16;     // 관리메모16
+    
+    @Size(max = 200)
     private String managementMemo17;     // 관리메모17
+    
+    @Size(max = 200)
     private String managementMemo18;     // 관리메모18
+    
+    @Size(max = 200)
     private String managementMemo19;     // 관리메모19
+    
+    @Size(max = 200)
     private String managementMemo20;     // 관리메모20
+    
+    @Size(max = 1)
     private String salesYn;
+    
     private LocalDateTime salesAt;
+    
+    @Size(max = 1)
     private String releaseYn;
+    
     private LocalDateTime releaseAt;
+    
+    @Size(max = 1)
     private String stockReflectYn;
+    
     private LocalDateTime createdAt;
     private UUID createdBy;
 

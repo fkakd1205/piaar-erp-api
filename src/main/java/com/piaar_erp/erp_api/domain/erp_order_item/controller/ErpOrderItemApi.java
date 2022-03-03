@@ -3,6 +3,8 @@ package com.piaar_erp.erp_api.domain.erp_order_item.controller;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.service.ErpOrderItemBusinessService;
 import com.piaar_erp.erp_api.domain.message.dto.Message;
@@ -10,6 +12,7 @@ import com.piaar_erp.erp_api.domain.message.dto.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/erp-order-item")
 public class ErpOrderItemApi {
@@ -63,10 +67,10 @@ public class ErpOrderItemApi {
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
-     * @see erpOrderItemBusinessService#saveList
+     * @see ErpOrderItemBusinessService#saveList
      */
     @PostMapping("/list")
-    public ResponseEntity<?> saveList(@RequestBody List<ErpOrderItemDto> itemDtos) {
+    public ResponseEntity<?> saveList(@RequestBody @Valid List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
 
         erpOrderItemBusinessService.saveList(itemDtos);

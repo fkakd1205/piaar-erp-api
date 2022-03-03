@@ -1,5 +1,6 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -10,9 +11,11 @@ import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 import com.piaar_erp.erp_api.domain.product.entity.QProductEntity;
 import com.piaar_erp.erp_api.domain.product_category.entity.QProductCategoryEntity;
 import com.piaar_erp.erp_api.domain.product_option.entity.QProductOptionEntity;
+import com.piaar_erp.erp_api.utils.CustomFieldUtils;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -57,10 +60,12 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                         qProductCategoryEntity.name.as("categoryName")
                        ))
                 .where(eqSalesYn(params), eqReleaseYn(params))
+                .where(lkSearchCondition(params))
+                .where(withinDateRange(params))
                 .leftJoin(qProductOptionEntity).on(qErpOrderItemEntity.optionCode.eq(qProductOptionEntity.code))
                 .leftJoin(qProductEntity).on(qProductOptionEntity.productCid.eq(qProductEntity.cid))
                 .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid));
-
+    
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
         return result.getResults();
     }
@@ -83,5 +88,30 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
         } else {
             return qErpOrderItemEntity.releaseYn.eq(releaseYn);
         }
+    }
+
+    private BooleanExpression withinDateRange(Map<String, Object> params) {
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
+        
+        if (params.get("startDate") != null && params.get("endDate") != null) {
+            startDate = LocalDateTime.parse(params.get("startDate").toString());
+            endDate = LocalDateTime.parse(params.get("endDate").toString());
+
+            return qErpOrderItemEntity.createdAt.between(startDate, endDate);
+        } else {
+            return null;
+        }
+    }
+
+    private BooleanExpression lkSearchCondition(Map<String, Object> params) {
+        String columnName = params.get("searchColumnName") == null ? null : params.get("searchColumnName").toString();
+        String searchValue = params.get("searchValue") == null ? null : params.get("searchValue").toString();
+        if(columnName == null || searchValue == null){
+            return null;
+        }
+
+        StringPath str2 = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
+        return str2.contains(searchValue);
     }
 }

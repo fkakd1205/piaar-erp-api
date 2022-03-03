@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class ErpOrderItemVo {
     private UUID id;
-    private UUID uniqueCode;      // 피아르 고유코드
+    private String uniqueCode;      // 피아르 고유코드
     private String orderNumber1;        // 주문번호1
     private String orderNumber2;        // 주문번호2
     private String orderNumber3;        // 주문번호3
@@ -73,7 +73,6 @@ public class ErpOrderItemVo {
     private String stockReflectYn;
     private LocalDateTime createdAt;
     private UUID createdBy;
-    private Integer deliveryReadyFileCid;
 
     public static ErpOrderItemVo toVo(ErpOrderItemProj proj) {
         ErpOrderItemVo itemVo = ErpOrderItemVo.builder()
