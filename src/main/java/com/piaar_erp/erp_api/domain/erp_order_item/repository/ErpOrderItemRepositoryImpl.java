@@ -54,11 +54,9 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
         JPQLQuery customQuery = query.from(qErpOrderItemEntity)
                 .select(Projections.fields(ErpOrderItemProj.class,
                         qErpOrderItemEntity.as("erpOrderItem"),
-                        qProductEntity.defaultName.as("prodDefaultName"),
-                        qProductEntity.managementName.as("prodManagementName"),
-                        qProductOptionEntity.defaultName.as("optionDefaultName"),
-                        qProductOptionEntity.managementName.as("optionManagementName"),
-                        qProductCategoryEntity.name.as("categoryName")
+                        qProductEntity.as("product"),
+                        qProductOptionEntity.as("productOption"),
+                        qProductCategoryEntity.as("productCategory")
                        ))
                 .where(eqSalesYn(params), eqReleaseYn(params))
                 .where(lkSearchCondition(params))

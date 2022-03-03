@@ -220,4 +220,25 @@ public class ErpOrderItemApi {
         return new ResponseEntity<>(message, message.getStatus());
     }
 
+    /**
+     * Delete erp order item.
+     * <p>
+     * <b>POST : API URL => /api/v1/erp-order-item/list/delete</b>
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#deleteList
+     */
+    @PostMapping("/list/delete")
+    public ResponseEntity<?> deleteList(@RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.deleteList(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+    
+
 }

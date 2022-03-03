@@ -25,6 +25,7 @@ import com.piaar_erp.erp_api.domain.erp_order_item.vo.CombinedDeliveryErpOrderIt
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
 import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
+import com.piaar_erp.erp_api.domain.product_option.entity.ProductOptionEntity;
 import com.piaar_erp.erp_api.domain.product_option.service.ProductOptionService;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
 import com.piaar_erp.erp_api.utils.CustomFieldUtils;
@@ -279,16 +280,13 @@ public class ErpOrderItemBusinessService {
      * @param params : Map::String, Object::
      * @return List::ErpOrderItemVo::
      * @see ErpOrderItemService#findAllM2OJ
-     * @see ErpOrderItemVo#toVo
      * @see ErpOrderItemBusinessService#getOptionStockUnit
      */
     public List<ErpOrderItemVo> searchList(Map<String, Object> params) {
         // 등록된 모든 엑셀 데이터를 조회한다
-        List<ErpOrderItemProj> itemViewProjs = erpOrderItemService.findAllM2OJ(params);
-        List<ErpOrderItemVo> itemVos = itemViewProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
-
+        List<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params);
         // 옵션재고수량 추가
-        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemVos);
+        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemProjs);
         return ErpOrderItemVos;
     }
 
@@ -300,16 +298,21 @@ public class ErpOrderItemBusinessService {
      * 
      * @param itemVos : List::ErpOrderItemVo::
      * @return List::ErpOrderItemVo::
-     * @see ProductOptionService#searchListByProductListOptionCode
+     * @see ProductOptionService#searchStockUnit
+     * @see ErpOrderItemVo#toVo
      */
-    public List<ErpOrderItemVo> getOptionStockUnit(List<ErpOrderItemVo> itemVos) {
-        List<String> optionCodes = itemVos.stream().map(r -> r.getOptionCode()).collect(Collectors.toList());
-        List<ProductOptionDto> optionGetDtos = productOptionService.searchListByProductListOptionCode(optionCodes);
+    public List<ErpOrderItemVo> getOptionStockUnit(List<ErpOrderItemProj> itemProjs) {
+        // 옵션이 존재하는 데이터들의 
+        List<ProductOptionEntity> optionEntities = itemProjs.stream().filter(r -> r.getProductOption() != null ? true : false).collect(Collectors.toList())
+            .stream().map(r -> r.getProductOption()).collect(Collectors.toList());
+
+        List<ProductOptionDto> optionDtos = productOptionService.searchStockUnit(optionEntities);
+        List<ErpOrderItemVo> itemVos = itemProjs.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
 
         // 옵션 재고수량을 StockSumUnit(총 입고 수량 - 총 출고 수량)으로 변경
         List<ErpOrderItemVo> erpOrderItemVos = itemVos.stream().map(itemVo -> {
             // 옵션 코드와 동일한 상품의 재고수량을 변경한다
-            optionGetDtos.stream().forEach(option -> {
+            optionDtos.stream().forEach(option -> {
                 if (itemVo.getOptionCode().equals(option.getCode())) {
                     itemVo.setOptionStockUnit(option.getStockSumUnit().toString());
                 }
@@ -450,6 +453,14 @@ public class ErpOrderItemBusinessService {
         return combinedDeliveryItems;
     }
 
+    /**
+     * <b>Data Processing Related Method</b>
+     * <p>
+     * 엑셀 데이터의 수취인 정보가 동일한 데이터들을 합배송 처리한다
+     * 
+     * @param dtos : List::ErpOrderItemDto::
+     * @return  List::CombinedDeliveryErpOrderItemVo::
+     */
     public List<CombinedDeliveryErpOrderItemVo> getMergeCombinedDelivery(List<ErpOrderItemDto> dtos) {
         // 수취인 정보가 동일한 합배송 데이터 추출
         List<CombinedDeliveryErpOrderItemVo> combinedDeliveryItems = this.getCombinedDelivery(dtos);
@@ -496,5 +507,21 @@ public class ErpOrderItemBusinessService {
         }
 
         return combinedDeliveryItems;
+    }
+
+    /**
+     * <b>Data Delete Related Method</b>
+     * <p>
+     * 피아르 엑셀 데이터를 삭제한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemEntity#toEntity
+     * @see ErpOrderItemService#delete
+     */
+    public void deleteList(List<ErpOrderItemDto> itemDtos) {
+        itemDtos.stream().forEach(dto -> {
+            ErpOrderItemEntity.toEntity(dto);
+            erpOrderItemService.delete(dto.getId());
+        });
     }
 }

@@ -59,4 +59,19 @@ public class ErpOrderItemService {
     public List<ErpOrderItemEntity> findAllByIdList(List<UUID> idList) {
         return erpOrderItemRepository.qfindAllByIdList(idList);
     }
+
+    /**
+     * <b>DB Delete Related Method</b>
+     * <p>
+     * id 값에 대응하는 엑셀 데이터를 모두 삭제한다.
+     * 
+     * @param id : UUID
+     * @ErpOrderItemRepository#findById
+     * @ErpOrderItemRepository#delete
+     */
+    public void delete(UUID id) {
+        erpOrderItemRepository.findById(id).ifPresent(item -> {
+            erpOrderItemRepository.delete(item);
+        });
+    }
 }

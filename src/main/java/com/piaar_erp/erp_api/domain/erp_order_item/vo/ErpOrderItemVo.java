@@ -75,6 +75,8 @@ public class ErpOrderItemVo {
     private UUID createdBy;
 
     public static ErpOrderItemVo toVo(ErpOrderItemProj proj) {
+        if(proj == null) return null;
+
         ErpOrderItemVo itemVo = ErpOrderItemVo.builder()
                 .id(proj.getErpOrderItem().getId())
                 .uniqueCode(proj.getErpOrderItem().getUniqueCode())
@@ -124,11 +126,11 @@ public class ErpOrderItemVo {
                 .stockReflectYn(proj.getErpOrderItem().getStockReflectYn())
                 .createdAt(proj.getErpOrderItem().getCreatedAt())
                 .createdBy(proj.getErpOrderItem().getCreatedBy())
-                .categoryName(proj.getCategoryName())
-                .prodDefaultName(proj.getProdDefaultName())
-                .prodManagementName(proj.getProdManagementName())
-                .optionDefaultName(proj.getOptionDefaultName())
-                .optionManagementName(proj.getOptionManagementName())
+                .categoryName(proj.getProductCategory() != null ? proj.getProductCategory().getName() : "")
+                .prodDefaultName(proj.getProduct() != null ? proj.getProduct().getDefaultName() : "")
+                .prodManagementName(proj.getProduct() != null ? proj.getProduct().getManagementName() : "")
+                .optionDefaultName(proj.getProductOption() != null ? proj.getProductOption().getDefaultName() : "")
+                .optionManagementName(proj.getProductOption() != null ? proj.getProductOption().getManagementName() :"")
                 .build();
 
         return itemVo;
