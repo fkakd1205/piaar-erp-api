@@ -250,7 +250,7 @@ public class ErpOrderItemBusinessService {
         return itemVos;
     }
 
-    public void saveList(List<ErpOrderItemDto> orderItemDtos) {
+    public void createBatch(List<ErpOrderItemDto> orderItemDtos) {
         UUID USER_ID = UUID.randomUUID();
 
         List<ErpOrderItemEntity> orderItemEntities = orderItemDtos.stream()
@@ -279,13 +279,13 @@ public class ErpOrderItemBusinessService {
      * @param params : Map::String, Object::
      * @return List::ErpOrderItemVo::
      * @see ErpOrderItemService#findAllM2OJ
-     * @see ErpOrderItemBusinessService#getOptionStockUnit
+     * @see ErpOrderItemBusinessService#setOptionStockUnit
      */
-    public List<ErpOrderItemVo> searchList(Map<String, Object> params) {
+    public List<ErpOrderItemVo> searchBatch(Map<String, Object> params) {
         // 등록된 모든 엑셀 데이터를 조회한다
         List<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params);
         // 옵션재고수량 추가
-        List<ErpOrderItemVo> ErpOrderItemVos = this.getOptionStockUnit(itemProjs);
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
         return ErpOrderItemVos;
     }
 
@@ -300,7 +300,7 @@ public class ErpOrderItemBusinessService {
      * @see ProductOptionService#searchStockUnit
      * @see ErpOrderItemVo#toVo
      */
-    public List<ErpOrderItemVo> getOptionStockUnit(List<ErpOrderItemProj> itemProjs) {
+    public List<ErpOrderItemVo> setOptionStockUnit(List<ErpOrderItemProj> itemProjs) {
         // 옵션이 존재하는 데이터들의 
         List<ProductOptionEntity> optionEntities = itemProjs.stream().filter(r -> r.getProductOption() != null ? true : false).collect(Collectors.toList())
             .stream().map(r -> r.getProductOption()).collect(Collectors.toList());
@@ -325,19 +325,23 @@ public class ErpOrderItemBusinessService {
     /**
      * <b>DB Update Related Method</b>
      * <p>
-     * 엑셀 데이터의 salesYn(판매 여부)을 y(판매 O)로 업데이트한다.
+     * 엑셀 데이터의 salesYn(판매 여부)을 업데이트한다.
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @see ErpOrderItemService#findAllByIdList
      * @see CustomDateUtils#getCurrentDateTime
      * @see ErpOrderItemService#saveListAndModify
      */
-    public void changeListToSales(List<ErpOrderItemDto> itemDtos) {
+    public void changeBatchForSalesYn(List<ErpOrderItemDto> itemDtos) {
         List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
         entities.forEach(entity -> {
-            entity.setSalesYn("y").setSalesAt(CustomDateUtils.getCurrentDateTime());
+            itemDtos.forEach(dto -> {
+                if(entity.getId().equals(dto.getId())){
+                    entity.setSalesYn(dto.getSalesYn()).setSalesAt(dto.getSalesAt());
+                }
+            });
         });
 
         erpOrderItemService.saveListAndModify(entities);
@@ -346,59 +350,23 @@ public class ErpOrderItemBusinessService {
     /**
      * <b>DB Update Related Method</b>
      * <p>
-     * 엑셀 데이터의 salesYn(판매 여부)을 n(판매 X)로 업데이트한다.
-     * 
-     * @param itemDtos : List::ErpOrderItemDto::
-     * @see ErpOrderItemService#findAllByIdList
-     * @see ErpOrderItemService#saveListAndModify
-     */
-    public void changeListToSalesCancel(List<ErpOrderItemDto> itemDtos) {
-        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
-        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
-
-        entities.forEach(entity -> {
-            entity.setSalesYn("n").setSalesAt(null);
-        });
-
-        erpOrderItemService.saveListAndModify(entities);
-    }
-
-    /**
-     * <b>DB Update Related Method</b>
-     * <p>
-     * 엑셀 데이터의 releaseYn(출고 여부)을 y(출고 O)로 업데이트한다.
+     * 엑셀 데이터의 releaseYn(출고 여부)을 업데이트한다.
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @see ErpOrderItemService#findAllByIdList
      * @see CustomDateUtils#getCurrentDateTime
      * @see ErpOrderItemService#saveListAndModify
      */
-    public void changeListToRelease(List<ErpOrderItemDto> itemDtos) {
+    public void changeBatchForReleaseYn(List<ErpOrderItemDto> itemDtos) {
         List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
         entities.forEach(entity -> {
-            entity.setReleaseYn("y").setReleaseAt(CustomDateUtils.getCurrentDateTime());
-        });
-
-        erpOrderItemService.saveListAndModify(entities);
-    }
-
-    /**
-     * <b>DB Update Related Method</b>
-     * <p>
-     * 엑셀 데이터의 releaseYn(출고 여부)을 n(출고 X)로 업데이트한다.
-     * 
-     * @param itemDtos : List::ErpOrderItemDto::
-     * @see ErpOrderItemService#findAllByIdList
-     * @see ErpOrderItemService#saveListAndModify
-     */
-    public void changeListToReleaseCancel(List<ErpOrderItemDto> itemDtos) {
-        List<UUID> idList = itemDtos.stream().map(dto -> dto.getId()).collect(Collectors.toList());
-        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
-
-        entities.forEach(entity -> {
-            entity.setReleaseYn("n").setReleaseAt(null);
+            itemDtos.forEach(dto -> {
+                if(entity.getId().equals(dto.getId())){
+                    entity.setReleaseYn(dto.getReleaseYn()).setReleaseAt(dto.getReleaseAt());
+                }
+            });
         });
 
         erpOrderItemService.saveListAndModify(entities);
@@ -517,28 +485,56 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemEntity#toEntity
      * @see ErpOrderItemService#delete
      */
-    public void deleteList(List<ErpOrderItemDto> itemDtos) {
+    public void deleteBatch(List<ErpOrderItemDto> itemDtos) {
         itemDtos.stream().forEach(dto -> {
             ErpOrderItemEntity.toEntity(dto);
             erpOrderItemService.delete(dto.getId());
         });
     }
 
-    public void changeAllOptionCode(List<ErpOrderItemDto> itemDtos) {
-        itemDtos.stream().forEach(dto -> {
-            ErpOrderItemEntity entity = erpOrderItemService.searchOne(dto.getId());
-            entity.setOptionCode(dto.getOptionCode()).setReleaseOptionCode(dto.getOptionCode());
+    /**
+     * <b>Data Update Related Method</b>
+     * <p>
+     * 변경 주문 옵션코드를 참고해 주문 옵션코드와 출고 옵션코드를 변경한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void changeBatchForAllOptionCode(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
-            erpOrderItemService.saveAndModify(entity);
+        entities.stream().forEach(entity -> {
+            itemDtos.stream().forEach(dto -> {
+                if(entity.getId().equals(dto.getId())) {
+                    entity.setOptionCode(dto.getOptionCode()).setReleaseOptionCode(dto.getOptionCode());
+                }
+            });
         });
+        erpOrderItemService.saveListAndModify(entities);
     }
 
-    public void changeReleaseOptionCode(List<ErpOrderItemDto> itemDtos) {
-        itemDtos.stream().forEach(dto -> {
-            ErpOrderItemEntity entity = erpOrderItemService.searchOne(dto.getId());
-            entity.setReleaseOptionCode(dto.getReleaseOptionCode());
+    /**
+     * <b>Data Update Related Method</b>
+     * <p>
+     * 출고 옵션코드를 변경한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void changeBatchForReleaseOptionCode(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
 
-            erpOrderItemService.saveAndModify(entity);
+        entities.stream().forEach(entity -> {
+            itemDtos.stream().forEach(dto -> {
+                if(entity.getId().equals(dto.getId())) {
+                    entity.setReleaseOptionCode(dto.getReleaseOptionCode());
+                }
+            });
         });
+        erpOrderItemService.saveListAndModify(entities);
     }
 }
