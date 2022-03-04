@@ -98,6 +98,7 @@ public class ErpOrderItemEntity {
     @Column(name = "prod_code")
     private String prodCode; // 피아르 상품코드
 
+    @Setter
     @Column(name = "option_code")
     private String optionCode; // 피아르 옵션코드
 
@@ -170,6 +171,10 @@ public class ErpOrderItemEntity {
     private LocalDateTime salesAt;
 
     @Setter
+    @Column(name = "release_option_code")
+    private String releaseOptionCode;
+
+    @Setter
     @Column(name = "release_yn", columnDefinition = "n")
     private String releaseYn;
 
@@ -236,6 +241,7 @@ public class ErpOrderItemEntity {
                 .managementMemo20(dto.getManagementMemo20())
                 .salesYn(dto.getSalesYn())
                 .salesAt(dto.getSalesAt())
+                .releaseOptionCode(dto.getReleaseOptionCode())
                 .releaseYn(dto.getReleaseYn())
                 .releaseAt(dto.getReleaseAt())
                 .createdAt(dto.getCreatedAt())

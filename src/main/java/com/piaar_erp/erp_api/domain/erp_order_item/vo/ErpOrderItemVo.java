@@ -68,6 +68,7 @@ public class ErpOrderItemVo {
 
     private String salesYn;
     private LocalDateTime salesAt;
+    private String releaseOptionCode;
     private String releaseYn;
     private LocalDateTime releaseAt;
     private String stockReflectYn;
@@ -119,6 +120,7 @@ public class ErpOrderItemVo {
                 .managementMemo18(proj.getErpOrderItem().getManagementMemo18())
                 .managementMemo19(proj.getErpOrderItem().getManagementMemo19())
                 .managementMemo20(proj.getErpOrderItem().getManagementMemo20())
+                .releaseOptionCode(proj.getErpOrderItem().getReleaseOptionCode())
                 .salesYn(proj.getErpOrderItem().getSalesYn())
                 .salesAt(proj.getErpOrderItem().getSalesAt())
                 .releaseYn(proj.getErpOrderItem().getReleaseYn())
