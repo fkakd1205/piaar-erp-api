@@ -2,7 +2,7 @@ package com.piaar_erp.erp_api.domain.erp_order_item.vo;
 
 import java.util.List;
 
-import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
+import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +16,5 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CombinedDeliveryErpOrderItemVo {
-    List<ErpOrderItemDto> combinedDeliveryItems;
+    List<ErpOrderItemVo> combinedDeliveryItems;
 }

@@ -87,7 +87,7 @@ public class ErpOrderItemApi {
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#searchBatch
      */
-    @GetMapping("/products/product-categories")
+    @GetMapping("")
     public ResponseEntity<?> searchBatch(@RequestParam Map<String, Object> params) {
         Message message = new Message();
 

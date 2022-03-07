@@ -295,7 +295,7 @@ public class ErpOrderItemBusinessService {
      * 조회된 피아르 엑셀 데이터에서 옵션코드 값과 대응하는 옵션데이터를 조회한다.
      * 옵션데이터의 재고수량을 피아르 엑셀 데이터에 추가한다.
      * 
-     * @param itemVos : List::ErpOrderItemVo::
+     * @param itemProjs : List::ErpOrderItemVo::
      * @return List::ErpOrderItemVo::
      * @see ProductOptionService#searchStockUnit
      * @see ErpOrderItemVo#toVo
@@ -398,18 +398,18 @@ public class ErpOrderItemBusinessService {
             sb.append(dtos.get(i).getDestination());
 
             String resultStr = sb.toString();
-            List<ErpOrderItemDto> newCombinedList = new ArrayList<>();
+            List<ErpOrderItemVo> newCombinedList = new ArrayList<>();
             CombinedDeliveryErpOrderItemVo itemVo = new CombinedDeliveryErpOrderItemVo();
 
             // 새로운 데이터라면
             if (deliverySet.add(resultStr)) {
-                newCombinedList.add(dtos.get(i));
+                newCombinedList.add(ErpOrderItemVo.toVo(dtos.get(i)));
                 itemVo = CombinedDeliveryErpOrderItemVo.builder().combinedDeliveryItems(newCombinedList).build();
                 combinedDeliveryItems.add(itemVo);
             } else { // 중복된다면
                 // 이전 데이터에 현재 데이터를 추가한다
                 newCombinedList = combinedDeliveryItems.get(combinedDeliveryItems.size() - 1).getCombinedDeliveryItems();
-                newCombinedList.add(dtos.get(i));
+                newCombinedList.add(ErpOrderItemVo.toVo(dtos.get(i)));
 
                 itemVo = CombinedDeliveryErpOrderItemVo.builder().combinedDeliveryItems(newCombinedList).build();
 
@@ -441,29 +441,29 @@ public class ErpOrderItemBusinessService {
         
         for(int i = 0; i < combinedDeliveryItems.size(); i++) {
             for(int j = 0; j < combinedDeliveryItems.get(i).getCombinedDeliveryItems().size(); j++) {
-                ErpOrderItemDto currentDto = combinedDeliveryItems.get(i).getCombinedDeliveryItems().get(j);
+                ErpOrderItemVo currentVo = combinedDeliveryItems.get(i).getCombinedDeliveryItems().get(j);
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(currentDto.getReceiver());
-                sb.append(currentDto.getReceiverContact1());
-                sb.append(currentDto.getDestination());
-                sb.append(currentDto.getProdName());
-                sb.append(currentDto.getOptionName());
+                sb.append(currentVo.getReceiver());
+                sb.append(currentVo.getReceiverContact1());
+                sb.append(currentVo.getDestination());
+                sb.append(currentVo.getProdName());
+                sb.append(currentVo.getOptionName());
 
                 String resultStr = sb.toString();
 
                 if(!deliverySet.add(resultStr) && (j > 0)) {
-                    ErpOrderItemDto prevDto = combinedDeliveryItems.get(i).getCombinedDeliveryItems().get(j-1);
+                    ErpOrderItemVo prevVo = combinedDeliveryItems.get(i).getCombinedDeliveryItems().get(j-1);
 
                     // 중복데이터(상품 + 옵션) 수량 더하기
-                    CustomFieldUtils.setFieldValue(prevDto, "unit", prevDto.getUnit() + currentDto.getUnit());
+                    CustomFieldUtils.setFieldValue(prevVo, "unit", prevVo.getUnit() + currentVo.getUnit());
 
                     matchedColumnName.forEach(columnName -> {
-                        String prevFieldValue = CustomFieldUtils.getFieldValue(prevDto, columnName) == null ? "" : CustomFieldUtils.getFieldValue(prevDto, columnName);
-                        String currentFieldValue = CustomFieldUtils.getFieldValue(currentDto, columnName) == null ? "" : CustomFieldUtils.getFieldValue(currentDto, columnName);
+                        String prevFieldValue = CustomFieldUtils.getFieldValue(prevVo, columnName) == null ? "" : CustomFieldUtils.getFieldValue(prevVo, columnName);
+                        String currentFieldValue = CustomFieldUtils.getFieldValue(currentVo, columnName) == null ? "" : CustomFieldUtils.getFieldValue(currentVo, columnName);
                     
                         if(!columnName.equals("unit")) {
-                            CustomFieldUtils.setFieldValue(prevDto, columnName, prevFieldValue + "|&&|" + currentFieldValue);
+                            CustomFieldUtils.setFieldValue(prevVo, columnName, prevFieldValue + "|&&|" + currentFieldValue);
                         }
                     });
 
