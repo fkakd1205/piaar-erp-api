@@ -32,7 +32,7 @@ public class ErpDeliveryHeaderBusinessService {
     public void saveOne(ErpDeliveryHeaderDto headerDto) {
         UUID USER_ID = UUID.randomUUID();
         ErpDeliveryHeaderEntity headerEntity = ErpDeliveryHeaderEntity.toEntity(headerDto);
-        headerEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID).setUpdatedAt(CustomDateUtils.getCurrentDateTime());
+        headerEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID);
 
         erpDeliveryHeaderService.saveAndModify(headerEntity);
     }

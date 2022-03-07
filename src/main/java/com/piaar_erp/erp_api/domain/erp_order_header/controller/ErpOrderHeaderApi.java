@@ -64,7 +64,7 @@ public class ErpOrderHeaderApi {
     }
 
     /**
-     * Create one api for product.
+     * Update one api for erp order header.
      * <p>
      * <b>PUT : API URL => /api/v1/erp-order-header</b>
      * 
