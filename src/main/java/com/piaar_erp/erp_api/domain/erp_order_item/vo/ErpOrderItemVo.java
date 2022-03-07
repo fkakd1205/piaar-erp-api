@@ -3,6 +3,8 @@ package com.piaar_erp.erp_api.domain.erp_order_item.vo;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 
 import lombok.AllArgsConstructor;
@@ -67,11 +69,14 @@ public class ErpOrderItemVo {
     private String optionStockUnit;
 
     private String salesYn;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime salesAt;
     private String releaseOptionCode;
     private String releaseYn;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime releaseAt;
     private String stockReflectYn;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     private LocalDateTime createdAt;
     private UUID createdBy;
 
@@ -133,6 +138,69 @@ public class ErpOrderItemVo {
                 .prodManagementName(proj.getProduct() != null ? proj.getProduct().getManagementName() : "")
                 .optionDefaultName(proj.getProductOption() != null ? proj.getProductOption().getDefaultName() : "")
                 .optionManagementName(proj.getProductOption() != null ? proj.getProductOption().getManagementName() :"")
+                .build();
+
+        return itemVo;
+    }
+
+    public static ErpOrderItemVo toVo(ErpOrderItemDto dto) {
+        if(dto == null) return null;
+
+        ErpOrderItemVo itemVo = ErpOrderItemVo.builder()
+                .id(dto.getId())
+                .uniqueCode(dto.getUniqueCode())
+                .orderNumber1(dto.getOrderNumber1())
+                .orderNumber2(dto.getOrderNumber2())
+                .orderNumber3(dto.getOrderNumber3())
+                .prodName(dto.getProdName())
+                .optionName(dto.getOptionName())
+                .unit(dto.getUnit())
+                .receiver(dto.getReceiver())
+                .receiverContact1(dto.getReceiverContact1())
+                .receiverContact2(dto.getReceiverContact2())
+                .destination(dto.getDestination())
+                .zipCode(dto.getZipCode())
+                .transportType(dto.getTransportType())
+                .deliveryMessage(dto.getDeliveryMessage())
+                .prodUniqueNumber1(dto.getProdUniqueNumber1())
+                .prodUniqueNumber2(dto.getProdUniqueNumber2())
+                .optionUniqueNumber1(dto.getOptionUniqueNumber1())
+                .optionUniqueNumber2(dto.getOptionUniqueNumber2())
+                .prodCode(dto.getProdCode())
+                .optionCode(dto.getOptionCode())
+                .managementMemo1(dto.getManagementMemo1())
+                .managementMemo2(dto.getManagementMemo2())
+                .managementMemo3(dto.getManagementMemo3())
+                .managementMemo4(dto.getManagementMemo4())
+                .managementMemo5(dto.getManagementMemo5())
+                .managementMemo6(dto.getManagementMemo6())
+                .managementMemo7(dto.getManagementMemo7())
+                .managementMemo8(dto.getManagementMemo8())
+                .managementMemo9(dto.getManagementMemo9())
+                .managementMemo10(dto.getManagementMemo10())
+                .managementMemo11(dto.getManagementMemo11())
+                .managementMemo12(dto.getManagementMemo12())
+                .managementMemo13(dto.getManagementMemo13())
+                .managementMemo14(dto.getManagementMemo14())
+                .managementMemo15(dto.getManagementMemo15())
+                .managementMemo16(dto.getManagementMemo16())
+                .managementMemo17(dto.getManagementMemo17())
+                .managementMemo18(dto.getManagementMemo18())
+                .managementMemo19(dto.getManagementMemo19())
+                .managementMemo20(dto.getManagementMemo20())
+                .releaseOptionCode(dto.getReleaseOptionCode())
+                .salesYn(dto.getSalesYn())
+                .salesAt(dto.getSalesAt())
+                .releaseYn(dto.getReleaseYn())
+                .releaseAt(dto.getReleaseAt())
+                .stockReflectYn(dto.getStockReflectYn())
+                .createdAt(dto.getCreatedAt())
+                .createdBy(dto.getCreatedBy())
+                .categoryName(dto.getCategoryName())
+                .prodDefaultName(dto.getProdDefaultName())
+                .prodManagementName(dto.getProdManagementName())
+                .optionDefaultName(dto.getOptionDefaultName())
+                .optionManagementName(dto.getOptionManagementName())
                 .build();
 
         return itemVo;
