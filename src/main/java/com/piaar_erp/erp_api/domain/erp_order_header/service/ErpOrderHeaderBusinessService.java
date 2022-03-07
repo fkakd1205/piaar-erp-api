@@ -28,11 +28,12 @@ public class ErpOrderHeaderBusinessService {
      * 
      * @param headerDto : ErpOrderHeaderDto
      * @see ErpOrderHeaderEntity#toEntity
+     * @see ErpOrderHeaderService#saveAndModify
      */
     public void saveOne(ErpOrderHeaderDto headerDto) {
         UUID USER_ID = UUID.randomUUID();
         ErpOrderHeaderEntity headerEntity = ErpOrderHeaderEntity.toEntity(headerDto);
-        headerEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID).setUpdatedAt(CustomDateUtils.getCurrentDateTime());
+        headerEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID);
 
         erpOrderHeaderService.saveAndModify(headerEntity);
     }
