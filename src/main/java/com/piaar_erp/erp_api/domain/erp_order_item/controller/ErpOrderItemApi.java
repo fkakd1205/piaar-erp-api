@@ -2,6 +2,7 @@ package com.piaar_erp.erp_api.domain.erp_order_item.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
@@ -13,14 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Validated
@@ -147,16 +141,16 @@ public class ErpOrderItemApi {
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getCombinedDelivery
      */
-    @PostMapping("/action-combined")
-    public ResponseEntity<?> getCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
-        Message message = new Message();
-
-        message.setData(erpOrderItemBusinessService.getCombinedDelivery(itemDtos));
-        message.setStatus(HttpStatus.OK);
-        message.setMessage("success");
-
-        return new ResponseEntity<>(message, message.getStatus());
-    }
+//    @PostMapping("/action-combined")
+//    public ResponseEntity<?> getCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
+//        Message message = new Message();
+//
+//        message.setData(erpOrderItemBusinessService.getCombinedDelivery(itemDtos));
+//        message.setStatus(HttpStatus.OK);
+//        message.setMessage("success");
+//
+//        return new ResponseEntity<>(message, message.getStatus());
+//    }
 
     /**
      * Get merged combined delivery item of erp order item.
@@ -167,16 +161,16 @@ public class ErpOrderItemApi {
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getMergeCombinedDelivery
      */
-    @PostMapping("/action-combined/action-merge")
-    public ResponseEntity<?> getMergeCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
-        Message message = new Message();
-
-        message.setData(erpOrderItemBusinessService.getMergeCombinedDelivery(itemDtos));
-        message.setStatus(HttpStatus.OK);
-        message.setMessage("success");
-
-        return new ResponseEntity<>(message, message.getStatus());
-    }
+//    @PostMapping("/action-combined/action-merge")
+//    public ResponseEntity<?> getMergeCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
+//        Message message = new Message();
+//
+//        message.setData(erpOrderItemBusinessService.getMergeCombinedDelivery(itemDtos));
+//        message.setStatus(HttpStatus.OK);
+//        message.setMessage("success");
+//
+//        return new ResponseEntity<>(message, message.getStatus());
+//    }
 
     /**
      * Delete erp order item.
@@ -232,6 +226,17 @@ public class ErpOrderItemApi {
         Message message = new Message();
 
         erpOrderItemBusinessService.changeBatchForReleaseOptionCode(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @PostMapping("/erp-first-merge-headers/{firstMergeHeaderId}/action-merge")
+    public ResponseEntity<?> getFirstMergeItem(@PathVariable(value = "firstMergeHeaderId") UUID firstMergeHeaderId, @RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.getFirstMergeItem(firstMergeHeaderId, itemDtos));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 

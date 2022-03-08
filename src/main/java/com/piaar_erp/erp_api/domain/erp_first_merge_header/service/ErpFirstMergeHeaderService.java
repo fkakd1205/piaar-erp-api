@@ -48,6 +48,7 @@ public class ErpFirstMergeHeaderService {
      * <p>
      * id에 대응하는 erp first merge header을 조회한다.
      *
+     * @param id : UUID
      * @return ErpFirstMergeHeaderEntity
      * @see ErpFirstMergeHeaderRepository#findById
      */
@@ -59,5 +60,18 @@ public class ErpFirstMergeHeaderService {
         }else {
             throw new CustomNotFoundDataException("수정하려는 데이터를 찾을 수 없습니다.");
         }
+    }
+
+    /**
+     * <b>DB Delete Related Method</b>
+     * <p>
+     * id에 대응하는 erp first merge header을 삭제한다.
+     *
+     * @param id : UUID
+     * @see ErpFirstMergeHeaderRepository#findById
+     * @see ErpFirstMergeHeaderRepository#delete
+     */
+    public void deleteOne(UUID id) {
+        erpFirstMergeHeaderRepository.findById(id).ifPresent(header -> erpFirstMergeHeaderRepository.delete(header));
     }
 }

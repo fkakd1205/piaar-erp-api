@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/erp-first-merge-headers")
 public class ErpFirstMergeHeaderApi {
@@ -71,6 +73,26 @@ public class ErpFirstMergeHeaderApi {
         Message message = new Message();
 
         erpFirstMergeHeaderBusinessService.updateOne(headerDto);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Update one api for erp first merge header.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-first-merge-headers/{id}</b>
+     *
+     * @param id : UUID
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpFirstMergeHeaderBusinessService#deleteOne
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteOne(@PathVariable(value = "id") UUID id) {
+        Message message = new Message();
+
+        erpFirstMergeHeaderBusinessService.deleteOne(id);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
