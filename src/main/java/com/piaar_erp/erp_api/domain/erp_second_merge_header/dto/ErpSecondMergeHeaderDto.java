@@ -1,6 +1,6 @@
-package com.piaar_erp.erp_api.domain.erp_first_merge_header.dto;
+package com.piaar_erp.erp_api.domain.erp_second_merge_header.dto;
 
-import com.piaar_erp.erp_api.domain.erp_first_merge_header.entity.ErpFirstMergeHeaderEntity;
+import com.piaar_erp.erp_api.domain.erp_second_merge_header.entity.ErpSecondMergeHeaderEntity;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -12,11 +12,11 @@ import java.util.UUID;
 @Accessors(chain=true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErpFirstMergeHeaderDto {
+public class ErpSecondMergeHeaderDto {
     private Integer cid;
     private UUID id;
     private String title;
-    private ErpFirstMergeHeaderDetailDto headerDetail;
+    private ErpSecondMergeHeaderDetailDto headerDetail;
 
     @Setter
     private LocalDateTime createdAt;
@@ -27,10 +27,10 @@ public class ErpFirstMergeHeaderDto {
     @Setter
     private LocalDateTime updatedAt;
 
-    public static ErpFirstMergeHeaderDto toDto(ErpFirstMergeHeaderEntity entity) {
+    public static ErpSecondMergeHeaderDto toDto(ErpSecondMergeHeaderEntity entity) {
         if(entity == null) return null;
 
-        ErpFirstMergeHeaderDto dto = ErpFirstMergeHeaderDto.builder()
+        ErpSecondMergeHeaderDto dto = ErpSecondMergeHeaderDto.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .headerDetail(entity.getHeaderDetail())

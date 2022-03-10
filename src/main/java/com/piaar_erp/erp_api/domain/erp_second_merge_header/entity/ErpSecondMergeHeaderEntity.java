@@ -1,7 +1,7 @@
-package com.piaar_erp.erp_api.domain.erp_first_merge_header.entity;
+package com.piaar_erp.erp_api.domain.erp_second_merge_header.entity;
 
-import com.piaar_erp.erp_api.domain.erp_first_merge_header.dto.ErpFirstMergeHeaderDetailDto;
-import com.piaar_erp.erp_api.domain.erp_first_merge_header.dto.ErpFirstMergeHeaderDto;
+import com.piaar_erp.erp_api.domain.erp_second_merge_header.dto.ErpSecondMergeHeaderDetailDto;
+import com.piaar_erp.erp_api.domain.erp_second_merge_header.dto.ErpSecondMergeHeaderDto;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.Type;
@@ -13,12 +13,12 @@ import java.util.UUID;
 @Entity
 @Builder
 @Getter
-@Table(name = "erp_first_merge_header")
+@Table(name = "erp_second_merge_header")
 @ToString
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErpFirstMergeHeaderEntity {
+public class ErpSecondMergeHeaderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class ErpFirstMergeHeaderEntity {
 
     @Type(type = "json")
     @Column(name = "header_detail", columnDefinition = "json")
-    private ErpFirstMergeHeaderDetailDto headerDetail;
+    private ErpSecondMergeHeaderDetailDto headerDetail;
 
     @Setter
     @Column(name = "created_at")
@@ -51,10 +51,10 @@ public class ErpFirstMergeHeaderEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public static ErpFirstMergeHeaderEntity toEntity(ErpFirstMergeHeaderDto dto) {
+    public static ErpSecondMergeHeaderEntity toEntity(ErpSecondMergeHeaderDto dto) {
         if(dto == null) return null;
 
-        ErpFirstMergeHeaderEntity entity = ErpFirstMergeHeaderEntity.builder()
+        ErpSecondMergeHeaderEntity entity = ErpSecondMergeHeaderEntity.builder()
                 .cid(dto.getCid())
                 .id(dto.getId())
                 .title(dto.getTitle())
