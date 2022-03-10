@@ -1,16 +1,10 @@
 package com.piaar_erp.erp_api.domain.erp_second_merge_header.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import java.util.List;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Accessors(chain = true)
+import lombok.Getter;
+
+@Getter
 public class DetailDto {
     private Integer cellNumber;
     private String originCellName;
@@ -18,4 +12,6 @@ public class DetailDto {
     private String matchedColumnName;
     private String mergeYn;
     private String fixedValue;
+    private String splitter;
+    private List<ViewDetailDto> viewDetails;
 }
