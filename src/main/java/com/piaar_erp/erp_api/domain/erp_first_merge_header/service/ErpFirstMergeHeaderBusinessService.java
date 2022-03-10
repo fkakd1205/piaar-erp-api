@@ -69,4 +69,8 @@ public class ErpFirstMergeHeaderBusinessService {
 
         erpFirstMergeHeaderService.saveAndModify(entity);
     }
+
+    public void deleteOne(UUID id) {
+        erpFirstMergeHeaderService.deleteOne(id);
+    }
 }

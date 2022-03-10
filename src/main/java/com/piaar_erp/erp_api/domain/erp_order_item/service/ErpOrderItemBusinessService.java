@@ -5,23 +5,16 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import com.piaar_erp.erp_api.domain.erp_order_header.dto.ErpOrderHeaderDto;
-import com.piaar_erp.erp_api.domain.erp_order_header.entity.ErpOrderHeaderEntity;
+import com.piaar_erp.erp_api.domain.erp_first_merge_header.dto.ErpFirstMergeHeaderDto;
+import com.piaar_erp.erp_api.domain.erp_first_merge_header.entity.ErpFirstMergeHeaderEntity;
+import com.piaar_erp.erp_api.domain.erp_first_merge_header.service.ErpFirstMergeHeaderService;
 import com.piaar_erp.erp_api.domain.erp_order_header.service.ErpOrderHeaderService;
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
-import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.CombinedDeliveryErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
@@ -48,16 +41,19 @@ public class ErpOrderItemBusinessService {
     private ErpOrderItemService erpOrderItemService;
     private ProductOptionService productOptionService;
     private ErpOrderHeaderService erpOrderHeaderService;
+    private ErpFirstMergeHeaderService erpFirstMergeHeaderService;
 
     @Autowired
     public ErpOrderItemBusinessService(
         ErpOrderItemService erpOrderItemService,
         ProductOptionService productOptionService,
-        ErpOrderHeaderService erpOrderHeaderService
+        ErpOrderHeaderService erpOrderHeaderService,
+        ErpFirstMergeHeaderService erpFirstMergeHeaderService
     ) {
         this.erpOrderItemService = erpOrderItemService;
         this.productOptionService = productOptionService;
         this.erpOrderHeaderService = erpOrderHeaderService;
+        this.erpFirstMergeHeaderService = erpFirstMergeHeaderService;
     }
 
     // Excel file extension.
@@ -383,7 +379,7 @@ public class ErpOrderItemBusinessService {
     public List<CombinedDeliveryErpOrderItemVo> getCombinedDelivery(List<ErpOrderItemDto> dtos) {
         List<CombinedDeliveryErpOrderItemVo> combinedDeliveryItems = new ArrayList<>();
         Set<String> deliverySet = new HashSet<>();  // 수취인+전화번호+주소 를 담는 Set
-        
+
         // 수취인 > 전화번호 > 주소 > 상품명 > 옵션명 으로 정렬
         dtos.sort(Comparator.comparing(ErpOrderItemDto::getReceiver)
                 .thenComparing(ErpOrderItemDto::getReceiverContact1)
@@ -424,21 +420,35 @@ public class ErpOrderItemBusinessService {
      * <b>Data Processing Related Method</b>
      * <p>
      * 엑셀 데이터의 수취인 정보가 동일한 데이터들을 합배송 처리한다
+     * 같은 상품과 옵션이라면 수량을 더한다
+     * 병합 데이터의 나열 여부와 고정값 여부를 체크해서 데이터를 변환한다
      * 
+     * @param firstMergeHeaderId : UUID
      * @param dtos : List::ErpOrderItemDto::
      * @return  List::CombinedDeliveryErpOrderItemVo::
+     * @see ErpOrderItemBusinessService#getCombinedDelivery
+     * @see ErpOrderItemBusinessService#searchErpFirstMergeHeader
      */
-    public List<CombinedDeliveryErpOrderItemVo> getMergeCombinedDelivery(List<ErpOrderItemDto> dtos) {
+    public List<CombinedDeliveryErpOrderItemVo> getFirstMergeItem(UUID firstMergeHeaderId, List<ErpOrderItemDto> dtos) {
         // 수취인 정보가 동일한 합배송 데이터 추출
         List<CombinedDeliveryErpOrderItemVo> combinedDeliveryItems = this.getCombinedDelivery(dtos);
 
-        ErpOrderHeaderEntity headerEntity = erpOrderHeaderService.findAll().stream().findFirst().orElse(null);
-        ErpOrderHeaderDto headerDto = ErpOrderHeaderDto.toDto(headerEntity);
+        // 선택된 병합 헤더데이터 조회
+        ErpFirstMergeHeaderDto headerDto = this.searchErpFirstMergeHeader(firstMergeHeaderId);
+
+        // 나열 컬럼명 추출
         List<String> matchedColumnName = headerDto.getHeaderDetail().getDetails().stream().filter(r -> r.getMergeYn().equals("y")).collect(Collectors.toList())
             .stream().map(r -> r.getMatchedColumnName()).collect(Collectors.toList());
 
+        // fixedValue가 존재하는 컬럼의 컬럼명과 fixedValue값 추출
+        Map<String, String> fixedValueMap = headerDto.getHeaderDetail().getDetails().stream().filter(r -> !r.getFixedValue().isBlank()).collect(Collectors.toList())
+            .stream().collect(Collectors.toMap(
+                    key -> key.getMatchedColumnName(),
+                    value -> value.getFixedValue()
+            ));
+
         Set<String> deliverySet = new HashSet<>();
-        
+
         for(int i = 0; i < combinedDeliveryItems.size(); i++) {
             for(int j = 0; j < combinedDeliveryItems.get(i).getCombinedDeliveryItems().size(); j++) {
                 ErpOrderItemVo currentVo = combinedDeliveryItems.get(i).getCombinedDeliveryItems().get(j);
@@ -458,12 +468,18 @@ public class ErpOrderItemBusinessService {
                     // 중복데이터(상품 + 옵션) 수량 더하기
                     CustomFieldUtils.setFieldValue(prevVo, "unit", prevVo.getUnit() + currentVo.getUnit());
 
+                    // 구분자로 나열할 데이터 처리
                     matchedColumnName.forEach(columnName -> {
                         String prevFieldValue = CustomFieldUtils.getFieldValue(prevVo, columnName) == null ? "" : CustomFieldUtils.getFieldValue(prevVo, columnName);
                         String currentFieldValue = CustomFieldUtils.getFieldValue(currentVo, columnName) == null ? "" : CustomFieldUtils.getFieldValue(currentVo, columnName);
-                    
+
                         if(!columnName.equals("unit")) {
                             CustomFieldUtils.setFieldValue(prevVo, columnName, prevFieldValue + "|&&|" + currentFieldValue);
+
+                            // fixedValue가 지정된 column들은 fixedValue값으로 데이터를 덮어씌운다
+                            if(fixedValueMap.get(columnName) != null) {
+                                CustomFieldUtils.setFieldValue(prevVo, columnName, fixedValueMap.get(columnName));
+                            }
                         }
                     });
 
@@ -474,6 +490,21 @@ public class ErpOrderItemBusinessService {
         }
 
         return combinedDeliveryItems;
+    }
+
+    /**
+     * <b>Data Select Related Method</b>
+     * <p>
+     * firstMergeHeaderId에 대응하는 1차 병합헤더 데이터를 조회한다.
+     * 
+     * @param firstMergeHeaderId : UUID
+     * @return ErpFirstMergeHeaderDto
+     * @see ErpFirstMergeHeaderService#searchOne
+     * @see ErpFirstMergeHeaerDto#toDto
+     */
+    public ErpFirstMergeHeaderDto searchErpFirstMergeHeader(UUID firstMergeHeaderId) {
+        ErpFirstMergeHeaderEntity firstMergeHeaderEntity = erpFirstMergeHeaderService.searchOne(firstMergeHeaderId);
+        return ErpFirstMergeHeaderDto.toDto(firstMergeHeaderEntity);
     }
 
     /**
