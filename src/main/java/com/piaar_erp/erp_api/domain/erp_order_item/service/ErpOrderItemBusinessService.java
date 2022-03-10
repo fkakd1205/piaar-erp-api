@@ -376,102 +376,6 @@ public class ErpOrderItemBusinessService {
      * @param dtos : List::ErpOrderItemDto::
      * @return  List::CombinedDeliveryErpOrderItemVo::
      */
-//    public List<CombinedDeliveryErpOrderItemVo> getCombinedDelivery(List<ErpOrderItemDto> dtos) {
-//        List<CombinedDeliveryErpOrderItemVo> combinedDeliveryItems = new ArrayList<>();
-//        Set<String> deliverySet = new HashSet<>();  // 수취인+전화번호+주소 를 담는 Set
-//
-//        // 수취인 > 전화번호 > 주소 > 상품명 > 옵션명 으로 정렬
-//        dtos.sort(Comparator.comparing(ErpOrderItemDto::getReceiver)
-//                .thenComparing(ErpOrderItemDto::getReceiverContact1)
-//                .thenComparing(ErpOrderItemDto::getDestination)
-//                .thenComparing(ErpOrderItemDto::getProdName)
-//                .thenComparing(ErpOrderItemDto::getOptionName));
-//
-//        for (int i = 0; i < dtos.size(); i++) {
-//            StringBuilder sb = new StringBuilder();
-//            sb.append(dtos.get(i).getReceiver());
-//            sb.append(dtos.get(i).getReceiverContact1());
-//            sb.append(dtos.get(i).getDestination());
-//
-//            String resultStr = sb.toString();
-//            List<ErpOrderItemVo> newCombinedList = new ArrayList<>();
-//            CombinedDeliveryErpOrderItemVo itemVo = new CombinedDeliveryErpOrderItemVo();
-//
-//            // 새로운 데이터라면
-//            if (deliverySet.add(resultStr)) {
-//                newCombinedList.add(ErpOrderItemVo.toVo(dtos.get(i)));
-//                itemVo = CombinedDeliveryErpOrderItemVo.builder().combinedDeliveryItems(newCombinedList).build();
-//                combinedDeliveryItems.add(itemVo);
-//            } else { // 중복된다면
-//                // 이전 데이터에 현재 데이터를 추가한다
-//                newCombinedList = combinedDeliveryItems.get(combinedDeliveryItems.size() - 1).getCombinedDeliveryItems();
-//                newCombinedList.add(ErpOrderItemVo.toVo(dtos.get(i)));
-//
-//                itemVo = CombinedDeliveryErpOrderItemVo.builder().combinedDeliveryItems(newCombinedList).build();
-//
-//                // 이전 결합배송 리스트를 수정한다
-//                combinedDeliveryItems.set(combinedDeliveryItems.size() - 1, itemVo);
-//            }
-//        }
-//        return combinedDeliveryItems;
-//    }
-
-    /**
-     * <b>Data Processing Related Method</b>
-     * <p>
-     * 엑셀 데이터의 수취인 정보가 동일한 데이터들을 합배송 처리한다
-     * 
-     * @param dtos : List::ErpOrderItemDto::
-     * @return  List::CombinedDeliveryErpOrderItemVo::
-     */
-//    public List<CombinedDeliveryErpOrderItemVo> getMergeCombinedDelivery(List<ErpOrderItemDto> dtos) {
-//        // 수취인 정보가 동일한 합배송 데이터 추출
-//        List<CombinedDeliveryErpOrderItemVo> combinedDeliveryItems = this.getCombinedDelivery(dtos);
-//
-//        ErpOrderHeaderEntity headerEntity = erpOrderHeaderService.findAll().stream().findFirst().orElse(null);
-//        ErpOrderHeaderDto headerDto = ErpOrderHeaderDto.toDto(headerEntity);
-//        List<String> matchedColumnName = headerDto.getHeaderDetail().getDetails().stream().filter(r -> r.getMergeYn().equals("y")).collect(Collectors.toList())
-//            .stream().map(r -> r.getMatchedColumnName()).collect(Collectors.toList());
-//
-//        Set<String> deliverySet = new HashSet<>();
-//
-//        for(int i = 0; i < combinedDeliveryItems.size(); i++) {
-//            for(int j = 0; j < combinedDeliveryItems.get(i).getCombinedDeliveryItems().size(); j++) {
-//                ErpOrderItemVo currentVo = combinedDeliveryItems.get(i).getCombinedDeliveryItems().get(j);
-//
-//                StringBuilder sb = new StringBuilder();
-//                sb.append(currentVo.getReceiver());
-//                sb.append(currentVo.getReceiverContact1());
-//                sb.append(currentVo.getDestination());
-//                sb.append(currentVo.getProdName());
-//                sb.append(currentVo.getOptionName());
-//
-//                String resultStr = sb.toString();
-//
-//                if(!deliverySet.add(resultStr) && (j > 0)) {
-//                    ErpOrderItemVo prevVo = combinedDeliveryItems.get(i).getCombinedDeliveryItems().get(j-1);
-//
-//                    // 중복데이터(상품 + 옵션) 수량 더하기
-//                    CustomFieldUtils.setFieldValue(prevVo, "unit", prevVo.getUnit() + currentVo.getUnit());
-//
-//                    matchedColumnName.forEach(columnName -> {
-//                        String prevFieldValue = CustomFieldUtils.getFieldValue(prevVo, columnName) == null ? "" : CustomFieldUtils.getFieldValue(prevVo, columnName);
-//                        String currentFieldValue = CustomFieldUtils.getFieldValue(currentVo, columnName) == null ? "" : CustomFieldUtils.getFieldValue(currentVo, columnName);
-//
-//                        if(!columnName.equals("unit")) {
-//                            CustomFieldUtils.setFieldValue(prevVo, columnName, prevFieldValue + "|&&|" + currentFieldValue);
-//                        }
-//                    });
-//
-//                    // 수량이 합쳐지고 남은 중복 데이터 제거
-//                    combinedDeliveryItems.get(i).getCombinedDeliveryItems().remove(j);
-//                }
-//            }
-//        }
-//
-//        return combinedDeliveryItems;
-//    }
-
     public List<CombinedDeliveryErpOrderItemVo> getCombinedDelivery(List<ErpOrderItemDto> dtos) {
         List<CombinedDeliveryErpOrderItemVo> combinedDeliveryItems = new ArrayList<>();
         Set<String> deliverySet = new HashSet<>();  // 수취인+전화번호+주소 를 담는 Set
@@ -512,26 +416,36 @@ public class ErpOrderItemBusinessService {
         return combinedDeliveryItems;
     }
 
-    // v 1. 합배송 데이터 추출
-    // v 2. 합배송 병합 나열 데이터(mergeYn == y) 나열
-    // x 3. fixedValue가 존재하면 덮어씌우기
+    /**
+     * <b>Data Processing Related Method</b>
+     * <p>
+     * 엑셀 데이터의 수취인 정보가 동일한 데이터들을 합배송 처리한다
+     * 같은 상품과 옵션이라면 수량을 더한다
+     * 병합 데이터의 나열 여부와 고정값 여부를 체크해서 데이터를 변환한다
+     * 
+     * @param firstMergeHeaderId : UUID
+     * @param dtos : List::ErpOrderItemDto::
+     * @return  List::CombinedDeliveryErpOrderItemVo::
+     * @see ErpOrderItemBusinessService#getCombinedDelivery
+     * @see ErpOrderItemBusinessService#searchErpFirstMergeHeader
+     */
     public List<CombinedDeliveryErpOrderItemVo> getFirstMergeItem(UUID firstMergeHeaderId, List<ErpOrderItemDto> dtos) {
         // 수취인 정보가 동일한 합배송 데이터 추출
         List<CombinedDeliveryErpOrderItemVo> combinedDeliveryItems = this.getCombinedDelivery(dtos);
 
         // 선택된 병합 헤더데이터 조회
-        ErpFirstMergeHeaderEntity firstMergeHeaderEntity = erpFirstMergeHeaderService.searchOne(firstMergeHeaderId);
-        ErpFirstMergeHeaderDto headerDto = ErpFirstMergeHeaderDto.toDto(firstMergeHeaderEntity);
+        ErpFirstMergeHeaderDto headerDto = this.searchErpFirstMergeHeader(firstMergeHeaderId);
+
+        // 나열 컬럼명 추출
         List<String> matchedColumnName = headerDto.getHeaderDetail().getDetails().stream().filter(r -> r.getMergeYn().equals("y")).collect(Collectors.toList())
             .stream().map(r -> r.getMatchedColumnName()).collect(Collectors.toList());
 
-        Map<String, String> fixedValueColumnName = headerDto.getHeaderDetail().getDetails().stream().filter(r -> !r.getFixedValue().isBlank()).collect(Collectors.toList())
+        // fixedValue가 존재하는 컬럼의 컬럼명과 fixedValue값 추출
+        Map<String, String> fixedValueMap = headerDto.getHeaderDetail().getDetails().stream().filter(r -> !r.getFixedValue().isBlank()).collect(Collectors.toList())
             .stream().collect(Collectors.toMap(
                     key -> key.getMatchedColumnName(),
                     value -> value.getFixedValue()
-                ));
-
-            System.out.println(fixedValueColumnName);
+            ));
 
         Set<String> deliverySet = new HashSet<>();
 
@@ -562,8 +476,9 @@ public class ErpOrderItemBusinessService {
                         if(!columnName.equals("unit")) {
                             CustomFieldUtils.setFieldValue(prevVo, columnName, prevFieldValue + "|&&|" + currentFieldValue);
 
-                            if(fixedValueColumnName.get(columnName) != null) {
-                                CustomFieldUtils.setFieldValue(prevVo, columnName, fixedValueColumnName.get(columnName));
+                            // fixedValue가 지정된 column들은 fixedValue값으로 데이터를 덮어씌운다
+                            if(fixedValueMap.get(columnName) != null) {
+                                CustomFieldUtils.setFieldValue(prevVo, columnName, fixedValueMap.get(columnName));
                             }
                         }
                     });
@@ -575,6 +490,21 @@ public class ErpOrderItemBusinessService {
         }
 
         return combinedDeliveryItems;
+    }
+
+    /**
+     * <b>Data Select Related Method</b>
+     * <p>
+     * firstMergeHeaderId에 대응하는 1차 병합헤더 데이터를 조회한다.
+     * 
+     * @param firstMergeHeaderId : UUID
+     * @return ErpFirstMergeHeaderDto
+     * @see ErpFirstMergeHeaderService#searchOne
+     * @see ErpFirstMergeHeaerDto#toDto
+     */
+    public ErpFirstMergeHeaderDto searchErpFirstMergeHeader(UUID firstMergeHeaderId) {
+        ErpFirstMergeHeaderEntity firstMergeHeaderEntity = erpFirstMergeHeaderService.searchOne(firstMergeHeaderId);
+        return ErpFirstMergeHeaderDto.toDto(firstMergeHeaderEntity);
     }
 
     /**
