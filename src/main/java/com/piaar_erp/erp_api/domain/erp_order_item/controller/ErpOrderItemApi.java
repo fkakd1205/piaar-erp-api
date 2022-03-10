@@ -133,46 +133,6 @@ public class ErpOrderItemApi {
     }
 
     /**
-     * Get combined delivery item of erp order item.
-     * <p>
-     * <b>POST : API URL => /api/v1/erp-order-items/action-combined</b>
-     * 
-     * @param itemDtos : List::ErpOrderItemDto::
-     * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#getCombinedDelivery
-     */
-//    @PostMapping("/action-combined")
-//    public ResponseEntity<?> getCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
-//        Message message = new Message();
-//
-//        message.setData(erpOrderItemBusinessService.getCombinedDelivery(itemDtos));
-//        message.setStatus(HttpStatus.OK);
-//        message.setMessage("success");
-//
-//        return new ResponseEntity<>(message, message.getStatus());
-//    }
-
-    /**
-     * Get merged combined delivery item of erp order item.
-     * <p>
-     * <b>POST : API URL => /api/v1/erp-order-items/action-combined/action-merge</b>
-     * 
-     * @param itemDtos : List::ErpOrderItemDto::
-     * @return ResponseEntity(message, HttpStatus)
-     * @see ErpOrderItemBusinessService#getMergeCombinedDelivery
-     */
-//    @PostMapping("/action-combined/action-merge")
-//    public ResponseEntity<?> getMergeCombinedDelivery(@RequestBody List<ErpOrderItemDto> itemDtos) {
-//        Message message = new Message();
-//
-//        message.setData(erpOrderItemBusinessService.getMergeCombinedDelivery(itemDtos));
-//        message.setStatus(HttpStatus.OK);
-//        message.setMessage("success");
-//
-//        return new ResponseEntity<>(message, message.getStatus());
-//    }
-
-    /**
      * Delete erp order item.
      * <p>
      * <b>POST : API URL => /api/v1/erp-order-items/batch-delete</b>
@@ -232,6 +192,16 @@ public class ErpOrderItemApi {
         return new ResponseEntity<>(message, message.getStatus());
     }
 
+    /**
+     * Change erp order item to combined delivery item by first merge header
+     * <p>
+     * <b>POST : API URL => /api/v1/erp-order-items/erp-first-merge-headers/{firstMergeHeaderId}/action-merge</b>
+     * 
+     * @param firstMergeHeaderId : UUID
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#getFirstMergeItem
+     */
     @PostMapping("/erp-first-merge-headers/{firstMergeHeaderId}/action-merge")
     public ResponseEntity<?> getFirstMergeItem(@PathVariable(value = "firstMergeHeaderId") UUID firstMergeHeaderId, @RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
