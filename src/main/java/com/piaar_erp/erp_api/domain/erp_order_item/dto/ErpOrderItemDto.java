@@ -3,16 +3,10 @@ package com.piaar_erp.erp_api.domain.erp_order_item.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 
-import org.hibernate.validator.constraints.Length;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,8 +45,7 @@ public class ErpOrderItemDto {
     @Size(max = 300)
     private String optionName;      // 옵션명 / 필수값
 
-    @PositiveOrZero
-    private Integer unit;       // 수량 / 필수값
+    private String unit;
     
     @Size(max = 20)
     private String receiver;        // 수취인명 / 필수값
@@ -191,7 +184,7 @@ public class ErpOrderItemDto {
                 .orderNumber3(entity.getOrderNumber3())
                 .prodName(entity.getProdName())
                 .optionName(entity.getOptionName())
-                .unit(entity.getUnit())
+                .unit(entity.getUnit().toString())
                 .receiver(entity.getReceiver())
                 .receiverContact1(entity.getReceiverContact1())
                 .receiverContact2(entity.getReceiverContact2())

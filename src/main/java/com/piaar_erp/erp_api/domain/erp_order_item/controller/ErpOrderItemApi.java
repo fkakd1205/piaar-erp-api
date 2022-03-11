@@ -212,4 +212,15 @@ public class ErpOrderItemApi {
 
         return new ResponseEntity<>(message, message.getStatus());
     }
+
+    @PostMapping("/erp-second-merge-headers/{secondMergeHeaderId}/action-merge")
+    public ResponseEntity<?> getSecondMergeItem(@PathVariable(value = "secondMergeHeaderId") UUID secondMergeHeaderId, @RequestBody List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.getSecondMergeItem(secondMergeHeaderId, itemDtos));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
 }

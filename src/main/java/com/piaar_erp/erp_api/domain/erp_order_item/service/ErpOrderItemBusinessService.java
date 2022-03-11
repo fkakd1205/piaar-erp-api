@@ -11,11 +11,14 @@ import java.util.stream.Collectors;
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.dto.ErpFirstMergeHeaderDto;
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.entity.ErpFirstMergeHeaderEntity;
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.service.ErpFirstMergeHeaderService;
-import com.piaar_erp.erp_api.domain.erp_order_header.service.ErpOrderHeaderService;
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
+import com.piaar_erp.erp_api.domain.erp_second_merge_header.dto.DetailDto;
+import com.piaar_erp.erp_api.domain.erp_second_merge_header.dto.ErpSecondMergeHeaderDto;
+import com.piaar_erp.erp_api.domain.erp_second_merge_header.entity.ErpSecondMergeHeaderEntity;
+import com.piaar_erp.erp_api.domain.erp_second_merge_header.service.ErpSecondMergeHeaderService;
 import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
 import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
 import com.piaar_erp.erp_api.domain.product_option.entity.ProductOptionEntity;
@@ -43,6 +46,7 @@ public class ErpOrderItemBusinessService {
     private final ErpOrderItemService erpOrderItemService;
     private final ProductOptionService productOptionService;
     private final ErpFirstMergeHeaderService erpFirstMergeHeaderService;
+    private final ErpSecondMergeHeaderService erpSecondMergeHeaderService;
 
     // Excel file extension.
     private final List<String> EXTENSIONS_EXCEL = Arrays.asList("xlsx", "xls");
@@ -357,6 +361,68 @@ public class ErpOrderItemBusinessService {
     }
 
     /**
+     * <b>Data Delete Related Method</b>
+     * <p>
+     * 피아르 엑셀 데이터를 삭제한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemEntity#toEntity
+     * @see ErpOrderItemService#delete
+     */
+    public void deleteBatch(List<ErpOrderItemDto> itemDtos) {
+        itemDtos.stream().forEach(dto -> {
+            ErpOrderItemEntity.toEntity(dto);
+            erpOrderItemService.delete(dto.getId());
+        });
+    }
+
+    /**
+     * <b>Data Update Related Method</b>
+     * <p>
+     * 변경 주문 옵션코드를 참고해 주문 옵션코드와 출고 옵션코드를 변경한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void changeBatchForAllOptionCode(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.stream().forEach(entity -> {
+            itemDtos.stream().forEach(dto -> {
+                if(entity.getId().equals(dto.getId())) {
+                    entity.setOptionCode(dto.getOptionCode()).setReleaseOptionCode(dto.getOptionCode());
+                }
+            });
+        });
+        erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
+     * <b>Data Update Related Method</b>
+     * <p>
+     * 출고 옵션코드를 변경한다.
+     * 
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @see ErpOrderItemService#findAllByIdList
+     * @see ErpOrderItemService#saveListAndModify
+     */
+    public void changeBatchForReleaseOptionCode(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
+
+        entities.stream().forEach(entity -> {
+            itemDtos.stream().forEach(dto -> {
+                if(entity.getId().equals(dto.getId())) {
+                    entity.setReleaseOptionCode(dto.getReleaseOptionCode());
+                }
+            });
+        });
+        erpOrderItemService.saveListAndModify(entities);
+    }
+
+    /**
     * <b>Data Processing Related Method</b>
     * <p>
     * 수령인 > 수령인 전화번호 > 주소 > 상품명 > 옵션명 순으로 정렬해서
@@ -454,64 +520,111 @@ public class ErpOrderItemBusinessService {
     }
 
     /**
-     * <b>Data Delete Related Method</b>
-     * <p>
-     * 피아르 엑셀 데이터를 삭제한다.
-     * 
-     * @param itemDtos : List::ErpOrderItemDto::
-     * @see ErpOrderItemEntity#toEntity
-     * @see ErpOrderItemService#delete
-     */
-    public void deleteBatch(List<ErpOrderItemDto> itemDtos) {
-        itemDtos.stream().forEach(dto -> {
-            ErpOrderItemEntity.toEntity(dto);
-            erpOrderItemService.delete(dto.getId());
-        });
+    * <b>Data Processing Related Method</b>
+    * <p>
+    * 병합 여부와 splitter로 구분해 나타낼 컬럼들을 확인해 데이터를 나열한다
+    * 동일 수령인정보라면 구분자(|&&|)로 표시해 병합한다
+    * 고정값 여부를 체크해서 데이터를 고정값으로 채워넣는다
+    * 
+    * @param firstMergeHeaderId : UUID
+    * @param dtos : List::ErpOrderItemDto::
+    * @return  List::ErpOrderItemDto::
+    * @see ErpOrderItemBusinessService#searchErpSecondMergeHeader
+    * @see CustomFieldUtils#getFieldValue
+    * @see CustomFieldUtils#setFieldValue
+    */
+    public List<ErpOrderItemDto> getSecondMergeItem(UUID secondMergeHeaderId, List<ErpOrderItemDto> dtos) {
+        // 선택된 병합 헤더데이터 조회
+        ErpSecondMergeHeaderDto headerDto = this.searchErpSecondMergeHeader(secondMergeHeaderId);
+
+        Map<String, String> splitterMap = headerDto.getHeaderDetail().getDetails().stream().filter(r -> r.getMergeYn().equals("y")).collect(Collectors.toList())
+            .stream().collect(Collectors.toMap(
+                r -> r.getMatchedColumnName(),
+                r -> r.getSplitter()
+            ));
+
+        // fixedValue가 존재하는 컬럼의 컬럼명과 fixedValue값 추출
+        Map<String, String> fixedValueMap = headerDto.getHeaderDetail().getDetails().stream().filter(r -> !r.getFixedValue().isBlank()).collect(Collectors.toList())
+            .stream().collect(Collectors.toMap(
+                    r -> r.getMatchedColumnName(),
+                    r -> r.getFixedValue()
+            ));
+
+        dtos.sort(Comparator.comparing(ErpOrderItemDto::getReceiver)
+            .thenComparing(ErpOrderItemDto::getReceiverContact1)
+            .thenComparing(ErpOrderItemDto::getDestination)
+            .thenComparing(ErpOrderItemDto::getProdName)
+            .thenComparing(ErpOrderItemDto::getOptionName));
+
+        for(int i = 0; i < dtos.size(); i++) {
+            ErpOrderItemDto currentDto = dtos.get(i);
+            
+            // 1. splitter로 나타낼 데이터 컬럼을 모두 추출해서 현재 데이터에 그 컬럼의 데이터 값을 구분자를 붙여 추가한다.
+            // 2. 수령인이 동일하면 |&&|구분자로 병합해서 나열. 중복처리된 열 제거
+            // 3. fixedValue가 존재하는 애들은 fixedValue값으로 채우기
+            
+            // 1. splitter로 나타낼 데이터 컬럼을 추출
+            splitterMap.entrySet().stream().forEach(mergeMap -> {
+                // viewDetails 
+                DetailDto matchedDetail = headerDto.getHeaderDetail().getDetails().stream().filter(r -> r.getMatchedColumnName().equals(mergeMap.getKey())).collect(Collectors.toList()).get(0);
+                
+                String currentFieldValue = CustomFieldUtils.getFieldValue(currentDto, mergeMap.getKey()).toString();
+                String appendFieldValue = "";
+
+                if(matchedDetail.getViewDetails().size() == 1) {
+                    currentFieldValue = "";
+                    appendFieldValue = CustomFieldUtils.getFieldValue(currentDto, matchedDetail.getViewDetails().get(0).getMatchedColumnName()).toString();
+                }else{
+                    for(int j = 0; j < matchedDetail.getViewDetails().size(); j++) {
+                        appendFieldValue += mergeMap.getValue() + CustomFieldUtils.getFieldValue(currentDto, matchedDetail.getViewDetails().get(j).getMatchedColumnName()).toString();
+                    }
+                }
+                CustomFieldUtils.setFieldValue(currentDto, mergeMap.getKey(), currentFieldValue + appendFieldValue);
+            });
+        }
+
+
+        // 2. 수령인 동일하면 |&&|구분자로 병합해서 나열.
+        List<ErpOrderItemDto> mergeItemDtos = new ArrayList<>();
+            
+        Set<String> deliverySet = new HashSet<>();
+        for (int i = 0; i < dtos.size(); i++) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(dtos.get(i).getReceiver());
+            sb.append(dtos.get(i).getReceiverContact1());
+            sb.append(dtos.get(i).getDestination());
+
+            String resultStr = sb.toString();
+            
+            mergeItemDtos.add(dtos.get(i));
+            int currentMergeItemIndex = mergeItemDtos.size()-1;
+
+            // 중복데이터(상품 + 옵션)
+            if(!deliverySet.add(resultStr)) {
+                ErpOrderItemDto currentDto = mergeItemDtos.get(currentMergeItemIndex);
+                ErpOrderItemDto prevDto = mergeItemDtos.get(currentMergeItemIndex-1);
+
+                splitterMap.entrySet().stream().forEach(mergeMap -> {
+                    String prevFieldValue = CustomFieldUtils.getFieldValue(prevDto, mergeMap.getKey()) == null ? "" : CustomFieldUtils.getFieldValue(prevDto, mergeMap.getKey());
+                    String currentFieldValue = CustomFieldUtils.getFieldValue(currentDto, mergeMap.getKey()) == null ? "" : CustomFieldUtils.getFieldValue(currentDto, mergeMap.getKey());
+                    CustomFieldUtils.setFieldValue(prevDto, mergeMap.getKey(), prevFieldValue + "|&&|" + currentFieldValue);
+                });
+
+                // 중복데이터 제거
+                mergeItemDtos.remove(currentMergeItemIndex);
+            }
+
+            // 3. fixedValue가 지정된 column들은 fixedValue값으로 데이터를 덮어씌운다
+            fixedValueMap.entrySet().stream().forEach(map -> {
+                CustomFieldUtils.setFieldValue(mergeItemDtos.get(mergeItemDtos.size()-1), map.getKey(), map.getValue());
+            });
+        }
+
+        return mergeItemDtos;
     }
 
-    /**
-     * <b>Data Update Related Method</b>
-     * <p>
-     * 변경 주문 옵션코드를 참고해 주문 옵션코드와 출고 옵션코드를 변경한다.
-     * 
-     * @param itemDtos : List::ErpOrderItemDto::
-     * @see ErpOrderItemService#findAllByIdList
-     * @see ErpOrderItemService#saveListAndModify
-     */
-    public void changeBatchForAllOptionCode(List<ErpOrderItemDto> itemDtos) {
-        List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
-        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
-
-        entities.stream().forEach(entity -> {
-            itemDtos.stream().forEach(dto -> {
-                if(entity.getId().equals(dto.getId())) {
-                    entity.setOptionCode(dto.getOptionCode()).setReleaseOptionCode(dto.getOptionCode());
-                }
-            });
-        });
-        erpOrderItemService.saveListAndModify(entities);
-    }
-
-    /**
-     * <b>Data Update Related Method</b>
-     * <p>
-     * 출고 옵션코드를 변경한다.
-     * 
-     * @param itemDtos : List::ErpOrderItemDto::
-     * @see ErpOrderItemService#findAllByIdList
-     * @see ErpOrderItemService#saveListAndModify
-     */
-    public void changeBatchForReleaseOptionCode(List<ErpOrderItemDto> itemDtos) {
-        List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
-        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
-
-        entities.stream().forEach(entity -> {
-            itemDtos.stream().forEach(dto -> {
-                if(entity.getId().equals(dto.getId())) {
-                    entity.setReleaseOptionCode(dto.getReleaseOptionCode());
-                }
-            });
-        });
-        erpOrderItemService.saveListAndModify(entities);
+    public ErpSecondMergeHeaderDto searchErpSecondMergeHeader(UUID secondMergeHeaderId) {
+        ErpSecondMergeHeaderEntity secondMergeHeaderEntity = erpSecondMergeHeaderService.searchOne(secondMergeHeaderId);
+        return ErpSecondMergeHeaderDto.toDto(secondMergeHeaderEntity);
     }
 }
