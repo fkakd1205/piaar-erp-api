@@ -205,7 +205,7 @@ public class ErpOrderItemEntity {
                 .orderNumber3(dto.getOrderNumber3())
                 .prodName(dto.getProdName())
                 .optionName(dto.getOptionName())
-                .unit(Integer.parseInt(dto.getUnit()))
+                .unit(dto.getUnit())
                 .receiver(dto.getReceiver())
                 .receiverContact1(dto.getReceiverContact1())
                 .receiverContact2(dto.getReceiverContact2())

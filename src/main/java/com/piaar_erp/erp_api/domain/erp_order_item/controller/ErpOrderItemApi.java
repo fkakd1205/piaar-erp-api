@@ -213,6 +213,16 @@ public class ErpOrderItemApi {
         return new ResponseEntity<>(message, message.getStatus());
     }
 
+    /**
+     * Change erp order item to combined delivery item by second merge header
+     * <p>
+     * <b>POST : API URL => /api/v1/erp-order-items/erp-second-merge-headers/{secondMergeHeaderId}/action-merge</b>
+     * 
+     * @param firstMergeHeaderId : UUID
+     * @param itemDtos : List::ErpOrderItemDto::
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#getSecondMergeItem
+     */
     @PostMapping("/erp-second-merge-headers/{secondMergeHeaderId}/action-merge")
     public ResponseEntity<?> getSecondMergeItem(@PathVariable(value = "secondMergeHeaderId") UUID secondMergeHeaderId, @RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();

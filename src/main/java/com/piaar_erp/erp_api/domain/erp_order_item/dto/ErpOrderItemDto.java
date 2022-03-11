@@ -3,6 +3,7 @@ package com.piaar_erp.erp_api.domain.erp_order_item.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
@@ -45,7 +46,8 @@ public class ErpOrderItemDto {
     @Size(max = 300)
     private String optionName;      // 옵션명 / 필수값
 
-    private String unit;
+    @PositiveOrZero
+    private Integer unit;       // 수량 / 필수값
     
     @Size(max = 20)
     private String receiver;        // 수취인명 / 필수값
@@ -184,7 +186,7 @@ public class ErpOrderItemDto {
                 .orderNumber3(entity.getOrderNumber3())
                 .prodName(entity.getProdName())
                 .optionName(entity.getOptionName())
-                .unit(entity.getUnit().toString())
+                .unit(entity.getUnit())
                 .receiver(entity.getReceiver())
                 .receiverContact1(entity.getReceiverContact1())
                 .receiverContact2(entity.getReceiverContact2())
