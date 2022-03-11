@@ -8,9 +8,16 @@ import javax.validation.Valid;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.service.ErpOrderItemBusinessService;
+import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.message.dto.Message;
+import com.piaar_erp.erp_api.domain.page.dto.Pagination;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -75,19 +82,21 @@ public class ErpOrderItemApi {
     /**
      * Search erp order item.
      * <p>
-     * <b>GET : API URL => /api/v1/erp-order-items/products/product-categories</b>
+     * <b>GET : API URL => /api/v1/erp-order-items</b>
      * 
      * @param params : Map::String, Object::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#searchBatch
      */
     @GetMapping("")
-    public ResponseEntity<?> searchBatch(@RequestParam Map<String, Object> params) {
+    public ResponseEntity<?> searchBatch(@RequestParam Map<String, Object> params, @PageableDefault(sort="receiver", direction = Sort.Direction.ASC, size = 10) Pageable pageable) {
         Message message = new Message();
 
-        message.setData(erpOrderItemBusinessService.searchBatch(params));
+        Pageable page = PageRequest.of(Integer.parseInt(params.get("page").toString()), pageable.getPageSize(), pageable.getSort());
+        message.setData(erpOrderItemBusinessService.searchBatch(params, page));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
+        message.setPage(null);
 
         return new ResponseEntity<>(message, message.getStatus());
     }

@@ -11,6 +11,8 @@ import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemReposi
 import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -57,8 +59,8 @@ public class ErpOrderItemService {
      * @see ErpOrderItemRepository#qfindAllM2OJ
      * 
      */
-    public List<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params) {
-        return erpOrderItemRepository.qfindAllM2OJ(params);
+    public Page<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params, Pageable pageable) {
+        return erpOrderItemRepository.qfindAllM2OJ(params, pageable);
     }
 
     /**

@@ -35,6 +35,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -269,11 +271,12 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#findAllM2OJ
      * @see ErpOrderItemBusinessService#setOptionStockUnit
      */
-    public List<ErpOrderItemVo> searchBatch(Map<String, Object> params) {
+    public List<ErpOrderItemVo> searchBatch(Map<String, Object> params, Pageable pageable) {
         // 등록된 모든 엑셀 데이터를 조회한다
-        List<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params);
+        Page<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params, pageable);
+        List<ErpOrderItemProj> itemProjList = itemProjs.getContent();
         // 옵션재고수량 추가
-        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjList);
         return ErpOrderItemVos;
     }
 
@@ -437,6 +440,8 @@ public class ErpOrderItemBusinessService {
     * @see CustomFieldUtils#setFieldValue
     */
     public List<ErpOrderItemVo> getFirstMergeItem(UUID firstMergeHeaderId, List<ErpOrderItemDto> dtos) {
+        List<ErpOrderItemVo> itemVos = dtos.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
+
         // 선택된 병합 헤더데이터 조회
         ErpFirstMergeHeaderDto headerDto = this.searchErpFirstMergeHeader(firstMergeHeaderId);
 
@@ -451,28 +456,28 @@ public class ErpOrderItemBusinessService {
                     value -> value.getFixedValue()
             ));
 
-        dtos.sort(Comparator.comparing(ErpOrderItemDto::getReceiver)
-            .thenComparing(ErpOrderItemDto::getReceiverContact1)
-            .thenComparing(ErpOrderItemDto::getDestination)
-            .thenComparing(ErpOrderItemDto::getProdName)
-            .thenComparing(ErpOrderItemDto::getOptionName));
+        itemVos.sort(Comparator.comparing(ErpOrderItemVo::getReceiver)
+            .thenComparing(ErpOrderItemVo::getReceiverContact1)
+            .thenComparing(ErpOrderItemVo::getDestination)
+            .thenComparing(ErpOrderItemVo::getProdName)
+            .thenComparing(ErpOrderItemVo::getOptionName));
 
             
         // 반환할 병합 데이터
         List<ErpOrderItemVo> mergeItemVos = new ArrayList<>();
             
         Set<String> deliverySet = new HashSet<>();
-        for (int i = 0; i < dtos.size(); i++) {
+        for (int i = 0; i < itemVos.size(); i++) {
             StringBuilder sb = new StringBuilder();
-            sb.append(dtos.get(i).getReceiver());
-            sb.append(dtos.get(i).getReceiverContact1());
-            sb.append(dtos.get(i).getDestination());
-            sb.append(dtos.get(i).getProdName());
-            sb.append(dtos.get(i).getOptionName());
+            sb.append(itemVos.get(i).getReceiver());
+            sb.append(itemVos.get(i).getReceiverContact1());
+            sb.append(itemVos.get(i).getDestination());
+            sb.append(itemVos.get(i).getProdName());
+            sb.append(itemVos.get(i).getOptionName());
 
             String resultStr = sb.toString();
             
-            mergeItemVos.add(ErpOrderItemVo.toVo(dtos.get(i)));
+            mergeItemVos.add(itemVos.get(i));
             int currentMergeItemIndex = mergeItemVos.size()-1;
 
             // 중복데이터(상품 + 옵션)
@@ -534,6 +539,8 @@ public class ErpOrderItemBusinessService {
     * @see CustomFieldUtils#setFieldValue
     */
     public List<ErpOrderItemVo> getSecondMergeItem(UUID secondMergeHeaderId, List<ErpOrderItemDto> dtos) {
+        List<ErpOrderItemVo> itemVos = dtos.stream().map(r -> ErpOrderItemVo.toVo(r)).collect(Collectors.toList());
+
         // 선택된 병합 헤더데이터 조회
         ErpSecondMergeHeaderDto headerDto = this.searchErpSecondMergeHeader(secondMergeHeaderId);
 
@@ -550,14 +557,14 @@ public class ErpOrderItemBusinessService {
                     r -> r.getFixedValue()
             ));
 
-        dtos.sort(Comparator.comparing(ErpOrderItemDto::getReceiver)
-            .thenComparing(ErpOrderItemDto::getReceiverContact1)
-            .thenComparing(ErpOrderItemDto::getDestination)
-            .thenComparing(ErpOrderItemDto::getProdName)
-            .thenComparing(ErpOrderItemDto::getOptionName));
+            itemVos.sort(Comparator.comparing(ErpOrderItemVo::getReceiver)
+            .thenComparing(ErpOrderItemVo::getReceiverContact1)
+            .thenComparing(ErpOrderItemVo::getDestination)
+            .thenComparing(ErpOrderItemVo::getProdName)
+            .thenComparing(ErpOrderItemVo::getOptionName));
 
-        for(int i = 0; i < dtos.size(); i++) {
-            ErpOrderItemVo currentVo = ErpOrderItemVo.toVo(dtos.get(i));
+        for(int i = 0; i < itemVos.size(); i++) {
+            ErpOrderItemVo currentVo = itemVos.get(i);
             
             // 1. splitter로 나타낼 데이터 컬럼을 모두 추출해서 현재 데이터에 그 컬럼의 데이터 값을 구분자를 붙여 추가한다.
             // 2. 수령인이 동일하면 |&&|구분자로 병합해서 나열. 중복처리된 열 제거
@@ -588,15 +595,15 @@ public class ErpOrderItemBusinessService {
         List<ErpOrderItemVo> mergeItemVos = new ArrayList<>();
             
         Set<String> deliverySet = new HashSet<>();
-        for (int i = 0; i < dtos.size(); i++) {
+        for (int i = 0; i < itemVos.size(); i++) {
             StringBuilder sb = new StringBuilder();
-            sb.append(dtos.get(i).getReceiver());
-            sb.append(dtos.get(i).getReceiverContact1());
-            sb.append(dtos.get(i).getDestination());
+            sb.append(itemVos.get(i).getReceiver());
+            sb.append(itemVos.get(i).getReceiverContact1());
+            sb.append(itemVos.get(i).getDestination());
 
             String resultStr = sb.toString();
             
-            mergeItemVos.add(ErpOrderItemVo.toVo(dtos.get(i)));
+            mergeItemVos.add(itemVos.get(i));
             int currentMergeItemIndex = mergeItemVos.size()-1;
 
             // 중복데이터(상품 + 옵션)
