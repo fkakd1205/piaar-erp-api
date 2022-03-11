@@ -65,7 +65,7 @@ public class ErpFirstMergeHeaderBusinessService {
         ErpFirstMergeHeaderEntity entity = erpFirstMergeHeaderService.searchOne(headerDto.getId());
 
         entity.getHeaderDetail().setDetails(headerDto.getHeaderDetail().getDetails());
-        entity.setUpdatedAt(CustomDateUtils.getCurrentDateTime());
+        entity.setTitle(headerDto.getTitle()).setUpdatedAt(CustomDateUtils.getCurrentDateTime());
 
         erpFirstMergeHeaderService.saveAndModify(entity);
     }
