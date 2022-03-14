@@ -59,8 +59,21 @@ public class ErpOrderItemService {
      * @see ErpOrderItemRepository#qfindAllM2OJ
      * 
      */
-    public Page<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params, Pageable pageable) {
-        return erpOrderItemRepository.qfindAllM2OJ(params, pageable);
+    public List<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params) {
+        return erpOrderItemRepository.qfindAllM2OJ(params);
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 페이지 처리 후 피아르 엑셀 데이터를 모두 조회한다.
+     *
+     * @return List::ErpOrderItemProj::
+     * @see ErpOrderItemRepository#qfindAllM2OJ
+     * 
+     */
+    public Page<ErpOrderItemProj> findAllM2OJByPage(Map<String, Object> params, Pageable pageable) {
+        return erpOrderItemRepository.qfindAllM2OJByPage(params, pageable);
     }
 
     /**

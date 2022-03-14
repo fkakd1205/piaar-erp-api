@@ -14,8 +14,11 @@ import com.piaar_erp.erp_api.domain.product_category.entity.QProductCategoryEnti
 import com.piaar_erp.erp_api.domain.product_option.entity.QProductOptionEntity;
 import com.piaar_erp.erp_api.utils.CustomFieldUtils;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -53,7 +57,28 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
     }
 
     @Override
-    public Page<ErpOrderItemProj> qfindAllM2OJ(Map<String, Object> params, Pageable pageable) {
+    public List<ErpOrderItemProj> qfindAllM2OJ(Map<String, Object> params) {
+        JPQLQuery customQuery = query.from(qErpOrderItemEntity)
+                .select(Projections.fields(ErpOrderItemProj.class,
+                        qErpOrderItemEntity.as("erpOrderItem"),
+                        qProductEntity.as("product"),
+                        qProductOptionEntity.as("productOption"),
+                        qProductCategoryEntity.as("productCategory")
+                       ))
+                .where(eqSalesYn(params), eqReleaseYn(params))
+                .where(lkSearchCondition(params))
+                .where(withinDateRange(params))
+                .leftJoin(qProductOptionEntity).on(qErpOrderItemEntity.optionCode.eq(qProductOptionEntity.code))
+                .leftJoin(qProductEntity).on(qProductOptionEntity.productCid.eq(qProductEntity.cid))
+                .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid));
+    
+        QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
+       
+        return result.getResults();
+    }
+
+    @Override
+    public Page<ErpOrderItemProj> qfindAllM2OJByPage(Map<String, Object> params, Pageable pageable) {
         JPQLQuery customQuery = query.from(qErpOrderItemEntity)
                 .select(Projections.fields(ErpOrderItemProj.class,
                         qErpOrderItemEntity.as("erpOrderItem"),
@@ -69,9 +94,15 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                 .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
+                
+        for(Sort.Order o : pageable.getSort()) {
+            PathBuilder pathBuilder = new PathBuilder(qErpOrderItemEntity.getType(), qErpOrderItemEntity.getMetadata());
+            customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, pathBuilder.get(o.getProperty())));
+         }
+
+        customQuery.orderBy(qErpOrderItemEntity.createdAt.desc());
     
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
-       
         return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
     }
 
@@ -99,15 +130,23 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         LocalDateTime startDate = null;
         LocalDateTime endDate = null;
-        
-        if (params.get("startDate") != null && params.get("endDate") != null) {
-            startDate = LocalDateTime.parse(params.get("startDate").toString(), formatter);
-            endDate = LocalDateTime.parse(params.get("endDate").toString(), formatter);
+        String periodType = params.get("periodType") == null ? null : params.get("periodType").toString();
 
-            return qErpOrderItemEntity.createdAt.between(startDate, endDate);
-        } else {
+        if (params.get("startDate") == null || params.get("endDate") == null) {
             return null;
         }
+
+        startDate = LocalDateTime.parse(params.get("startDate").toString(), formatter);
+        endDate = LocalDateTime.parse(params.get("endDate").toString(), formatter);
+
+        if (periodType.equals("registration")) {
+            return qErpOrderItemEntity.createdAt.between(startDate, endDate);
+        } else if (periodType.equals("sales")) {
+            return qErpOrderItemEntity.salesAt.between(startDate, endDate);
+        } else if (periodType.equals("release")) {
+            return qErpOrderItemEntity.releaseAt.between(startDate, endDate);
+        }
+        return null;
     }
 
     private BooleanExpression lkSearchCondition(Map<String, Object> params) {
@@ -117,7 +156,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
             return null;
         }
 
-        StringPath str2 = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
-        return str2.contains(searchValue);
+        StringPath columnNameStringPath = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
+        return columnNameStringPath.contains(searchValue);
     }
 }

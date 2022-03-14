@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -271,13 +272,34 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#findAllM2OJ
      * @see ErpOrderItemBusinessService#setOptionStockUnit
      */
-    public List<ErpOrderItemVo> searchBatch(Map<String, Object> params, Pageable pageable) {
+    public List<ErpOrderItemVo> searchBatch(Map<String, Object> params) {
         // 등록된 모든 엑셀 데이터를 조회한다
-        Page<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params, pageable);
-        List<ErpOrderItemProj> itemProjList = itemProjs.getContent();
+        List<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params);       // 페이징 처리 x
         // 옵션재고수량 추가
-        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjList);
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
         return ErpOrderItemVos;
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 유저가 업로드한 엑셀을 전체 가져온다.
+     * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
+     *
+     * @param params : Map::String, Object::
+     * @param pageable : Pageable
+     * @return List::ErpOrderItemVo::
+     * @see ErpOrderItemService#findAllM2OJ
+     * @see ErpOrderItemBusinessService#setOptionStockUnit
+     */
+    public Page<ErpOrderItemVo> searchBatchByPaging(Map<String, Object> params, Pageable pageable) {
+        Page<ErpOrderItemProj> itemPages = erpOrderItemService.findAllM2OJByPage(params, pageable);
+        // 등록된 모든 엑셀 데이터를 조회한다
+        List<ErpOrderItemProj> itemProjs = itemPages.getContent();    // 페이징 처리 o
+        // 옵션재고수량 추가
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
+
+        return new PageImpl(ErpOrderItemVos, pageable, itemPages.getTotalElements());
     }
 
     /**
