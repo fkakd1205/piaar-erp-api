@@ -3,16 +3,11 @@ package com.piaar_erp.erp_api.domain.erp_order_item.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 
-import org.hibernate.validator.constraints.Length;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

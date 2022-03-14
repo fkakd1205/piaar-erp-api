@@ -26,7 +26,8 @@ public class ErpOrderItemVo {
     private String orderNumber3;        // 주문번호3
     private String prodName;        // 상품명 / 필수값
     private String optionName;      // 옵션명 / 필수값
-    private Integer unit;       // 수량 / 필수값
+    private String unit;       // 수량 / 필수값
+    // private Integer unit;       // 수량 / 필수값
     private String receiver;        // 수취인명 / 필수값
     private String receiverContact1;        // 전화번호1 / 필수값
     private String receiverContact2;        // 전화번호2
@@ -91,7 +92,7 @@ public class ErpOrderItemVo {
                 .orderNumber3(proj.getErpOrderItem().getOrderNumber3())
                 .prodName(proj.getErpOrderItem().getProdName())
                 .optionName(proj.getErpOrderItem().getOptionName())
-                .unit(proj.getErpOrderItem().getUnit())
+                .unit(proj.getErpOrderItem().getUnit().toString())
                 .receiver(proj.getErpOrderItem().getReceiver())
                 .receiverContact1(proj.getErpOrderItem().getReceiverContact1())
                 .receiverContact2(proj.getErpOrderItem().getReceiverContact2())
@@ -154,7 +155,7 @@ public class ErpOrderItemVo {
                 .orderNumber3(dto.getOrderNumber3())
                 .prodName(dto.getProdName())
                 .optionName(dto.getOptionName())
-                .unit(dto.getUnit())
+                .unit(dto.getUnit().toString())
                 .receiver(dto.getReceiver())
                 .receiverContact1(dto.getReceiverContact1())
                 .receiverContact2(dto.getReceiverContact2())

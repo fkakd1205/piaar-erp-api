@@ -21,6 +21,9 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -50,7 +53,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
     }
 
     @Override
-    public List<ErpOrderItemProj> qfindAllM2OJ(Map<String, Object> params) {
+    public Page<ErpOrderItemProj> qfindAllM2OJ(Map<String, Object> params, Pageable pageable) {
         JPQLQuery customQuery = query.from(qErpOrderItemEntity)
                 .select(Projections.fields(ErpOrderItemProj.class,
                         qErpOrderItemEntity.as("erpOrderItem"),
@@ -63,10 +66,13 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                 .where(withinDateRange(params))
                 .leftJoin(qProductOptionEntity).on(qErpOrderItemEntity.optionCode.eq(qProductOptionEntity.code))
                 .leftJoin(qProductEntity).on(qProductOptionEntity.productCid.eq(qProductEntity.cid))
-                .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid));
+                .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
     
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
-        return result.getResults();
+       
+        return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
     }
 
     private BooleanExpression eqSalesYn(Map<String, Object> params) {
