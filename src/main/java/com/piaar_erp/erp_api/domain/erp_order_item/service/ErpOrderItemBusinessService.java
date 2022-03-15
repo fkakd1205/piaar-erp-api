@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -271,13 +272,34 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#findAllM2OJ
      * @see ErpOrderItemBusinessService#setOptionStockUnit
      */
-    public List<ErpOrderItemVo> searchBatch(Map<String, Object> params, Pageable pageable) {
+    public List<ErpOrderItemVo> searchBatch(Map<String, Object> params) {
         // 등록된 모든 엑셀 데이터를 조회한다
-        Page<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params, pageable);
-        List<ErpOrderItemProj> itemProjList = itemProjs.getContent();
+        List<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(params);       // 페이징 처리 x
         // 옵션재고수량 추가
-        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjList);
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
         return ErpOrderItemVos;
+    }
+
+    /**
+     * <b>DB Select Related Method</b>
+     * <p>
+     * 유저가 업로드한 엑셀을 전체 가져온다.
+     * 피아르 관리코드에 대응하는 데이터들을 반환 Dto에 추가한다.
+     *
+     * @param params : Map::String, Object::
+     * @param pageable : Pageable
+     * @return List::ErpOrderItemVo::
+     * @see ErpOrderItemService#findAllM2OJ
+     * @see ErpOrderItemBusinessService#setOptionStockUnit
+     */
+    public Page<ErpOrderItemVo> searchBatchByPaging(Map<String, Object> params, Pageable pageable) {
+        Page<ErpOrderItemProj> itemPages = erpOrderItemService.findAllM2OJByPage(params, pageable);
+        // 등록된 모든 엑셀 데이터를 조회한다
+        List<ErpOrderItemProj> itemProjs = itemPages.getContent();    // 페이징 처리 o
+        // 옵션재고수량 추가
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
+
+        return new PageImpl(ErpOrderItemVos, pageable, itemPages.getTotalElements());
     }
 
     /**
@@ -486,7 +508,8 @@ public class ErpOrderItemBusinessService {
                 ErpOrderItemVo prevVo = mergeItemVos.get(currentMergeItemIndex-1);
                 
                 // 수량 더하기
-                CustomFieldUtils.setFieldValue(prevVo, "unit", prevVo.getUnit() + currentVo.getUnit());
+                int sumUnit = Integer.parseInt(prevVo.getUnit()) + Integer.parseInt(currentVo.getUnit());
+                CustomFieldUtils.setFieldValue(prevVo, "unit", String.valueOf(sumUnit));
 
                 // 구분자로 나열 데이터 처리 - 수량은 제외하고
                 matchedColumnName.forEach(columnName -> {
@@ -552,19 +575,19 @@ public class ErpOrderItemBusinessService {
 
         // fixedValue가 존재하는 컬럼의 컬럼명과 fixedValue값 추출
         Map<String, String> fixedValueMap = headerDto.getHeaderDetail().getDetails().stream().filter(r -> !r.getFixedValue().isBlank()).collect(Collectors.toList())
-            .stream().collect(Collectors.toMap(
-                    r -> r.getMatchedColumnName(),
-                    r -> r.getFixedValue()
-            ));
+                .stream().collect(Collectors.toMap(
+                        r -> r.getMatchedColumnName(),
+                        r -> r.getFixedValue()));
 
-            itemVos.sort(Comparator.comparing(ErpOrderItemVo::getReceiver)
-            .thenComparing(ErpOrderItemVo::getReceiverContact1)
-            .thenComparing(ErpOrderItemVo::getDestination)
-            .thenComparing(ErpOrderItemVo::getProdName)
-            .thenComparing(ErpOrderItemVo::getOptionName));
+        itemVos.sort(Comparator.comparing(ErpOrderItemVo::getReceiver)
+                .thenComparing(ErpOrderItemVo::getReceiverContact1)
+                .thenComparing(ErpOrderItemVo::getDestination)
+                .thenComparing(ErpOrderItemVo::getProdName)
+                .thenComparing(ErpOrderItemVo::getOptionName));
 
-        for(int i = 0; i < itemVos.size(); i++) {
+        for (int i = 0; i < itemVos.size() && i < dtos.size(); i++) {
             ErpOrderItemVo currentVo = itemVos.get(i);
+            ErpOrderItemDto originDto = dtos.get(i);
             
             // 1. splitter로 나타낼 데이터 컬럼을 모두 추출해서 현재 데이터에 그 컬럼의 데이터 값을 구분자를 붙여 추가한다.
             // 2. 수령인이 동일하면 |&&|구분자로 병합해서 나열. 중복처리된 열 제거
@@ -574,19 +597,15 @@ public class ErpOrderItemBusinessService {
             splitterMap.entrySet().stream().forEach(mergeMap -> {
                 // viewDetails 
                 DetailDto matchedDetail = headerDto.getHeaderDetail().getDetails().stream().filter(r -> r.getMatchedColumnName().equals(mergeMap.getKey())).collect(Collectors.toList()).get(0);
-                
-                String currentFieldValue = CustomFieldUtils.getFieldValue(currentVo, mergeMap.getKey()).toString();
                 String appendFieldValue = "";
 
-                if(matchedDetail.getViewDetails().size() == 1) {
-                    currentFieldValue = "";
-                    appendFieldValue = CustomFieldUtils.getFieldValue(currentVo, matchedDetail.getViewDetails().get(0).getMatchedColumnName()).toString();
-                }else{
-                    for(int j = 0; j < matchedDetail.getViewDetails().size(); j++) {
-                        appendFieldValue += mergeMap.getValue() + CustomFieldUtils.getFieldValue(currentVo, matchedDetail.getViewDetails().get(j).getMatchedColumnName()).toString();
+                for(int j = 0; j < matchedDetail.getViewDetails().size(); j++) {
+                    appendFieldValue += CustomFieldUtils.getFieldValue(originDto, matchedDetail.getViewDetails().get(j).getMatchedColumnName()).toString();
+                    if(j < matchedDetail.getViewDetails().size()-1) {
+                        appendFieldValue += mergeMap.getValue().toString();
                     }
                 }
-                CustomFieldUtils.setFieldValue(currentVo, mergeMap.getKey(), currentFieldValue + appendFieldValue);
+                CustomFieldUtils.setFieldValue(currentVo, mergeMap.getKey(), appendFieldValue);
             });
         }
 

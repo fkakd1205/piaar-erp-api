@@ -8,13 +8,9 @@ import javax.validation.Valid;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.service.ErpOrderItemBusinessService;
-import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
 import com.piaar_erp.erp_api.domain.message.dto.Message;
-import com.piaar_erp.erp_api.domain.page.dto.Pagination;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -89,14 +85,33 @@ public class ErpOrderItemApi {
      * @see ErpOrderItemBusinessService#searchBatch
      */
     @GetMapping("")
-    public ResponseEntity<?> searchBatch(@RequestParam Map<String, Object> params, @PageableDefault(sort="receiver", direction = Sort.Direction.ASC, size = 10) Pageable pageable) {
+    public ResponseEntity<?> searchBatch(@RequestParam Map<String, Object> params) {
         Message message = new Message();
 
-        Pageable page = PageRequest.of(Integer.parseInt(params.get("page").toString()), pageable.getPageSize(), pageable.getSort());
-        message.setData(erpOrderItemBusinessService.searchBatch(params, page));
+        message.setData(erpOrderItemBusinessService.searchBatch(params));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
-        message.setPage(null);
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Search erp order item.
+     * <p>
+     * <b>GET : API URL => /api/v1/erp-order-items/search</b>
+     * 
+     * @param params : Map::String, Object::
+     * @param pageable : Pageable
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#searchBatchByPaging
+     */
+    @GetMapping("/search")
+    public ResponseEntity<?> searchBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort="createdAt", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.searchBatchByPaging(params, pageable));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
 
         return new ResponseEntity<>(message, message.getStatus());
     }

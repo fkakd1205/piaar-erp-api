@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Date;
 
-import com.piaar_erp.erp_api.domain.page.dto.Pagination;
-
 @Data
 public class Message {
     private HttpStatus status;
@@ -18,7 +16,6 @@ public class Message {
     private String path;
     private Date timestamp;
     private String error;
-    private Pagination page;
 
     public Message() {
         this.status = HttpStatus.BAD_REQUEST;
@@ -28,7 +25,6 @@ public class Message {
         this.memo = null;
         this.data = null;
         this.timestamp = new Date();
-        this.page = null;
     }
 
     public void setStatus(HttpStatus status){
