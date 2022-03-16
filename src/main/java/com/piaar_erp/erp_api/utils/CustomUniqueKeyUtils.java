@@ -1,5 +1,7 @@
 package com.piaar_erp.erp_api.utils;
 
+import java.util.Random;
+
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class CustomUniqueKeyUtils {
@@ -17,6 +19,23 @@ public class CustomUniqueKeyUtils {
         sb.append(nanoTimeStr);
 
         return sb.toString();
+    }
+
+    // total : 4 random characters => upper case, lower case, Number 1~9
+    public static String generateFreightCode() {
+        int[] NUMBER_BOUND = {49, 57};     // asci 49~57 => number 1~9
+        int[] UPPER_CASE_BOUND = {65, 90};      // asci 65~90 => upper case A~Z
+        int[] LOWER_CASE_BOUND = {97, 122};     // asci 97~122 => lower case a~z
+
+        int targetLength = 4;
+        Random random = new Random();
+        String generatedCode = random.ints(NUMBER_BOUND[0], LOWER_CASE_BOUND[1]+1)
+                            .filter(i -> (i <= NUMBER_BOUND[1] || i >= UPPER_CASE_BOUND[0]) && (i <= UPPER_CASE_BOUND[1] || i >= LOWER_CASE_BOUND[0]))
+                            .limit(targetLength)
+                            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                            .toString();
+
+        return generatedCode;
     }
 
     public static Long getCurrentMillis() {

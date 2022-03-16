@@ -21,6 +21,7 @@ import lombok.experimental.Accessors;
 public class ErpOrderItemVo {
     private UUID id;
     private String uniqueCode;      // 피아르 고유코드
+    private String freightCode;
     private String orderNumber1;        // 주문번호1
     private String orderNumber2;        // 주문번호2
     private String orderNumber3;        // 주문번호3
@@ -87,6 +88,7 @@ public class ErpOrderItemVo {
         ErpOrderItemVo itemVo = ErpOrderItemVo.builder()
                 .id(proj.getErpOrderItem().getId())
                 .uniqueCode(proj.getErpOrderItem().getUniqueCode())
+                .freightCode(proj.getErpOrderItem().getFreightCode())
                 .orderNumber1(proj.getErpOrderItem().getOrderNumber1())
                 .orderNumber2(proj.getErpOrderItem().getOrderNumber2())
                 .orderNumber3(proj.getErpOrderItem().getOrderNumber3())

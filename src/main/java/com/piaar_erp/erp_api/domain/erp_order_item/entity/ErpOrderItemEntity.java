@@ -44,6 +44,9 @@ public class ErpOrderItemEntity {
     @Column(name = "unique_code")
     private String uniqueCode; // 피아르 고유코드
 
+    @Column(name = "freight_code")
+    private String freightCode; // 피아르 고유코드
+
     @Column(name = "order_number1")
     private String orderNumber1; // 주문번호1
 
@@ -200,6 +203,7 @@ public class ErpOrderItemEntity {
                 .cid(dto.getCid())
                 .id(dto.getId())
                 .uniqueCode(dto.getUniqueCode())
+                .freightCode(dto.getFreightCode())
                 .orderNumber1(dto.getOrderNumber1())
                 .orderNumber2(dto.getOrderNumber2())
                 .orderNumber3(dto.getOrderNumber3())
