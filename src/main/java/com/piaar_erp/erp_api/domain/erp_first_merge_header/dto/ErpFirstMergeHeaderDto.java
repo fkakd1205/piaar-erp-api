@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Builder
 @Getter
+@ToString
 @Accessors(chain=true)
 @AllArgsConstructor
 @NoArgsConstructor

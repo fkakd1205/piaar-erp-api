@@ -5,26 +5,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
 import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-@Service
-public class ErpOrderItemService {
-    private ErpOrderItemRepository erpOrderItemRepository;
+import lombok.RequiredArgsConstructor;
 
-    @Autowired
-    public ErpOrderItemService(
-        ErpOrderItemRepository erpOrderItemRepository
-    ) {
-        this.erpOrderItemRepository = erpOrderItemRepository;
-    }
+@Service
+@RequiredArgsConstructor
+public class ErpOrderItemService {
+    private final ErpOrderItemRepository erpOrderItemRepository;
 
     /**
      * <b>DB Insert Or Update Related Method</b>
@@ -46,6 +43,7 @@ public class ErpOrderItemService {
      * @param itemEntities : List::ErpOrderItemEntity::
      * @see ErpOrderItemRepository#saveAll
      */
+    @Transactional
     public void saveListAndModify(List<ErpOrderItemEntity> itemEntities) {
         erpOrderItemRepository.saveAll(itemEntities);
     }

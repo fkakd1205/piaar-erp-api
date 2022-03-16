@@ -5,19 +5,14 @@ import java.util.List;
 import com.piaar_erp.erp_api.domain.erp_delivery_header.entity.ErpDeliveryHeaderEntity;
 import com.piaar_erp.erp_api.domain.erp_delivery_header.repository.ErpDeliveryHeaderRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class ErpDeliveryHeaderService {
-    private ErpDeliveryHeaderRepository erpDeliveryHeaderRepository;
+import lombok.RequiredArgsConstructor;
 
-    @Autowired
-    public ErpDeliveryHeaderService(
-        ErpDeliveryHeaderRepository erpDeliveryHeaderRepository
-    ) {
-        this.erpDeliveryHeaderRepository = erpDeliveryHeaderRepository;   
-    }
+@Service
+@RequiredArgsConstructor
+public class ErpDeliveryHeaderService {
+    private final ErpDeliveryHeaderRepository erpDeliveryHeaderRepository;
 
     /**
      * <b>DB Insert Or Update Related Method</b>

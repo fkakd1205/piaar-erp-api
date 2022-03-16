@@ -3,8 +3,10 @@ package com.piaar_erp.erp_api.domain.erp_second_merge_header.dto;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class DetailDto {
     private Integer cellNumber;
     private String originCellName;

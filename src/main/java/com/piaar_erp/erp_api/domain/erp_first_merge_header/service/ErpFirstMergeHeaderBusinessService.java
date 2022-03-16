@@ -3,21 +3,18 @@ package com.piaar_erp.erp_api.domain.erp_first_merge_header.service;
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.dto.ErpFirstMergeHeaderDto;
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.entity.ErpFirstMergeHeaderEntity;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ErpFirstMergeHeaderBusinessService {
-    private ErpFirstMergeHeaderService erpFirstMergeHeaderService;
-
-    @Autowired
-    public ErpFirstMergeHeaderBusinessService(ErpFirstMergeHeaderService erpFirstMergeHeaderService) {
-        this.erpFirstMergeHeaderService = erpFirstMergeHeaderService;
-    }
+    private final ErpFirstMergeHeaderService erpFirstMergeHeaderService;
 
     /**
      * <b>DB Insert Related Method</b>
