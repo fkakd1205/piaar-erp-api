@@ -3,21 +3,18 @@ package com.piaar_erp.erp_api.domain.erp_first_merge_header.service;
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.entity.ErpFirstMergeHeaderEntity;
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.repository.ErpFirstMergeHeaderRepository;
 import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ErpFirstMergeHeaderService {
-    private ErpFirstMergeHeaderRepository erpFirstMergeHeaderRepository;
-
-    @Autowired
-    public ErpFirstMergeHeaderService(ErpFirstMergeHeaderRepository erpFirstMergeHeaderRepository) {
-        this.erpFirstMergeHeaderRepository = erpFirstMergeHeaderRepository;
-    }
+    private final ErpFirstMergeHeaderRepository erpFirstMergeHeaderRepository;
 
     /**
      * <b>DB Insert Or Update Related Method</b>

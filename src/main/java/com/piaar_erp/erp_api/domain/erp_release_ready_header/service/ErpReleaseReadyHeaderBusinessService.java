@@ -7,19 +7,14 @@ import com.piaar_erp.erp_api.domain.erp_release_ready_header.entity.ErpReleaseRe
 import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class ErpReleaseReadyHeaderBusinessService {
-    private ErpReleaseReadyHeaderService erpReleaseReadyHeaderService;
+import lombok.RequiredArgsConstructor;
 
-    @Autowired
-    public ErpReleaseReadyHeaderBusinessService(
-        ErpReleaseReadyHeaderService erpReleaseReadyHeaderService
-    ) {
-        this.erpReleaseReadyHeaderService = erpReleaseReadyHeaderService;
-    }
+@Service
+@RequiredArgsConstructor
+public class ErpReleaseReadyHeaderBusinessService {
+    private final ErpReleaseReadyHeaderService erpReleaseReadyHeaderService;
 
     /**
      * <b>DB Insert Related Method</b>

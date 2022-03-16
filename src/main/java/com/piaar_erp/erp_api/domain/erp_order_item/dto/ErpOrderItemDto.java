@@ -30,6 +30,9 @@ public class ErpOrderItemDto {
     @Size(max = 36)
     private String uniqueCode;      // 피아르 고유코드
 
+    @Size(max = 4)
+    private String freightCode;      // 운임코드
+
     @Size(max = 36)
     private String orderNumber1;        // 주문번호1
     
@@ -180,6 +183,7 @@ public class ErpOrderItemDto {
                 .cid(entity.getCid())
                 .id(entity.getId())
                 .uniqueCode(entity.getUniqueCode())
+                .freightCode(entity.getFreightCode())
                 .orderNumber1(entity.getOrderNumber1())
                 .orderNumber2(entity.getOrderNumber2())
                 .orderNumber3(entity.getOrderNumber3())

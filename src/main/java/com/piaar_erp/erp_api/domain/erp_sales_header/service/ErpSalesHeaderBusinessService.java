@@ -7,19 +7,14 @@ import com.piaar_erp.erp_api.domain.erp_sales_header.entity.ErpSalesHeaderEntity
 import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class ErpSalesHeaderBusinessService {
-    private ErpSalesHeaderService erpSalesHeaderService;
+import lombok.RequiredArgsConstructor;
 
-    @Autowired
-    public ErpSalesHeaderBusinessService(
-        ErpSalesHeaderService erpSalesHeaderService
-    ) {
-        this.erpSalesHeaderService = erpSalesHeaderService;
-    }
+@Service
+@RequiredArgsConstructor
+public class ErpSalesHeaderBusinessService {
+    private final ErpSalesHeaderService erpSalesHeaderService;
 
     /**
      * <b>DB Insert Related Method</b>

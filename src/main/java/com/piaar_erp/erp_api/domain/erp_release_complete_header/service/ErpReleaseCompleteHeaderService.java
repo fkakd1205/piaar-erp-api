@@ -5,19 +5,14 @@ import java.util.List;
 import com.piaar_erp.erp_api.domain.erp_release_complete_header.entity.ErpReleaseCompleteHeaderEntity;
 import com.piaar_erp.erp_api.domain.erp_release_complete_header.repository.ErpReleaseCompleteHeaderRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Service
-public class ErpReleaseCompleteHeaderService {
-    private ErpReleaseCompleteHeaderRepository erpReleaseCompleteHeaderRepository;
+import lombok.RequiredArgsConstructor;
 
-    @Autowired
-    public ErpReleaseCompleteHeaderService(
-        ErpReleaseCompleteHeaderRepository erpReleaseCompleteHeaderRepository
-    ) {
-        this.erpReleaseCompleteHeaderRepository = erpReleaseCompleteHeaderRepository;   
-    }
+@Service
+@RequiredArgsConstructor
+public class ErpReleaseCompleteHeaderService {
+    private final ErpReleaseCompleteHeaderRepository erpReleaseCompleteHeaderRepository;
 
     /**
      * <b>DB Insert Or Update Related Method</b>
