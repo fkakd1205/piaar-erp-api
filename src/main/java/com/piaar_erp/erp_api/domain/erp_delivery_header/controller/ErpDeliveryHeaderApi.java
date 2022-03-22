@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/erp-delivery-header")
+@RequestMapping("/api/v1/erp-delivery-headers")
 public class ErpDeliveryHeaderApi {
     private ErpDeliveryHeaderBusinessService erpDeliveryHeaderBusinessService;
 
@@ -27,7 +27,7 @@ public class ErpDeliveryHeaderApi {
     /**
      * Create one api for erp delivery header.
      * <p>
-     * <b>POST : API URL => /api/v1/erp-delivery-header</b>
+     * <b>POST : API URL => /api/v1/erp-delivery-headers</b>
      * 
      * @param headerDto : ErpDeliveryHeaderDto
      * @return ResponseEntity(message, HttpStatus)
@@ -47,7 +47,7 @@ public class ErpDeliveryHeaderApi {
     /**
      * Search one api for erp delivery header.
      * <p>
-     * <b>GET : API URL => /api/v1/erp-delivery-header</b>
+     * <b>GET : API URL => /api/v1/erp-delivery-headers</b>
      *
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpDeliveryHeaderBusinessService#searchOne
@@ -66,7 +66,7 @@ public class ErpDeliveryHeaderApi {
     /**
      * Create one api for product.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-delivery-header</b>
+     * <b>PUT : API URL => /api/v1/erp-delivery-headers</b>
      * 
      * @param headerDto : ErpDeliveryHeaderDto
      * @return ResponseEntity(message, HttpStatus)

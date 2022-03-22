@@ -15,6 +15,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ErpSecondMergeHeaderDto {
     private Integer cid;
+
+    @Setter
     private UUID id;
     private String title;
     private ErpSecondMergeHeaderDetailDto headerDetail;

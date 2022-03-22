@@ -25,10 +25,14 @@ public class ErpReleaseReadyHeaderBusinessService {
      * @see ErpReleaseReadyHeaderEntity#toEntity
      */
     public void saveOne(ErpReleaseReadyHeaderDto headerDto) {
+        UUID ID = UUID.randomUUID();
         UUID USER_ID = UUID.randomUUID();
-        ErpReleaseReadyHeaderEntity headerEntity = ErpReleaseReadyHeaderEntity.toEntity(headerDto);
-        headerEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID);
+        headerDto
+            .setId(ID)
+            .setCreatedAt(CustomDateUtils.getCurrentDateTime())
+            .setCreatedBy(USER_ID);
 
+        ErpReleaseReadyHeaderEntity headerEntity = ErpReleaseReadyHeaderEntity.toEntity(headerDto);
         erpReleaseReadyHeaderService.saveAndModify(headerEntity);
     }
 

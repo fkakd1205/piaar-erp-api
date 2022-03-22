@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ErpDownloadExcelHeaderBusinessService {
     private final ErpDownloadExcelHeaderService erpDownloadExcelHeaderService;
-    private final ErpSecondMergeHeaderService erpSecondMergeHeaderService;
 
     /**
      * <b>DB Insert Related Method</b>
@@ -43,7 +42,10 @@ public class ErpDownloadExcelHeaderBusinessService {
     public void saveOne(ErpDownloadExcelHeaderDto headerDto) {
         UUID USER_ID = UUID.randomUUID();
         ErpDownloadExcelHeaderEntity headerEntity = ErpDownloadExcelHeaderEntity.toEntity(headerDto);
-        headerEntity.setId(UUID.randomUUID()).setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID);
+        headerEntity
+            .setId(UUID.randomUUID())
+            .setCreatedAt(CustomDateUtils.getCurrentDateTime())
+            .setCreatedBy(USER_ID);
 
         erpDownloadExcelHeaderService.saveAndModify(headerEntity);
     }

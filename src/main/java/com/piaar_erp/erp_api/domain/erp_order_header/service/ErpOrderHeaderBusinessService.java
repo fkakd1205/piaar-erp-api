@@ -31,8 +31,8 @@ public class ErpOrderHeaderBusinessService {
         headerDto
                 .setId(ID)
                 .setCreatedAt(CustomDateUtils.getCurrentDateTime())
-                .setCreatedBy(USER_ID)
-                .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
+                .setCreatedBy(USER_ID);
+                // .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
         ErpOrderHeaderEntity headerEntity = ErpOrderHeaderEntity.toEntity(headerDto);
 
         erpOrderHeaderService.saveAndModify(headerEntity);

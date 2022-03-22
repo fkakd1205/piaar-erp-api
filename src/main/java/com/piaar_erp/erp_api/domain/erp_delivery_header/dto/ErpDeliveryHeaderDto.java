@@ -21,7 +21,9 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class ErpDeliveryHeaderDto {
     private Integer cid;
+    @Setter
     private UUID id;
+    
     private ErpDeliveryHeaderDetailDto headerDetail;
 
     @Setter
