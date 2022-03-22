@@ -41,6 +41,7 @@ public class ErpOrderHeaderEntity {
     @Column(name = "cid")
     private Integer cid;
 
+    @Setter
     @Type(type = "uuid-char")
     @Column(name = "id")
     private UUID id;

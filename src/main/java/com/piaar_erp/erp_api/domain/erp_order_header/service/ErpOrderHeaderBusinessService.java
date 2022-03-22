@@ -20,15 +20,20 @@ public class ErpOrderHeaderBusinessService {
      * <b>DB Insert Related Method</b>
      * <p>
      * erp order header를 등록한다.
-     * 
+     *
      * @param headerDto : ErpOrderHeaderDto
      * @see ErpOrderHeaderEntity#toEntity
      * @see ErpOrderHeaderService#saveAndModify
      */
     public void saveOne(ErpOrderHeaderDto headerDto) {
+        UUID ID = UUID.randomUUID();
         UUID USER_ID = UUID.randomUUID();
+        headerDto
+                .setId(ID)
+                .setCreatedAt(CustomDateUtils.getCurrentDateTime())
+                .setCreatedBy(USER_ID)
+                .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
         ErpOrderHeaderEntity headerEntity = ErpOrderHeaderEntity.toEntity(headerDto);
-        headerEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID);
 
         erpOrderHeaderService.saveAndModify(headerEntity);
     }
@@ -44,7 +49,7 @@ public class ErpOrderHeaderBusinessService {
      */
     public ErpOrderHeaderDto searchOne() {
         ErpOrderHeaderEntity headerEntity = erpOrderHeaderService.findAll().stream().findFirst().orElse(null);
-        
+
         return ErpOrderHeaderDto.toDto(headerEntity);
     }
 
@@ -52,7 +57,7 @@ public class ErpOrderHeaderBusinessService {
      * <b>DB Update Related Method</b>
      * <p>
      * 저장된 erp order header를 변경한다.
-     * 
+     *
      * @param headerDto : ErpOrderHeaderDto
      * @see ErpOrderHeaderBusinessService#searchOne
      * @see CustomDateUtils#getCurrentDateTime
@@ -60,8 +65,8 @@ public class ErpOrderHeaderBusinessService {
      */
     public void updateOne(ErpOrderHeaderDto headerDto) {
         ErpOrderHeaderDto dto = this.searchOne();
-        
-        if(dto == null) {
+
+        if (dto == null) {
             throw new CustomNotFoundDataException("수정하려는 데이터를 찾을 수 없습니다.");
         }
 

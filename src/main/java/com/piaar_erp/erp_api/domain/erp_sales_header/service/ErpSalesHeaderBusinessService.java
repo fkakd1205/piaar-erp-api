@@ -25,9 +25,15 @@ public class ErpSalesHeaderBusinessService {
      * @see ErpSalesHeaderEntity#toEntity
      */
     public void saveOne(ErpSalesHeaderDto headerDto) {
+        UUID ID = UUID.randomUUID();
         UUID USER_ID = UUID.randomUUID();
+        headerDto
+                .setId(ID)
+                .setCreatedAt(CustomDateUtils.getCurrentDateTime())
+                .setCreatedBy(USER_ID)
+                .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
+
         ErpSalesHeaderEntity headerEntity = ErpSalesHeaderEntity.toEntity(headerDto);
-        headerEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID);
 
         erpSalesHeaderService.saveAndModify(headerEntity);
     }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/erp-release-complete-header")
+@RequestMapping("/api/v1/erp-release-complete-headers")
 public class ErpReleaseCompleteHeaderApi {
     private ErpReleaseCompleteHeaderBusinessService erpReleaseCompleteHeaderBusinessService;
 

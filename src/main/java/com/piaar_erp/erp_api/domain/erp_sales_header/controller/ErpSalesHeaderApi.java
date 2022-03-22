@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/erp-sales-header")
+@RequestMapping("/api/v1/erp-sales-headers")
 public class ErpSalesHeaderApi {
     private ErpSalesHeaderBusinessService erpSalesHeaderBusinessService;
 
