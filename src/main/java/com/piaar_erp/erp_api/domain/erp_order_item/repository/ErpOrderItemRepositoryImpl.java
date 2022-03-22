@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.QErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
+import com.piaar_erp.erp_api.domain.exception.CustomInvalidDataException;
 import com.piaar_erp.erp_api.domain.product.entity.QProductEntity;
 import com.piaar_erp.erp_api.domain.product_category.entity.QProductCategoryEntity;
 import com.piaar_erp.erp_api.domain.product_option.entity.QProductOptionEntity;
@@ -132,14 +133,18 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
         LocalDateTime endDate = null;
         String periodType = params.get("periodType") == null ? null : params.get("periodType").toString();
 
-        if (params.get("startDate") == null || params.get("endDate") == null) {
+        if (params.get("startDate") == null || params.get("endDate") == null || periodType == null) {
             return null;
         }
 
         startDate = LocalDateTime.parse(params.get("startDate").toString(), formatter);
         endDate = LocalDateTime.parse(params.get("endDate").toString(), formatter);
 
-        if (periodType.equals("registration")) {
+        if(startDate.isAfter(endDate)) {
+            throw new CustomInvalidDataException("조회기간을 정확히 선택해 주세요.");
+        }
+
+        if(periodType.equals("registration")) {
             return qErpOrderItemEntity.createdAt.between(startDate, endDate);
         } else if (periodType.equals("sales")) {
             return qErpOrderItemEntity.salesAt.between(startDate, endDate);
@@ -151,12 +156,12 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
 
     private BooleanExpression lkSearchCondition(Map<String, Object> params) {
         String columnName = params.get("searchColumnName") == null ? null : params.get("searchColumnName").toString();
-        String searchValue = params.get("searchValue") == null ? null : params.get("searchValue").toString();
-        if(columnName == null || searchValue == null){
+        String searchQuery = params.get("searchQuery") == null ? null : params.get("searchQuery").toString();
+        if(columnName == null || searchQuery == null){
             return null;
         }
 
         StringPath columnNameStringPath = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
-        return columnNameStringPath.contains(searchValue);
+        return columnNameStringPath.contains(searchQuery);
     }
 }

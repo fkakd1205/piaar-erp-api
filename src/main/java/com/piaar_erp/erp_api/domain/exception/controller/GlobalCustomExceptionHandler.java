@@ -2,6 +2,7 @@ package com.piaar_erp.erp_api.domain.exception.controller;
 
 import com.piaar_erp.erp_api.domain.exception.CustomAccessDeniedException;
 import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
+import com.piaar_erp.erp_api.domain.exception.CustomInvalidDataException;
 import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
 import com.piaar_erp.erp_api.domain.message.dto.Message;
 
@@ -21,7 +22,7 @@ public class GlobalCustomExceptionHandler {
 
         Message message = new Message();
         message.setStatus(HttpStatus.BAD_REQUEST);
-        message.setMessage("data_error");
+        message.setMessage("excel_data_error");
         message.setMemo(e.getMessage());
 
         return new ResponseEntity<>(message, message.getStatus());
@@ -54,6 +55,22 @@ public class GlobalCustomExceptionHandler {
         Message message = new Message();
         message.setStatus(HttpStatus.NOT_FOUND);
         message.setMessage("not_found");
+        message.setMemo(e.getMessage());
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * 유효한 데이터 형태가 아닐 때
+     * http status 400
+     */
+    @ExceptionHandler({ CustomInvalidDataException.class })
+    public ResponseEntity<?> customInvalidDataExceptionHandler(CustomInvalidDataException e) {
+        log.error("ERROR STACKTRACE => {}", e.getStackTrace());
+
+        Message message = new Message();
+        message.setStatus(HttpStatus.BAD_REQUEST);
+        message.setMessage("data_error");
         message.setMemo(e.getMessage());
 
         return new ResponseEntity<>(message, message.getStatus());
