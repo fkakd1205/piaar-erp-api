@@ -34,7 +34,6 @@ public class ErpSalesHeaderBusinessService {
                 .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
 
         ErpSalesHeaderEntity headerEntity = ErpSalesHeaderEntity.toEntity(headerDto);
-
         erpSalesHeaderService.saveAndModify(headerEntity);
     }
 

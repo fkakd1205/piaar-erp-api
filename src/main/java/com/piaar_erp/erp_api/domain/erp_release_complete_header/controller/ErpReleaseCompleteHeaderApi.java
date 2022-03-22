@@ -27,7 +27,7 @@ public class ErpReleaseCompleteHeaderApi {
     /**
      * Create one api for erp release complete header.
      * <p>
-     * <b>POST : API URL => /api/v1/erp-release-complete-header</b>
+     * <b>POST : API URL => /api/v1/erp-release-complete-headers</b>
      * 
      * @param headerDto : ErpReleaseCompleteHeaderDto
      * @return ResponseEntity(message, HttpStatus)
@@ -47,7 +47,7 @@ public class ErpReleaseCompleteHeaderApi {
     /**
      * Search one api for erp release complete header.
      * <p>
-     * <b>GET : API URL => /api/v1/erp-release-complete-header</b>
+     * <b>GET : API URL => /api/v1/erp-release-complete-headers</b>
      *
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpReleaseCompleteHeaderBusinessService#searchOne
@@ -66,7 +66,7 @@ public class ErpReleaseCompleteHeaderApi {
     /**
      * Create one api for product.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-release-complete-header</b>
+     * <b>PUT : API URL => /api/v1/erp-release-complete-headers</b>
      * 
      * @param headerDto : ErpReleaseCompleteHeaderDto
      * @return ResponseEntity(message, HttpStatus)

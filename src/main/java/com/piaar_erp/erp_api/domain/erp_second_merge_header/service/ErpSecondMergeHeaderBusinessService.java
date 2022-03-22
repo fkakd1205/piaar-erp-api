@@ -26,10 +26,14 @@ public class ErpSecondMergeHeaderBusinessService {
      * @see ErpSecondMergeHeaderService#saveAndModify
      */
     public void saveOne(ErpSecondMergeHeaderDto headerDto) {
+        UUID ID = UUID.randomUUID();
         UUID USER_ID = UUID.randomUUID();
+        headerDto
+            .setId(ID)
+            .setCreatedAt(CustomDateUtils.getCurrentDateTime())
+            .setCreatedBy(USER_ID);
+        
         ErpSecondMergeHeaderEntity headerEntity = ErpSecondMergeHeaderEntity.toEntity(headerDto);
-        headerEntity.setId(UUID.randomUUID()).setCreatedAt(CustomDateUtils.getCurrentDateTime()).setCreatedBy(USER_ID);
-
         erpSecondMergeHeaderService.saveAndModify(headerEntity);
     }
 

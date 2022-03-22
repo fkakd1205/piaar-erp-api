@@ -199,13 +199,13 @@ public class ErpOrderItemApi {
     /**
      * Change release option code of erp order item.
      * <p>
-     * <b>Patch : API URL => /api/v1/erp-order-items/batch/option-code/release</b>
+     * <b>Patch : API URL => /api/v1/erp-order-items/batch/release-option-code</b>
      * 
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#changeBatchForReleaseOptionCode
      */
-    @PatchMapping("/batch/option-code/release")
+    @PatchMapping("/batch/release-option-code")
     public ResponseEntity<?> changeBatchForReleaseOptionCode(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
 

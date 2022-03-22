@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/erp-release-ready-header")
+@RequestMapping("/api/v1/erp-release-ready-headers")
 public class ErpReleaseReadyHeaderApi {
     private ErpReleaseReadyHeaderBusinessService erpReleaseReadyHeaderBusinessService;
 
@@ -27,7 +27,7 @@ public class ErpReleaseReadyHeaderApi {
     /**
      * Create one api for erp release ready header.
      * <p>
-     * <b>POST : API URL => /api/v1/erp-release-ready-header</b>
+     * <b>POST : API URL => /api/v1/erp-release-ready-headers</b>
      * 
      * @param headerDto : ErpReleaseReadyHeaderDto
      * @return ResponseEntity(message, HttpStatus)
@@ -47,7 +47,7 @@ public class ErpReleaseReadyHeaderApi {
     /**
      * Search one api for erp release ready header.
      * <p>
-     * <b>GET : API URL => /api/v1/erp-release-ready-header</b>
+     * <b>GET : API URL => /api/v1/erp-release-ready-headers</b>
      *
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpReleaseReadyHeaderBusinessService#searchOne
@@ -66,7 +66,7 @@ public class ErpReleaseReadyHeaderApi {
     /**
      * Create one api for product.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-release-ready-header</b>
+     * <b>PUT : API URL => /api/v1/erp-release-ready-headers</b>
      * 
      * @param headerDto : ErpReleaseReadyHeaderDto
      * @return ResponseEntity(message, HttpStatus)

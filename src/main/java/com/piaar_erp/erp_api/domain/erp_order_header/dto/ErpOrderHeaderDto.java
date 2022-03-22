@@ -23,6 +23,7 @@ public class ErpOrderHeaderDto {
     private Integer cid;
     @Setter
     private UUID id;
+    
     private ErpOrderHeaderDetailDto headerDetail;
 
     @Setter

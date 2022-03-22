@@ -30,10 +30,10 @@ public class ErpReleaseCompleteHeaderBusinessService {
         headerDto
                 .setId(ID)
                 .setCreatedAt(CustomDateUtils.getCurrentDateTime())
-                .setCreatedBy(USER_ID)
-                .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
+                .setCreatedBy(USER_ID);
+                // .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
+                
         ErpReleaseCompleteHeaderEntity headerEntity = ErpReleaseCompleteHeaderEntity.toEntity(headerDto);
-
         erpReleaseCompleteHeaderService.saveAndModify(headerEntity);
     }
 

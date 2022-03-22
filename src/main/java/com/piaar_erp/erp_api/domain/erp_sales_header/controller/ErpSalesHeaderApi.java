@@ -27,7 +27,7 @@ public class ErpSalesHeaderApi {
     /**
      * Create one api for erp sales header.
      * <p>
-     * <b>POST : API URL => /api/v1/erp-sales-header</b>
+     * <b>POST : API URL => /api/v1/erp-sales-headers</b>
      * 
      * @param headerDto : ErpSalesHeaderDto
      * @return ResponseEntity(message, HttpStatus)
@@ -47,7 +47,7 @@ public class ErpSalesHeaderApi {
     /**
      * Search one api for erp sales header.
      * <p>
-     * <b>GET : API URL => /api/v1/erp-sales-header</b>
+     * <b>GET : API URL => /api/v1/erp-sales-headers</b>
      *
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpSalesHeaderBusinessService#searchOne
@@ -66,7 +66,7 @@ public class ErpSalesHeaderApi {
     /**
      * Create one api for product.
      * <p>
-     * <b>PUT : API URL => /api/v1/erp-sales-header</b>
+     * <b>PUT : API URL => /api/v1/erp-sales-headers</b>
      * 
      * @param headerDto : ErpSalesHeaderDto
      * @return ResponseEntity(message, HttpStatus)
