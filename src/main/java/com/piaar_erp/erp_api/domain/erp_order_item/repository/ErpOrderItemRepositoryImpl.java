@@ -150,8 +150,9 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
             return qErpOrderItemEntity.salesAt.between(startDate, endDate);
         } else if (periodType.equals("release")) {
             return qErpOrderItemEntity.releaseAt.between(startDate, endDate);
+        }else {
+            throw new CustomInvalidDataException("상세조건이 올바르지 않습니다.");
         }
-        return null;
     }
 
     private BooleanExpression lkSearchCondition(Map<String, Object> params) {
@@ -161,7 +162,28 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
             return null;
         }
 
-        StringPath columnNameStringPath = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
+        StringPath columnNameStringPath = null;
+
+        switch(columnName) {
+            case "categoryName":
+                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductCategoryEntity, "name");
+                break;
+            case "prodManagementName":
+                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductEntity, "managementName");
+                break;
+            case "prodDefaultName":
+                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductEntity, "defaultName");
+                break;
+            case "optionManagementName":
+                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductOptionEntity, "managementName");
+                break;
+            case "optionDefaultName":
+                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductOptionEntity, "defaultName");
+                break;
+            default:
+                columnNameStringPath = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
+        }
+
         return columnNameStringPath.contains(searchQuery);
     }
 }
