@@ -100,8 +100,6 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
             PathBuilder pathBuilder = new PathBuilder(qErpOrderItemEntity.getType(), qErpOrderItemEntity.getMetadata());
             customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, pathBuilder.get(o.getProperty())));
          }
-
-        customQuery.orderBy(qErpOrderItemEntity.createdAt.desc());
     
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
         return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
