@@ -96,7 +96,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                 .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-
+      
         try{
             this.sortPagedData(customQuery, pageable);
         } catch(QueryException e) {
