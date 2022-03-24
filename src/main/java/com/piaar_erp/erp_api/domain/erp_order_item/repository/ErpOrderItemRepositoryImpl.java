@@ -14,6 +14,7 @@ import com.piaar_erp.erp_api.domain.product.entity.QProductEntity;
 import com.piaar_erp.erp_api.domain.product_category.entity.QProductCategoryEntity;
 import com.piaar_erp.erp_api.domain.product_option.entity.QProductOptionEntity;
 import com.piaar_erp.erp_api.utils.CustomFieldUtils;
+import com.querydsl.core.QueryException;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -95,14 +96,53 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                 .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-                
-        for(Sort.Order o : pageable.getSort()) {
-            PathBuilder pathBuilder = new PathBuilder(qErpOrderItemEntity.getType(), qErpOrderItemEntity.getMetadata());
-            customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, pathBuilder.get(o.getProperty())));
-         }
+      
+        try{
+            this.sortPagedData(customQuery, pageable);
+        } catch(QueryException e) {
+            throw new CustomInvalidDataException(e.getMessage());
+        }
     
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
         return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
+    }
+
+    private void sortPagedData(JPQLQuery customQuery, Pageable pageable) {
+        for(Sort.Order o : pageable.getSort()) {
+            PathBuilder erpOrderItemBuilder = new PathBuilder(qErpOrderItemEntity.getType(), qErpOrderItemEntity.getMetadata());
+            PathBuilder productBuilder = new PathBuilder(qProductEntity.getType(), qProductEntity.getMetadata());
+            PathBuilder productOptionBuilder = new PathBuilder(qProductOptionEntity.getType(), qProductOptionEntity.getMetadata());
+            PathBuilder productCategoryBuilder = new PathBuilder(qProductCategoryEntity.getType(), qProductCategoryEntity.getMetadata());
+
+            switch(o.getProperty().toString()) {
+                case "categoryName":
+                    customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productCategoryBuilder.get("name")));
+                    break;
+                case "prodManagementName":
+                    customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productBuilder.get("managementName")));
+                    break;
+                case "prodDefaultName":
+                    customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productBuilder.get("defaultName")));
+                    break;
+                case "optionManagementName":
+                    customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productOptionBuilder.get("managementName")));
+                    break;
+                case "optionDefaultName":
+                    customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productOptionBuilder.get("defaultName")));
+                    break;
+                case "optionStockUnit":
+                    customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productOptionBuilder.get("stockUnit")));
+                    break;
+                default:
+                    if(CustomFieldUtils.getFieldByName(qErpOrderItemEntity, o.getProperty().toString()) == null) {
+                        throw new QueryException("올바른 데이터가 아닙니다.");
+                    }
+                    customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, erpOrderItemBuilder.get(o.getProperty())));
+            }
+
+            // customQuery.orderBy(qErpOrderItemEntity.createdAt.desc());
+            customQuery.orderBy(qErpOrderItemEntity.cid.desc());
+        }
     }
 
     private BooleanExpression eqSalesYn(Map<String, Object> params) {
@@ -161,7 +201,6 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
         }
 
         StringPath columnNameStringPath = null;
-
         switch(columnName) {
             case "categoryName":
                 columnNameStringPath = CustomFieldUtils.getFieldValue(qProductCategoryEntity, "name");
