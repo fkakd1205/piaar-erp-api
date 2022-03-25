@@ -6,9 +6,6 @@ import com.piaar_erp.erp_api.domain.erp_download_excel_header.entity.ErpDownload
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpDownloadOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.vo.ErpOrderItemVo;
-import com.piaar_erp.erp_api.domain.erp_second_merge_header.dto.ErpSecondMergeHeaderDto;
-import com.piaar_erp.erp_api.domain.erp_second_merge_header.entity.ErpSecondMergeHeaderEntity;
-import com.piaar_erp.erp_api.domain.erp_second_merge_header.service.ErpSecondMergeHeaderService;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
 import com.piaar_erp.erp_api.utils.CustomFieldUtils;
 
@@ -45,7 +42,8 @@ public class ErpDownloadExcelHeaderBusinessService {
         headerEntity
             .setId(UUID.randomUUID())
             .setCreatedAt(CustomDateUtils.getCurrentDateTime())
-            .setCreatedBy(USER_ID);
+            .setCreatedBy(USER_ID)
+            .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
 
         erpDownloadExcelHeaderService.saveAndModify(headerEntity);
     }

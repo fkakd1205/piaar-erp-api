@@ -32,7 +32,8 @@ public class ErpFirstMergeHeaderBusinessService {
         headerEntity
             .setId(ID)
             .setCreatedAt(CustomDateUtils.getCurrentDateTime())
-            .setCreatedBy(USER_ID);
+            .setCreatedBy(USER_ID)
+            .setUpdatedAt(CustomDateUtils.getCurrentDateTime());
 
         erpFirstMergeHeaderService.saveAndModify(headerEntity);
     }
