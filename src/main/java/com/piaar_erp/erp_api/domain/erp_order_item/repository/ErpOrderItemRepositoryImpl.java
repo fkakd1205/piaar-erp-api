@@ -200,27 +200,37 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
             return null;
         }
 
-        StringPath columnNameStringPath = null;
-        switch(columnName) {
-            case "categoryName":
-                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductCategoryEntity, "name");
-                break;
-            case "prodManagementName":
-                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductEntity, "managementName");
-                break;
-            case "prodDefaultName":
-                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductEntity, "defaultName");
-                break;
-            case "optionManagementName":
-                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductOptionEntity, "managementName");
-                break;
-            case "optionDefaultName":
-                columnNameStringPath = CustomFieldUtils.getFieldValue(qProductOptionEntity, "defaultName");
-                break;
-            default:
-                columnNameStringPath = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
-        }
+        try{
+            StringPath columnNameStringPath = null;
+            switch (columnName) {
+                case "categoryName":
+                    columnNameStringPath = CustomFieldUtils.getFieldValue(qProductCategoryEntity, "name");
+                    break;
+                case "prodManagementName":
+                    columnNameStringPath = CustomFieldUtils.getFieldValue(qProductEntity, "managementName");
+                    break;
+                case "prodDefaultName":
+                    columnNameStringPath = CustomFieldUtils.getFieldValue(qProductEntity, "defaultName");
+                    break;
+                case "optionManagementName":
+                    columnNameStringPath = CustomFieldUtils.getFieldValue(qProductOptionEntity, "managementName");
+                    break;
+                case "optionDefaultName":
+                    columnNameStringPath = CustomFieldUtils.getFieldValue(qProductOptionEntity, "defaultName");
+                    break;
+                default:
+                    if(CustomFieldUtils.getFieldByName(qErpOrderItemEntity,columnName) == null) {
+                        throw new QueryException("올바른 데이터가 아닙니다.");
+                    }
+                    columnNameStringPath = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);
+            }
 
-        return columnNameStringPath.contains(searchQuery);
+            return columnNameStringPath.contains(searchQuery);
+
+        } catch (ClassCastException e) {
+            throw new CustomInvalidDataException("허용된 데이터 타입이 아닙니다.");
+        } catch (QueryException e) {
+            throw new CustomInvalidDataException(e.getMessage());
+        }
     }
 }
