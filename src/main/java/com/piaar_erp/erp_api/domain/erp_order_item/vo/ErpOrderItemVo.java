@@ -20,49 +20,59 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 public class ErpOrderItemVo {
     private UUID id;
-    private String uniqueCode;      // 피아르 고유코드
-    private String freightCode;
-    private String orderNumber1;        // 주문번호1
-    private String orderNumber2;        // 주문번호2
-    private String orderNumber3;        // 주문번호3
-    private String prodName;        // 상품명 / 필수값
-    private String optionName;      // 옵션명 / 필수값
-    private String unit;       // 수량 / 필수값
-    // private Integer unit;       // 수량 / 필수값
-    private String receiver;        // 수취인명 / 필수값
-    private String receiverContact1;        // 전화번호1 / 필수값
-    private String receiverContact2;        // 전화번호2
-    private String destination;     // 주소 / 필수값
-    private String zipCode;     // 우편번호
-    private String transportType;       // 배송방식
-    private String deliveryMessage;     // 배송메세지
-    private String prodUniqueNumber1;       // 상품고유번호1
-    private String prodUniqueNumber2;       // 상품고유번호2
-    private String optionUniqueNumber1;     // 옵션고유번호1
-    private String optionUniqueNumber2;     // 옵션고유번호2
-    private String prodCode;        // 피아르 상품코드
-    private String optionCode;      // 피아르 옵션코드
-    private String managementMemo1;     // 관리메모1
-    private String managementMemo2;     // 관리메모2
-    private String managementMemo3;     // 관리메모3
-    private String managementMemo4;     // 관리메모4
-    private String managementMemo5;     // 관리메모5
-    private String managementMemo6;     // 관리메모6
-    private String managementMemo7;     // 관리메모7
-    private String managementMemo8;     // 관리메모8
-    private String managementMemo9;     // 관리메모9
-    private String managementMemo10;     // 관리메모10
-    private String managementMemo11;     // 관리메모11
-    private String managementMemo12;     // 관리메모12
-    private String managementMemo13;     // 관리메모13
-    private String managementMemo14;     // 관리메모14
-    private String managementMemo15;     // 관리메모15
-    private String managementMemo16;     // 관리메모16
-    private String managementMemo17;     // 관리메모17
-    private String managementMemo18;     // 관리메모18
-    private String managementMemo19;     // 관리메모19
-    private String managementMemo20;     // 관리메모20
-    
+    private String uniqueCode; // 피아르 고유코드
+    private String prodName; // 상품명 / 필수값
+    private String optionName; // 옵션정보 / 필수값
+    private String unit; // 수량 / 필수값
+    private String receiver; // 수취인명 / 필수값
+    private String receiverContact1; // 전화번호1 / 필수값
+    private String receiverContact2; // 전화번호2
+    private String destination; // 주소 / 필수값
+    private String salesChannel; // 판매채널
+    private String orderNumber1; // 판매채널 주문번호1
+    private String orderNumber2; // 판매채널 주문번호2
+    private String channelProdCode; // 판매채널 상품코드
+    private String channelOptionCode; // 판매채널 옵션코드
+    private String zipCode; // 우편번호
+    private String courier; // 택배사
+    private String transportType; // 배송방식
+    private String deliveryMessage; // 배송메세지
+    private String waybillNumber;   // 운송장번호
+    private String price;  // 판매금액
+    private String deliveryCharge;  // 배송비
+    private String barCode; // 바코드
+    private String prodCode; // 피아르 상품코드
+    private String optionCode; // 피아르 옵션코드
+    private String releaseOptionCode;   // 출고 옵션코드
+    private String managementMemo1; // 관리메모1
+    private String managementMemo2; // 관리메모2
+    private String managementMemo3; // 관리메모3
+    private String managementMemo4; // 관리메모4
+    private String managementMemo5; // 관리메모5
+    private String managementMemo6; // 관리메모6
+    private String managementMemo7; // 관리메모7
+    private String managementMemo8; // 관리메모8
+    private String managementMemo9; // 관리메모9
+    private String managementMemo10; // 관리메모10
+    private String freightCode; // 운송코드
+
+    private String salesYn;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private LocalDateTime salesAt;
+
+    private String releaseYn;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private LocalDateTime releaseAt;
+
+    private String stockReflectYn;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private LocalDateTime createdAt;
+
+    private UUID createdBy;
+
     private String categoryName;
     private String prodDefaultName;
     private String prodManagementName;
@@ -70,28 +80,13 @@ public class ErpOrderItemVo {
     private String optionManagementName;
     private String optionStockUnit;
 
-    private String salesYn;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime salesAt;
-    private String releaseOptionCode;
-    private String releaseYn;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime releaseAt;
-    private String stockReflectYn;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime createdAt;
-    private UUID createdBy;
-
     public static ErpOrderItemVo toVo(ErpOrderItemProj proj) {
-        if(proj == null) return null;
+        if (proj == null)
+            return null;
 
         ErpOrderItemVo itemVo = ErpOrderItemVo.builder()
                 .id(proj.getErpOrderItem().getId())
                 .uniqueCode(proj.getErpOrderItem().getUniqueCode())
-                .freightCode(proj.getErpOrderItem().getFreightCode())
-                .orderNumber1(proj.getErpOrderItem().getOrderNumber1())
-                .orderNumber2(proj.getErpOrderItem().getOrderNumber2())
-                .orderNumber3(proj.getErpOrderItem().getOrderNumber3())
                 .prodName(proj.getErpOrderItem().getProdName())
                 .optionName(proj.getErpOrderItem().getOptionName())
                 .unit(proj.getErpOrderItem().getUnit().toString())
@@ -99,15 +94,22 @@ public class ErpOrderItemVo {
                 .receiverContact1(proj.getErpOrderItem().getReceiverContact1())
                 .receiverContact2(proj.getErpOrderItem().getReceiverContact2())
                 .destination(proj.getErpOrderItem().getDestination())
+                .salesChannel(proj.getErpOrderItem().getSalesChannel())
+                .orderNumber1(proj.getErpOrderItem().getOrderNumber1())
+                .orderNumber2(proj.getErpOrderItem().getOrderNumber2())
+                .channelProdCode(proj.getErpOrderItem().getChannelProdCode())
+                .channelOptionCode(proj.getErpOrderItem().getChannelOptionCode())
                 .zipCode(proj.getErpOrderItem().getZipCode())
+                .courier(proj.getErpOrderItem().getCourier())
                 .transportType(proj.getErpOrderItem().getTransportType())
                 .deliveryMessage(proj.getErpOrderItem().getDeliveryMessage())
-                .prodUniqueNumber1(proj.getErpOrderItem().getProdUniqueNumber1())
-                .prodUniqueNumber2(proj.getErpOrderItem().getProdUniqueNumber2())
-                .optionUniqueNumber1(proj.getErpOrderItem().getOptionUniqueNumber1())
-                .optionUniqueNumber2(proj.getErpOrderItem().getOptionUniqueNumber2())
+                .waybillNumber(proj.getErpOrderItem().getWaybillNumber())
+                .price(proj.getErpOrderItem().getPrice() != null ? proj.getErpOrderItem().getPrice().toString() : null)
+                .deliveryCharge(proj.getErpOrderItem().getDeliveryCharge() != null ? proj.getErpOrderItem().getDeliveryCharge().toString() : null)
+                .barCode(proj.getErpOrderItem().getBarCode())
                 .prodCode(proj.getErpOrderItem().getProdCode())
                 .optionCode(proj.getErpOrderItem().getOptionCode())
+                .releaseOptionCode(proj.getErpOrderItem().getReleaseOptionCode())
                 .managementMemo1(proj.getErpOrderItem().getManagementMemo1())
                 .managementMemo2(proj.getErpOrderItem().getManagementMemo2())
                 .managementMemo3(proj.getErpOrderItem().getManagementMemo3())
@@ -118,17 +120,7 @@ public class ErpOrderItemVo {
                 .managementMemo8(proj.getErpOrderItem().getManagementMemo8())
                 .managementMemo9(proj.getErpOrderItem().getManagementMemo9())
                 .managementMemo10(proj.getErpOrderItem().getManagementMemo10())
-                .managementMemo11(proj.getErpOrderItem().getManagementMemo11())
-                .managementMemo12(proj.getErpOrderItem().getManagementMemo12())
-                .managementMemo13(proj.getErpOrderItem().getManagementMemo13())
-                .managementMemo14(proj.getErpOrderItem().getManagementMemo14())
-                .managementMemo15(proj.getErpOrderItem().getManagementMemo15())
-                .managementMemo16(proj.getErpOrderItem().getManagementMemo16())
-                .managementMemo17(proj.getErpOrderItem().getManagementMemo17())
-                .managementMemo18(proj.getErpOrderItem().getManagementMemo18())
-                .managementMemo19(proj.getErpOrderItem().getManagementMemo19())
-                .managementMemo20(proj.getErpOrderItem().getManagementMemo20())
-                .releaseOptionCode(proj.getErpOrderItem().getReleaseOptionCode())
+                .freightCode(proj.getErpOrderItem().getFreightCode())
                 .salesYn(proj.getErpOrderItem().getSalesYn())
                 .salesAt(proj.getErpOrderItem().getSalesAt())
                 .releaseYn(proj.getErpOrderItem().getReleaseYn())
@@ -140,7 +132,7 @@ public class ErpOrderItemVo {
                 .prodDefaultName(proj.getProduct() != null ? proj.getProduct().getDefaultName() : "")
                 .prodManagementName(proj.getProduct() != null ? proj.getProduct().getManagementName() : "")
                 .optionDefaultName(proj.getProductOption() != null ? proj.getProductOption().getDefaultName() : "")
-                .optionManagementName(proj.getProductOption() != null ? proj.getProductOption().getManagementName() :"")
+                .optionManagementName(proj.getProductOption() != null ? proj.getProductOption().getManagementName() : "")
                 .build();
 
         return itemVo;
@@ -151,26 +143,30 @@ public class ErpOrderItemVo {
 
         ErpOrderItemVo itemVo = ErpOrderItemVo.builder()
                 .id(dto.getId())
-                .uniqueCode(dto.getUniqueCode())
-                .orderNumber1(dto.getOrderNumber1())
-                .orderNumber2(dto.getOrderNumber2())
-                .orderNumber3(dto.getOrderNumber3())
+                .uniqueCode(dto.getUniqueCode() != null ? dto.getUniqueCode().toString() : null)
                 .prodName(dto.getProdName())
                 .optionName(dto.getOptionName())
-                .unit(dto.getUnit().toString())
+                .unit(dto.getUnit() != null ? dto.getUnit().toString() : null)
                 .receiver(dto.getReceiver())
                 .receiverContact1(dto.getReceiverContact1())
                 .receiverContact2(dto.getReceiverContact2())
                 .destination(dto.getDestination())
+                .salesChannel(dto.getSalesChannel())
+                .orderNumber1(dto.getOrderNumber1())
+                .orderNumber2(dto.getOrderNumber2())
+                .channelProdCode(dto.getChannelProdCode())
+                .channelOptionCode(dto.getChannelOptionCode())
                 .zipCode(dto.getZipCode())
+                .courier(dto.getCourier())
                 .transportType(dto.getTransportType())
                 .deliveryMessage(dto.getDeliveryMessage())
-                .prodUniqueNumber1(dto.getProdUniqueNumber1())
-                .prodUniqueNumber2(dto.getProdUniqueNumber2())
-                .optionUniqueNumber1(dto.getOptionUniqueNumber1())
-                .optionUniqueNumber2(dto.getOptionUniqueNumber2())
+                .waybillNumber(dto.getWaybillNumber())
+                .price(dto.getPrice() != null ? dto.getPrice().toString() : null)
+                .deliveryCharge(dto.getDeliveryCharge() != null ? dto.getDeliveryCharge().toString() : null)
+                .barCode(dto.getBarCode())
                 .prodCode(dto.getProdCode())
                 .optionCode(dto.getOptionCode())
+                .releaseOptionCode(dto.getReleaseOptionCode())
                 .managementMemo1(dto.getManagementMemo1())
                 .managementMemo2(dto.getManagementMemo2())
                 .managementMemo3(dto.getManagementMemo3())
@@ -181,17 +177,7 @@ public class ErpOrderItemVo {
                 .managementMemo8(dto.getManagementMemo8())
                 .managementMemo9(dto.getManagementMemo9())
                 .managementMemo10(dto.getManagementMemo10())
-                .managementMemo11(dto.getManagementMemo11())
-                .managementMemo12(dto.getManagementMemo12())
-                .managementMemo13(dto.getManagementMemo13())
-                .managementMemo14(dto.getManagementMemo14())
-                .managementMemo15(dto.getManagementMemo15())
-                .managementMemo16(dto.getManagementMemo16())
-                .managementMemo17(dto.getManagementMemo17())
-                .managementMemo18(dto.getManagementMemo18())
-                .managementMemo19(dto.getManagementMemo19())
-                .managementMemo20(dto.getManagementMemo20())
-                .releaseOptionCode(dto.getReleaseOptionCode())
+                .freightCode(dto.getFreightCode())
                 .salesYn(dto.getSalesYn())
                 .salesAt(dto.getSalesAt())
                 .releaseYn(dto.getReleaseYn())
@@ -199,11 +185,6 @@ public class ErpOrderItemVo {
                 .stockReflectYn(dto.getStockReflectYn())
                 .createdAt(dto.getCreatedAt())
                 .createdBy(dto.getCreatedBy())
-                .categoryName(dto.getCategoryName())
-                .prodDefaultName(dto.getProdDefaultName())
-                .prodManagementName(dto.getProdManagementName())
-                .optionDefaultName(dto.getOptionDefaultName())
-                .optionManagementName(dto.getOptionManagementName())
                 .build();
 
         return itemVo;
