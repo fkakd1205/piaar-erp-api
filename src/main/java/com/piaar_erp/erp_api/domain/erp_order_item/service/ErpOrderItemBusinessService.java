@@ -54,50 +54,44 @@ public class ErpOrderItemBusinessService {
     // Excel file extension.
     private final List<String> EXTENSIONS_EXCEL = Arrays.asList("xlsx", "xls");
 
-    private final Integer PIAAR_ERP_ORDER_ITEM_SIZE = 40;
-    private final Integer PIAAR_ERP_ORDER_MEMO_START_INDEX = 20;
+    private final Integer PIAAR_ERP_ORDER_ITEM_SIZE = 34;
+    private final Integer PIAAR_ERP_ORDER_MEMO_START_INDEX = 24;
 
     private final List<String> PIAAR_ERP_ORDER_HEADER_NAME_LIST = Arrays.asList(
-            "피아르 고유번호",
-            "주문번호1",
-            "주문번호2",
-            "주문번호3",
-            "상품명",
-            "옵션명",
-            "수량",
-            "수취인명",
-            "전화번호1",
-            "전화번호2",
-            "주소",
-            "우편번호",
-            "배송방식",
-            "배송메세지",
-            "상품고유번호1",
-            "상품고유번호2",
-            "옵션고유번호1",
-            "옵션고유번호2",
-            "피아르 상품코드",
-            "피아르 옵션코드",
-            "관리메모1",
-            "관리메모2",
-            "관리메모3",
-            "관리메모4",
-            "관리메모5",
-            "관리메모6",
-            "관리메모7",
-            "관리메모8",
-            "관리메모9",
-            "관리메모10",
-            "관리메모11",
-            "관리메모12",
-            "관리메모13",
-            "관리메모14",
-            "관리메모15",
-            "관리메모16",
-            "관리메모17",
-            "관리메모18",
-            "관리메모19",
-            "관리메모20");
+        "피아르 고유번호",
+        "상품명",
+        "옵션정보",
+        "수량",
+        "수취인명",
+        "전화번호1",
+        "전화번호2",
+        "주소",
+        "판매채널",
+        "판매채널 주문번호1",
+        "판매채널 주문번호2",
+        "판매채널 상품코드",
+        "판매채널 옵션코드",
+        "우편번호",
+        "택배사",
+        "배송방식",
+        "배송메세지",
+        "운송장번호",
+        "판매금액",
+        "배송비",
+        "바코드",
+        "피아르 상품코드",
+        "피아르 옵션코드",
+        "출고 옵션코드",
+        "관리메모1",
+        "관리메모2",
+        "관리메모3",
+        "관리메모4",
+        "관리메모5",
+        "관리메모6",
+        "관리메모7",
+        "관리메모8",
+        "관리메모9",
+        "관리메모10");
 
     /**
      * <b>Extension Check</b>
@@ -171,7 +165,7 @@ public class ErpOrderItemBusinessService {
             Object cellValue = new Object();
             List<String> customManagementMemo = new ArrayList<>();
 
-            // type check and data setting of managementMemo1~20.
+            // type check and data setting of managementMemo1~10.
             for (int j = PIAAR_ERP_ORDER_MEMO_START_INDEX; j < PIAAR_ERP_ORDER_ITEM_SIZE; j++) {
                 Cell cell = row.getCell(j);
 
@@ -195,26 +189,29 @@ public class ErpOrderItemBusinessService {
 
             ErpOrderItemVo excelVo = ErpOrderItemVo.builder()
                     .uniqueCode(CustomUniqueKeyUtils.generateKey())
-                    .freightCode(CustomUniqueKeyUtils.generateFreightCode())
-                    .orderNumber1(row.getCell(1) != null ? row.getCell(1).getStringCellValue() : "")
-                    .orderNumber2(row.getCell(2) != null ? row.getCell(2).getStringCellValue() : "")
-                    .orderNumber3(row.getCell(3) != null ? row.getCell(3).getStringCellValue() : "")
-                    .prodName(row.getCell(4) != null ? row.getCell(4).getStringCellValue() : "")
-                    .optionName(row.getCell(5) != null ? row.getCell(5).getStringCellValue() : "")
-                    .unit(row.getCell(6) != null ? Integer.toString((int)row.getCell(6).getNumericCellValue()) : "")
-                    .receiver(row.getCell(7) != null ? row.getCell(7).getStringCellValue() : "")
-                    .receiverContact1(row.getCell(8) != null ? row.getCell(8).getStringCellValue() : "")
-                    .receiverContact2(row.getCell(9) != null ? row.getCell(9).getStringCellValue() : "")
-                    .destination(row.getCell(10) != null ? row.getCell(10).getStringCellValue() : "")
-                    .zipCode(row.getCell(11) != null ? row.getCell(11).getStringCellValue() : "")
-                    .transportType(row.getCell(12) != null ? row.getCell(12).getStringCellValue() : "")
-                    .deliveryMessage(row.getCell(13) != null ? row.getCell(13).getStringCellValue() : "")
-                    .prodUniqueNumber1(row.getCell(14) != null ? row.getCell(14).getStringCellValue() : "")
-                    .prodUniqueNumber2(row.getCell(15) != null ? row.getCell(15).getStringCellValue() : "")
-                    .optionUniqueNumber1(row.getCell(16) != null ? row.getCell(16).getStringCellValue() : "")
-                    .optionUniqueNumber2(row.getCell(17) != null ? row.getCell(17).getStringCellValue() : "")
-                    .prodCode(row.getCell(18) != null ? row.getCell(18).getStringCellValue() : "")
-                    .optionCode(row.getCell(19) != null ? row.getCell(19).getStringCellValue() : "")
+                    .prodName(row.getCell(1) != null ? row.getCell(1).getStringCellValue() : "")
+                    .optionName(row.getCell(2) != null ? row.getCell(2).getStringCellValue() : "")
+                    .unit(row.getCell(3) != null ? Integer.toString((int)row.getCell(3).getNumericCellValue()) : "")
+                    .receiver(row.getCell(4) != null ? row.getCell(4).getStringCellValue() : "")
+                    .receiverContact1(row.getCell(5) != null ? row.getCell(5).getStringCellValue() : "")
+                    .receiverContact2(row.getCell(6) != null ? row.getCell(6).getStringCellValue() : "")
+                    .destination(row.getCell(7) != null ? row.getCell(7).getStringCellValue() : "")
+                    .salesChannel(row.getCell(8) != null ? row.getCell(8).getStringCellValue() : "")
+                    .orderNumber1(row.getCell(9) != null ? row.getCell(9).getStringCellValue() : "")
+                    .orderNumber2(row.getCell(10) != null ? row.getCell(10).getStringCellValue() : "")
+                    .channelProdCode(row.getCell(11) != null ? row.getCell(11).getStringCellValue() : "")
+                    .channelOptionCode(row.getCell(12) != null ? row.getCell(12).getStringCellValue() : "")
+                    .zipCode(row.getCell(13) != null ? row.getCell(13).getStringCellValue() : "")
+                    .courier(row.getCell(14) != null ? row.getCell(14).getStringCellValue() : "")
+                    .transportType(row.getCell(15) != null ? row.getCell(15).getStringCellValue() : "")
+                    .deliveryMessage(row.getCell(16) != null ? row.getCell(16).getStringCellValue() : "")
+                    .waybillNumber(row.getCell(17) != null ? row.getCell(17).getStringCellValue() : "")
+                    .price(row.getCell(18) != null ? Integer.toString((int)row.getCell(18).getNumericCellValue()) : "")
+                    .deliveryCharge(row.getCell(19) != null ? Integer.toString((int)row.getCell(19).getNumericCellValue()) : "")
+                    .barCode(row.getCell(20) != null ? row.getCell(20).getStringCellValue() : "")
+                    .prodCode(row.getCell(21) != null ? row.getCell(21).getStringCellValue() : "")
+                    .optionCode(row.getCell(22) != null ? row.getCell(22).getStringCellValue() : "")
+                    .releaseOptionCode(row.getCell(23) != null ? row.getCell(23).getStringCellValue() : "")
                     .managementMemo1(customManagementMemo.get(0))
                     .managementMemo2(customManagementMemo.get(1))
                     .managementMemo3(customManagementMemo.get(2))
@@ -225,16 +222,7 @@ public class ErpOrderItemBusinessService {
                     .managementMemo8(customManagementMemo.get(7))
                     .managementMemo9(customManagementMemo.get(8))
                     .managementMemo10(customManagementMemo.get(9))
-                    .managementMemo11(customManagementMemo.get(10))
-                    .managementMemo12(customManagementMemo.get(11))
-                    .managementMemo13(customManagementMemo.get(12))
-                    .managementMemo14(customManagementMemo.get(13))
-                    .managementMemo15(customManagementMemo.get(14))
-                    .managementMemo16(customManagementMemo.get(15))
-                    .managementMemo17(customManagementMemo.get(16))
-                    .managementMemo18(customManagementMemo.get(17))
-                    .managementMemo19(customManagementMemo.get(18))
-                    .managementMemo20(customManagementMemo.get(19))
+                    .freightCode(CustomUniqueKeyUtils.generateFreightCode())
                     .build();
                     
             itemVos.add(excelVo);
