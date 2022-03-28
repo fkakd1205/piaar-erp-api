@@ -242,8 +242,9 @@ public class ErpOrderItemBusinessService {
 
     public void createBatch(List<ErpOrderItemDto> orderItemDtos) {
         UUID USER_ID = UUID.randomUUID();
+        List<ErpOrderItemDto> newOrderItemDtos = this.itemDuplicationCheck(orderItemDtos);
 
-        List<ErpOrderItemEntity> orderItemEntities = orderItemDtos.stream()
+        List<ErpOrderItemEntity> orderItemEntities = newOrderItemDtos.stream()
                 .map(r -> {
                     r.setId(UUID.randomUUID())
                             .setUniqueCode(r.getUniqueCode())
@@ -259,6 +260,49 @@ public class ErpOrderItemBusinessService {
                 }).collect(Collectors.toList());
 
         erpOrderItemService.saveListAndModify(orderItemEntities);
+    }
+
+    public List<ErpOrderItemDto> itemDuplicationCheck(List<ErpOrderItemDto> dtos) {
+        List<ErpOrderItemDto> newItems = dtos.stream().filter(r -> r.getOrderNumber1().isEmpty()).collect(Collectors.toList());
+        List<ErpOrderItemDto> duplicationCheckItems = dtos.stream().filter(r -> !r.getOrderNumber1().isEmpty()).collect(Collectors.toList());
+        
+        List<String> orderNumber1= new ArrayList<>();
+        List<String> receiver= new ArrayList<>();
+        List<String> prodName= new ArrayList<>();
+        List<String> optionName= new ArrayList<>();
+        List<Integer> unit = new ArrayList<>();
+        duplicationCheckItems.stream().forEach(r -> {
+            orderNumber1.add(r.getOrderNumber1());
+            receiver.add(r.getReceiver());
+            prodName.add(r.getProdName());
+            optionName.add(r.getOptionName());
+            unit.add(r.getUnit());
+        });
+
+        List<ErpOrderItemEntity> duplicationEntities = erpOrderItemService.findDuplicationItems(orderNumber1, receiver, prodName, optionName, unit);
+
+        if(duplicationEntities.size() == 0) {
+            return dtos;
+        }else{
+            for(int i = 0; i < duplicationCheckItems.size(); i++) {
+                boolean duplication = false;
+                // 주문번호 + 수령인 + 상품명 + 옵션명 + 수량 이 동일하다면 저장 제외
+                for(int j = 0; j < duplicationEntities.size(); j++) {
+                    if(duplicationEntities.get(j).getOrderNumber1().equals(duplicationCheckItems.get(i).getOrderNumber1())
+                    && duplicationEntities.get(j).getReceiver().equals(duplicationCheckItems.get(i).getReceiver())
+                    && duplicationEntities.get(j).getProdName().equals(duplicationCheckItems.get(i).getProdName())
+                    && duplicationEntities.get(j).getOptionName().equals(duplicationCheckItems.get(i).getOptionName())
+                    && duplicationEntities.get(j).getUnit().equals(duplicationCheckItems.get(i).getUnit())){
+                        duplication = true;
+                        break;
+                    }
+                }
+                if(!duplication){
+                    newItems.add(duplicationCheckItems.get(i));
+                }
+            }
+        }
+        return newItems;
     }
 
     /**
