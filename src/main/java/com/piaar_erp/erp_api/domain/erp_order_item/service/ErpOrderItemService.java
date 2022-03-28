@@ -111,4 +111,8 @@ public class ErpOrderItemService {
             throw new CustomNotFoundDataException("존재하지 않는 데이터입니다.");
         }
     }
+
+    public List<ErpOrderItemEntity> findDuplicationItems(List<String> orderNumber1, List<String> receiver, List<String> prodName, List<String> optionName, List<Integer> unit) {
+        return erpOrderItemRepository.findDuplicationItems(orderNumber1, receiver, prodName, optionName, unit);
+    }
 }

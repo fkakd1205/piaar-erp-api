@@ -187,6 +187,16 @@ public class ErpOrderItemBusinessService {
                 customManagementMemo.add(cellValue.toString());
             }
 
+            // price, deliveryCharge - 엑셀 타입 string, number 허용
+            String priceStr = (row.getCell(18) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
+                Integer.toString((int)row.getCell(18).getNumericCellValue()) : row.getCell(18).getStringCellValue());
+
+            String deliveryChargeStr = (row.getCell(19) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
+            Integer.toString((int)row.getCell(19).getNumericCellValue()) : row.getCell(18).getStringCellValue());
+
+            // '출고 옵션코드' 값이 입력되지 않았다면 '피아르 옵션코드'로 대체한다
+            String releaseOptionCode = (row.getCell(23) != null) ? row.getCell(23).getStringCellValue() : (row.getCell(22) == null ? "" : row.getCell(22).getStringCellValue());
+
             ErpOrderItemVo excelVo = ErpOrderItemVo.builder()
                     .uniqueCode(null)
                     .prodName(row.getCell(1) != null ? row.getCell(1).getStringCellValue() : "")
@@ -206,12 +216,12 @@ public class ErpOrderItemBusinessService {
                     .transportType(row.getCell(15) != null ? row.getCell(15).getStringCellValue() : "")
                     .deliveryMessage(row.getCell(16) != null ? row.getCell(16).getStringCellValue() : "")
                     .waybillNumber(row.getCell(17) != null ? row.getCell(17).getStringCellValue() : "")
-                    .price(row.getCell(18) != null ? Integer.toString((int) row.getCell(18).getNumericCellValue()) : "")
-                    .deliveryCharge(row.getCell(19) != null ? Integer.toString((int) row.getCell(19).getNumericCellValue()) : "")
+                    .price(priceStr)
+                    .deliveryCharge(deliveryChargeStr)
                     .barCode(row.getCell(20) != null ? row.getCell(20).getStringCellValue() : "")
                     .prodCode(row.getCell(21) != null ? row.getCell(21).getStringCellValue() : "")
                     .optionCode(row.getCell(22) != null ? row.getCell(22).getStringCellValue() : "")
-                    .releaseOptionCode(row.getCell(23) != null ? row.getCell(23).getStringCellValue() : "")
+                    .releaseOptionCode(releaseOptionCode)
                     .managementMemo1(customManagementMemo.get(0))
                     .managementMemo2(customManagementMemo.get(1))
                     .managementMemo3(customManagementMemo.get(2))
@@ -232,8 +242,9 @@ public class ErpOrderItemBusinessService {
 
     public void createBatch(List<ErpOrderItemDto> orderItemDtos) {
         UUID USER_ID = UUID.randomUUID();
+        List<ErpOrderItemDto> newOrderItemDtos = this.itemDuplicationCheck(orderItemDtos);
 
-        List<ErpOrderItemEntity> orderItemEntities = orderItemDtos.stream()
+        List<ErpOrderItemEntity> orderItemEntities = newOrderItemDtos.stream()
                 .map(r -> {
                     r.setId(UUID.randomUUID())
                             .setUniqueCode(CustomUniqueKeyUtils.generateKey())
@@ -249,6 +260,49 @@ public class ErpOrderItemBusinessService {
                 }).collect(Collectors.toList());
 
         erpOrderItemService.saveListAndModify(orderItemEntities);
+    }
+
+    public List<ErpOrderItemDto> itemDuplicationCheck(List<ErpOrderItemDto> dtos) {
+        List<ErpOrderItemDto> newItems = dtos.stream().filter(r -> r.getOrderNumber1().isEmpty()).collect(Collectors.toList());
+        List<ErpOrderItemDto> duplicationCheckItems = dtos.stream().filter(r -> !r.getOrderNumber1().isEmpty()).collect(Collectors.toList());
+        
+        List<String> orderNumber1= new ArrayList<>();
+        List<String> receiver= new ArrayList<>();
+        List<String> prodName= new ArrayList<>();
+        List<String> optionName= new ArrayList<>();
+        List<Integer> unit = new ArrayList<>();
+        duplicationCheckItems.stream().forEach(r -> {
+            orderNumber1.add(r.getOrderNumber1());
+            receiver.add(r.getReceiver());
+            prodName.add(r.getProdName());
+            optionName.add(r.getOptionName());
+            unit.add(r.getUnit());
+        });
+
+        List<ErpOrderItemEntity> duplicationEntities = erpOrderItemService.findDuplicationItems(orderNumber1, receiver, prodName, optionName, unit);
+
+        if(duplicationEntities.size() == 0) {
+            return dtos;
+        }else{
+            for(int i = 0; i < duplicationCheckItems.size(); i++) {
+                boolean duplication = false;
+                // 주문번호 + 수령인 + 상품명 + 옵션명 + 수량 이 동일하다면 저장 제외
+                for(int j = 0; j < duplicationEntities.size(); j++) {
+                    if(duplicationEntities.get(j).getOrderNumber1().equals(duplicationCheckItems.get(i).getOrderNumber1())
+                    && duplicationEntities.get(j).getReceiver().equals(duplicationCheckItems.get(i).getReceiver())
+                    && duplicationEntities.get(j).getProdName().equals(duplicationCheckItems.get(i).getProdName())
+                    && duplicationEntities.get(j).getOptionName().equals(duplicationCheckItems.get(i).getOptionName())
+                    && duplicationEntities.get(j).getUnit().equals(duplicationCheckItems.get(i).getUnit())){
+                        duplication = true;
+                        break;
+                    }
+                }
+                if(!duplication){
+                    newItems.add(duplicationCheckItems.get(i));
+                }
+            }
+        }
+        return newItems;
     }
 
     /**
