@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.Type;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class ErpOrderItemEntity {
 
     @Id
