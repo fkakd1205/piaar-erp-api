@@ -346,6 +346,16 @@ public class ErpOrderItemBusinessService {
         return new PageImpl(ErpOrderItemVos, pageable, itemPages.getTotalElements());
     }
 
+    public Page<ErpOrderItemVo> searchReleaseItemBatchByPaging(Map<String, Object> params, Pageable pageable) {
+        Page<ErpOrderItemProj> itemPages = erpOrderItemService.findReleaseItemM2OJByPage(params, pageable);
+        // 등록된 모든 엑셀 데이터를 조회한다
+        List<ErpOrderItemProj> itemProjs = itemPages.getContent();    // 페이징 처리 o
+        // 옵션재고수량 추가
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
+
+        return new PageImpl(ErpOrderItemVos, pageable, itemPages.getTotalElements());
+    }
+
     /**
      * <b>DB Select Related Method</b>
      * <p>

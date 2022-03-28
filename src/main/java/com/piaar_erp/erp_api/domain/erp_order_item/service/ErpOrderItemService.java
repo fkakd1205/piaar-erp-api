@@ -74,6 +74,10 @@ public class ErpOrderItemService {
         return erpOrderItemRepository.qfindAllM2OJByPage(params, pageable);
     }
 
+    public Page<ErpOrderItemProj> findReleaseItemM2OJByPage(Map<String, Object> params, Pageable pageable) {
+        return erpOrderItemRepository.qfindReleaseItemM2OJByPage(params, pageable);
+    }
+
     /**
      * <b>DB Select Related Method</b>
      * <p>

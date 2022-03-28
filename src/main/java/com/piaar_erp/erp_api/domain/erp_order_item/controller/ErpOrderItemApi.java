@@ -97,6 +97,7 @@ public class ErpOrderItemApi {
 
     /**
      * Search erp order item.
+     * Mapping by option code.
      * <p>
      * <b>GET : API URL => /api/v1/erp-order-items/search</b>
      * 
@@ -110,6 +111,28 @@ public class ErpOrderItemApi {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchBatchByPaging(params, pageable));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
+     * Search erp order item.
+     * Mapping by release option code.
+     * <p>
+     * <b>GET : API URL => /api/v1/erp-order-items/search/release</b>
+     * 
+     * @param params : Map::String, Object::
+     * @param pageable : Pageable
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#searchBatchByPaging
+     */
+    @GetMapping("/search/release")
+    public ResponseEntity<?> searchReleaseItemBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort="cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+        Message message = new Message();
+
+        message.setData(erpOrderItemBusinessService.searchReleaseItemBatchByPaging(params, pageable));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
