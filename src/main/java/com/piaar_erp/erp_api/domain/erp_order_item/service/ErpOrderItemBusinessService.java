@@ -188,11 +188,11 @@ public class ErpOrderItemBusinessService {
             }
 
             // price, deliveryCharge - 엑셀 타입 string, number 허용
-            String priceStr = (row.getCell(18) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
-                Integer.toString((int)row.getCell(18).getNumericCellValue()) : row.getCell(18).getStringCellValue());
+            String priceStr = (row.getCell(18) == null) ? "0" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
+                Integer.toString((int)row.getCell(18).getNumericCellValue()) : row.getCell(18).getStringCellValue()); 
 
-            String deliveryChargeStr = (row.getCell(19) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
-            Integer.toString((int)row.getCell(19).getNumericCellValue()) : row.getCell(18).getStringCellValue());
+            String deliveryChargeStr = (row.getCell(19) == null) ? "0" : (row.getCell(19).getCellType().equals(CellType.NUMERIC) ? 
+                Integer.toString((int)row.getCell(19).getNumericCellValue()) : row.getCell(19).getStringCellValue());
 
             // '출고 옵션코드' 값이 입력되지 않았다면 '피아르 옵션코드'로 대체한다
             String releaseOptionCode = (row.getCell(23) != null) ? row.getCell(23).getStringCellValue() : (row.getCell(22) == null ? "" : row.getCell(22).getStringCellValue());
