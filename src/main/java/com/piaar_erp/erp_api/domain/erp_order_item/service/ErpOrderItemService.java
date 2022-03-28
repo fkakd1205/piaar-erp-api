@@ -90,7 +90,7 @@ public class ErpOrderItemService {
     /**
      * <b>DB Delete Related Method</b>
      * <p>
-     * id 값에 대응하는 엑셀 데이터를 모두 삭제한다.
+     * id 값에 대응하는 엑셀 데이터를 삭제한다.
      * 
      * @param id : UUID
      * @ErpOrderItemRepository#findById
@@ -100,6 +100,18 @@ public class ErpOrderItemService {
         erpOrderItemRepository.findById(id).ifPresent(item -> {
             erpOrderItemRepository.delete(item);
         });
+    }
+
+    /**
+     * <b>DB Delete Related Method</b>
+     * <p>
+     * id 값에 대응하는 엑셀 데이터를 모두 삭제한다.
+     * 
+     * @param id : List::UUID::
+     * @ErpOrderItemRepository#deleteAllById
+     */
+    public void deleteBatch(List<UUID> ids) {
+        erpOrderItemRepository.deleteAllById(ids);
     }
 
     public ErpOrderItemEntity searchOne(UUID id) {

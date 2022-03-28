@@ -439,10 +439,8 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#delete
      */
     public void deleteBatch(List<ErpOrderItemDto> itemDtos) {
-        itemDtos.stream().forEach(dto -> {
-            ErpOrderItemEntity.toEntity(dto);
-            erpOrderItemService.delete(dto.getId());
-        });
+        List<UUID> itemId = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
+        erpOrderItemService.deleteBatch(itemId);
     }
 
     /**
