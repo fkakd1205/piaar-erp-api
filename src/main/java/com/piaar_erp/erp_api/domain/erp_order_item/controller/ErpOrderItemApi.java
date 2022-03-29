@@ -35,7 +35,7 @@ public class ErpOrderItemApi {
      * Upload excel data for order excel.
      * <p>
      * <b>POST : API URL => /api/v1/erp-order-items/excel/upload</b>
-     * 
+     *
      * @param file : MultipartFile
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#isExcelFile
@@ -59,7 +59,7 @@ public class ErpOrderItemApi {
      * Store excel data for order excel.
      * <p>
      * <b>POST : API URL => /api/v1/erp-order-items/batch</b>
-     * 
+     *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#createBatch
@@ -79,7 +79,7 @@ public class ErpOrderItemApi {
      * Search erp order item.
      * <p>
      * <b>GET : API URL => /api/v1/erp-order-items</b>
-     * 
+     *
      * @param params : Map::String, Object::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#searchBatch
@@ -100,14 +100,14 @@ public class ErpOrderItemApi {
      * Mapping by option code.
      * <p>
      * <b>GET : API URL => /api/v1/erp-order-items/search</b>
-     * 
-     * @param params : Map::String, Object::
+     *
+     * @param params   : Map::String, Object::
      * @param pageable : Pageable
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#searchBatchByPaging
      */
     @GetMapping("/search")
-    public ResponseEntity<?> searchBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort="cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+    public ResponseEntity<?> searchBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchBatchByPaging(params, pageable));
@@ -143,7 +143,7 @@ public class ErpOrderItemApi {
      * Change salesYn of erp order item.
      * <p>
      * <b>PATCH : API URL => /api/v1/erp-order-items/batch/sales-yn</b>
-     * 
+     *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#changeBatchForSalesYn
@@ -163,7 +163,7 @@ public class ErpOrderItemApi {
      * Change releaseYn of erp order item.
      * <p>
      * <b>PATCH : API URL => /api/v1/erp-order-items/batch/release-yn</b>
-     * 
+     *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#changeBatchForReleaseYn
@@ -171,7 +171,7 @@ public class ErpOrderItemApi {
     @PatchMapping("/batch/release-yn")
     public ResponseEntity<?> changeBatchForReleaseYn(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
- 
+
         erpOrderItemBusinessService.changeBatchForReleaseYn(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
@@ -183,7 +183,7 @@ public class ErpOrderItemApi {
      * Delete erp order item.
      * <p>
      * <b>POST : API URL => /api/v1/erp-order-items/batch-delete</b>
-     * 
+     *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#deleteBatch
@@ -203,7 +203,7 @@ public class ErpOrderItemApi {
      * Change option code and release option code of erp order item.
      * <p>
      * <b>Pathch : API URL => /api/v1/erp-order-items/batch/option-code/all</b>
-     * 
+     *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#changeBatchForAllOptionCode
@@ -223,7 +223,7 @@ public class ErpOrderItemApi {
      * Change release option code of erp order item.
      * <p>
      * <b>Patch : API URL => /api/v1/erp-order-items/batch/release-option-code</b>
-     * 
+     *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#changeBatchForReleaseOptionCode
@@ -243,9 +243,9 @@ public class ErpOrderItemApi {
      * Change erp order item to combined delivery item by first merge header
      * <p>
      * <b>POST : API URL => /api/v1/erp-order-items/erp-first-merge-headers/{firstMergeHeaderId}/action-merge</b>
-     * 
+     *
      * @param firstMergeHeaderId : UUID
-     * @param itemDtos : List::ErpOrderItemDto::
+     * @param itemDtos           : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getFirstMergeItem
      */
@@ -264,9 +264,9 @@ public class ErpOrderItemApi {
      * Change erp order item to combined delivery item by second merge header
      * <p>
      * <b>POST : API URL => /api/v1/erp-order-items/erp-second-merge-headers/{secondMergeHeaderId}/action-merge</b>
-     * 
-     * @param firstMergeHeaderId : UUID
-     * @param itemDtos : List::ErpOrderItemDto::
+     *
+     * @param secondMergeHeaderId : UUID
+     * @param itemDtos           : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getSecondMergeItem
      */
@@ -275,6 +275,20 @@ public class ErpOrderItemApi {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.getSecondMergeItem(secondMergeHeaderId, itemDtos));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @PatchMapping(value = "/batch/waybill")
+    public ResponseEntity<?> changeBatchForWaybill(
+            @RequestPart(value = "file") MultipartFile file, @RequestPart(value = "orderItems") List<ErpOrderItemDto> data
+    ) {
+        Message message = new Message();
+
+        System.out.println(erpOrderItemBusinessService.readWaybillExcelFile(file));
+
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 
