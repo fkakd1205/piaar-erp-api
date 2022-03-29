@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CustomExcelUtils {
-    private static final List<String> EXTENSIONS_EXCEL = Arrays.asList("xlsx", "xls", "csv");
+    private static final List<String> EXTENSIONS_EXCEL = Arrays.asList("xlsx", "xls");
     public static final int NUMERIC_TO_DOUBLE = 0;
     public static final int NUMERIC_TO_INT = 1;
 

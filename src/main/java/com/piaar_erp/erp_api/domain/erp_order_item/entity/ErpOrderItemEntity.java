@@ -85,15 +85,18 @@ public class ErpOrderItemEntity {
     @Column(name = "zip_code")
     private String zipCode; // 우편번호
 
+    @Setter
     @Column(name = "courier")
     private String courier; // 택배사
 
+    @Setter
     @Column(name = "transport_type")
     private String transportType; // 배송방식
 
     @Column(name = "delivery_message")
     private String deliveryMessage; // 배송메세지
 
+    @Setter
     @Column(name = "waybill_number")
     private String waybillNumber; // 운송장번호
 

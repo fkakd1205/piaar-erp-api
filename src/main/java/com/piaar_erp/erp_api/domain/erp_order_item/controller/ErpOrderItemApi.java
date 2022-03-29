@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.service.ErpOrderItemBusinessService;
+import com.piaar_erp.erp_api.domain.excel_form.waybill.WaybillExcelFormDto;
 import com.piaar_erp.erp_api.domain.message.dto.Message;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,14 +123,14 @@ public class ErpOrderItemApi {
      * Mapping by release option code.
      * <p>
      * <b>GET : API URL => /api/v1/erp-order-items/search/release</b>
-     * 
-     * @param params : Map::String, Object::
+     *
+     * @param params   : Map::String, Object::
      * @param pageable : Pageable
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#searchBatchByPaging
      */
     @GetMapping("/search/release")
-    public ResponseEntity<?> searchReleaseItemBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort="cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+    public ResponseEntity<?> searchReleaseItemBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchReleaseItemBatchByPaging(params, pageable));
@@ -266,7 +267,7 @@ public class ErpOrderItemApi {
      * <b>POST : API URL => /api/v1/erp-order-items/erp-second-merge-headers/{secondMergeHeaderId}/action-merge</b>
      *
      * @param secondMergeHeaderId : UUID
-     * @param itemDtos           : List::ErpOrderItemDto::
+     * @param itemDtos            : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
      * @see ErpOrderItemBusinessService#getSecondMergeItem
      */
@@ -287,10 +288,11 @@ public class ErpOrderItemApi {
     ) {
         Message message = new Message();
 
-        System.out.println(erpOrderItemBusinessService.readWaybillExcelFile(file));
-
+        List<WaybillExcelFormDto> waybillExcelFormDtos = erpOrderItemBusinessService.readWaybillExcelFile(file);
+        int updatedCount = erpOrderItemBusinessService.changeBatchForWaybill(data, waybillExcelFormDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
+        message.setMemo("운송장 입력된 데이터 총 : " + updatedCount + " 건");
 
         return new ResponseEntity<>(message, message.getStatus());
     }
