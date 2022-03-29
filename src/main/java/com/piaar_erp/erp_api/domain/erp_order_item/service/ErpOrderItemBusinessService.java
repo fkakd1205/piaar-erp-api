@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.piaar_erp.erp_api.domain.erp_first_merge_header.dto.ErpFirstMergeHeaderDto;
@@ -42,6 +43,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
@@ -191,11 +193,11 @@ public class ErpOrderItemBusinessService {
             }
 
             // price, deliveryCharge - 엑셀 타입 string, number 허용
-            String priceStr = (row.getCell(18) == null) ? "0" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
-                Integer.toString((int)row.getCell(18).getNumericCellValue()) : row.getCell(18).getStringCellValue()); 
+            String priceStr = (row.getCell(18) == null) ? "0" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ?
+                    Integer.toString((int) row.getCell(18).getNumericCellValue()) : row.getCell(18).getStringCellValue());
 
-            String deliveryChargeStr = (row.getCell(19) == null) ? "0" : (row.getCell(19).getCellType().equals(CellType.NUMERIC) ? 
-                Integer.toString((int)row.getCell(19).getNumericCellValue()) : row.getCell(19).getStringCellValue());
+            String deliveryChargeStr = (row.getCell(19) == null) ? "0" : (row.getCell(19).getCellType().equals(CellType.NUMERIC) ?
+                    Integer.toString((int) row.getCell(19).getNumericCellValue()) : row.getCell(19).getStringCellValue());
 
             // '출고 옵션코드' 값이 입력되지 않았다면 '피아르 옵션코드'로 대체한다
             String releaseOptionCode = (row.getCell(23) != null) ? row.getCell(23).getStringCellValue() : (row.getCell(22) == null ? "" : row.getCell(22).getStringCellValue());
@@ -711,7 +713,7 @@ public class ErpOrderItemBusinessService {
 
     public List<WaybillExcelFormDto> readWaybillExcelFile(MultipartFile file) {
         if (!CustomExcelUtils.isExcelFile(file)) {
-            throw new CustomExcelFileUploadException("올바른 파일은 업로드 해주세요.\n[.xls, .xlsx, .csv] 확장자 파일만 허용됩니다.");
+            throw new CustomExcelFileUploadException("올바른 파일은 업로드 해주세요.\n[.xls, .xlsx] 확장자 파일만 허용됩니다.");
         }
 
         List<String> HEADER_NAMES = WaybillExcelFormManager.HEADER_NAMES;
@@ -735,7 +737,7 @@ public class ErpOrderItemBusinessService {
                 !CustomExcelUtils.getCellCount(worksheet, HEADER_ROW_INDEX).equals(ALLOWED_CELL_SIZE) ||
                         !CustomExcelUtils.isCheckedHeaderCell(headerRow, HEADER_NAMES)
         ) {
-            throw new CustomExcelFileUploadException("올바른 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
+            throw new CustomExcelFileUploadException("올바른 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드 해주세요.");
         }
 
 //        엑셀 데이터 부분 컨트롤 Row Loop
@@ -768,5 +770,44 @@ public class ErpOrderItemBusinessService {
         }
 
         return waybillExcelFormDtos;
+    }
+
+    @Transactional
+    public int changeBatchForWaybill(List<ErpOrderItemDto> erpOrderItemDtos, List<WaybillExcelFormDto> waybillExcelFormDtos) {
+        List<WaybillExcelFormDto> dismantledWaybillExcelFormDtos = new ArrayList<>();
+        waybillExcelFormDtos.stream().forEach(r -> {
+            List<String> freightCodes = List.of(r.getFreightCode().split(","));
+
+            freightCodes.stream().forEach(freightCode -> {
+                WaybillExcelFormDto dto = new WaybillExcelFormDto();
+                dto.setReceiver(r.getReceiver());
+                dto.setFreightCode(freightCode);
+                dto.setWaybillNumber(r.getWaybillNumber());
+                dto.setTransportType(r.getTransportType());
+                dto.setCourier(r.getCourier());
+
+                dismantledWaybillExcelFormDtos.add(dto);
+            });
+        });
+
+        List<UUID> ids = erpOrderItemDtos.stream().map(r->r.getId()).collect(Collectors.toList());
+        List<ErpOrderItemEntity> erpOrderItemEntities = erpOrderItemService.findAllByIdList(ids);
+        AtomicInteger updatedCount = new AtomicInteger();
+
+        erpOrderItemEntities.forEach(erpOrderItemEntity->{
+            String matchingData = erpOrderItemEntity.getReceiver() + erpOrderItemEntity.getFreightCode();
+            dismantledWaybillExcelFormDtos.forEach(waybillExcelFormDto->{
+                String matchedData = waybillExcelFormDto.getReceiver() + waybillExcelFormDto.getFreightCode();
+
+                if(matchingData.equals(matchedData)){
+                    erpOrderItemEntity.setWaybillNumber(waybillExcelFormDto.getWaybillNumber());
+                    erpOrderItemEntity.setTransportType(waybillExcelFormDto.getTransportType());
+                    erpOrderItemEntity.setCourier(waybillExcelFormDto.getCourier());
+                    updatedCount.getAndIncrement();
+                }
+            });
+        });
+
+        return updatedCount.get();
     }
 }

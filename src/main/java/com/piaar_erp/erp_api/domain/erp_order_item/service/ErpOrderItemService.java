@@ -48,6 +48,10 @@ public class ErpOrderItemService {
         erpOrderItemRepository.saveAll(itemEntities);
     }
 
+    public List<ErpOrderItemEntity> saveListAndModifyGet(List<ErpOrderItemEntity> itemEntities) {
+        return erpOrderItemRepository.saveAll(itemEntities);
+    }
+
     /**
      * <b>DB Select Related Method</b>
      * <p>
