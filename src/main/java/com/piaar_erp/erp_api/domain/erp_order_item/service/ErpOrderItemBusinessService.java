@@ -19,11 +19,14 @@ import com.piaar_erp.erp_api.domain.erp_second_merge_header.dto.DetailDto;
 import com.piaar_erp.erp_api.domain.erp_second_merge_header.dto.ErpSecondMergeHeaderDto;
 import com.piaar_erp.erp_api.domain.erp_second_merge_header.entity.ErpSecondMergeHeaderEntity;
 import com.piaar_erp.erp_api.domain.erp_second_merge_header.service.ErpSecondMergeHeaderService;
+import com.piaar_erp.erp_api.domain.excel_form.waybill.WaybillExcelFormDto;
+import com.piaar_erp.erp_api.domain.excel_form.waybill.WaybillExcelFormManager;
 import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
 import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
 import com.piaar_erp.erp_api.domain.product_option.entity.ProductOptionEntity;
 import com.piaar_erp.erp_api.domain.product_option.service.ProductOptionService;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
+import com.piaar_erp.erp_api.utils.CustomExcelUtils;
 import com.piaar_erp.erp_api.utils.CustomFieldUtils;
 import com.piaar_erp.erp_api.utils.CustomUniqueKeyUtils;
 
@@ -188,11 +191,11 @@ public class ErpOrderItemBusinessService {
             }
 
             // price, deliveryCharge - 엑셀 타입 string, number 허용
-            String priceStr = (row.getCell(18) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
-                Integer.toString((int)row.getCell(18).getNumericCellValue()) : row.getCell(18).getStringCellValue());
+            String priceStr = (row.getCell(18) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ?
+                    Integer.toString((int) row.getCell(18).getNumericCellValue()) : row.getCell(18).getStringCellValue());
 
-            String deliveryChargeStr = (row.getCell(19) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ? 
-            Integer.toString((int)row.getCell(19).getNumericCellValue()) : row.getCell(18).getStringCellValue());
+            String deliveryChargeStr = (row.getCell(19) == null) ? "" : (row.getCell(18).getCellType().equals(CellType.NUMERIC) ?
+                    Integer.toString((int) row.getCell(19).getNumericCellValue()) : row.getCell(18).getStringCellValue());
 
             // '출고 옵션코드' 값이 입력되지 않았다면 '피아르 옵션코드'로 대체한다
             String releaseOptionCode = (row.getCell(23) != null) ? row.getCell(23).getStringCellValue() : (row.getCell(22) == null ? "" : row.getCell(22).getStringCellValue());
@@ -265,11 +268,11 @@ public class ErpOrderItemBusinessService {
     public List<ErpOrderItemDto> itemDuplicationCheck(List<ErpOrderItemDto> dtos) {
         List<ErpOrderItemDto> newItems = dtos.stream().filter(r -> r.getOrderNumber1().isEmpty()).collect(Collectors.toList());
         List<ErpOrderItemDto> duplicationCheckItems = dtos.stream().filter(r -> !r.getOrderNumber1().isEmpty()).collect(Collectors.toList());
-        
-        List<String> orderNumber1= new ArrayList<>();
-        List<String> receiver= new ArrayList<>();
-        List<String> prodName= new ArrayList<>();
-        List<String> optionName= new ArrayList<>();
+
+        List<String> orderNumber1 = new ArrayList<>();
+        List<String> receiver = new ArrayList<>();
+        List<String> prodName = new ArrayList<>();
+        List<String> optionName = new ArrayList<>();
         List<Integer> unit = new ArrayList<>();
         duplicationCheckItems.stream().forEach(r -> {
             orderNumber1.add(r.getOrderNumber1());
@@ -281,23 +284,23 @@ public class ErpOrderItemBusinessService {
 
         List<ErpOrderItemEntity> duplicationEntities = erpOrderItemService.findDuplicationItems(orderNumber1, receiver, prodName, optionName, unit);
 
-        if(duplicationEntities.size() == 0) {
+        if (duplicationEntities.size() == 0) {
             return dtos;
-        }else{
-            for(int i = 0; i < duplicationCheckItems.size(); i++) {
+        } else {
+            for (int i = 0; i < duplicationCheckItems.size(); i++) {
                 boolean duplication = false;
                 // 주문번호 + 수령인 + 상품명 + 옵션명 + 수량 이 동일하다면 저장 제외
-                for(int j = 0; j < duplicationEntities.size(); j++) {
-                    if(duplicationEntities.get(j).getOrderNumber1().equals(duplicationCheckItems.get(i).getOrderNumber1())
-                    && duplicationEntities.get(j).getReceiver().equals(duplicationCheckItems.get(i).getReceiver())
-                    && duplicationEntities.get(j).getProdName().equals(duplicationCheckItems.get(i).getProdName())
-                    && duplicationEntities.get(j).getOptionName().equals(duplicationCheckItems.get(i).getOptionName())
-                    && duplicationEntities.get(j).getUnit().equals(duplicationCheckItems.get(i).getUnit())){
+                for (int j = 0; j < duplicationEntities.size(); j++) {
+                    if (duplicationEntities.get(j).getOrderNumber1().equals(duplicationCheckItems.get(i).getOrderNumber1())
+                            && duplicationEntities.get(j).getReceiver().equals(duplicationCheckItems.get(i).getReceiver())
+                            && duplicationEntities.get(j).getProdName().equals(duplicationCheckItems.get(i).getProdName())
+                            && duplicationEntities.get(j).getOptionName().equals(duplicationCheckItems.get(i).getOptionName())
+                            && duplicationEntities.get(j).getUnit().equals(duplicationCheckItems.get(i).getUnit())) {
                         duplication = true;
                         break;
                     }
                 }
-                if(!duplication){
+                if (!duplication) {
                     newItems.add(duplicationCheckItems.get(i));
                 }
             }
@@ -584,7 +587,7 @@ public class ErpOrderItemBusinessService {
      * @param firstMergeHeaderId : UUID
      * @return ErpFirstMergeHeaderDto
      * @see ErpFirstMergeHeaderService#searchOne
-     * @see ErpFirstMergeHeaerDto#toDto
+     * @see ErpFirstMergeHeaderDto#toDto
      */
     public ErpFirstMergeHeaderDto searchErpFirstMergeHeader(UUID firstMergeHeaderId) {
         ErpFirstMergeHeaderEntity firstMergeHeaderEntity = erpFirstMergeHeaderService.searchOne(firstMergeHeaderId);
@@ -598,8 +601,8 @@ public class ErpOrderItemBusinessService {
      * 동일 수령인정보라면 구분자(|&&|)로 표시해 병합한다
      * 고정값 여부를 체크해서 데이터를 고정값으로 채워넣는다
      *
-     * @param firstMergeHeaderId : UUID
-     * @param dtos               : List::ErpOrderItemDto::
+     * @param secondMergeHeaderId : UUID
+     * @param dtos                : List::ErpOrderItemDto::
      * @return List::ErpOrderItemVo::
      * @see ErpOrderItemBusinessService#searchErpSecondMergeHeader
      * @see CustomFieldUtils#getFieldValue
@@ -696,5 +699,66 @@ public class ErpOrderItemBusinessService {
     public ErpSecondMergeHeaderDto searchErpSecondMergeHeader(UUID secondMergeHeaderId) {
         ErpSecondMergeHeaderEntity secondMergeHeaderEntity = erpSecondMergeHeaderService.searchOne(secondMergeHeaderId);
         return ErpSecondMergeHeaderDto.toDto(secondMergeHeaderEntity);
+    }
+
+    public List<WaybillExcelFormDto> readWaybillExcelFile(MultipartFile file) {
+        if (!CustomExcelUtils.isExcelFile(file)) {
+            throw new CustomExcelFileUploadException("올바른 파일은 업로드 해주세요.\n[.xls, .xlsx, .csv] 확장자 파일만 허용됩니다.");
+        }
+
+        List<String> HEADER_NAMES = WaybillExcelFormManager.HEADER_NAMES;
+        List<String> FIELD_NAMES = WaybillExcelFormManager.getAllFieldNames();
+        List<Integer> REQUIRED_CELL_NUMBERS = WaybillExcelFormManager.REQUIRED_CELL_NUMBERS;
+
+        Integer SHEET_INDEX = 0;
+        Integer HEADER_ROW_INDEX = WaybillExcelFormManager.HEADER_ROW_INDEX;
+        Integer DATA_START_ROW_INDEX = WaybillExcelFormManager.DATA_START_ROW_INDEX;
+        Integer ALLOWED_CELL_SIZE = WaybillExcelFormManager.ALLOWED_CELL_SIZE;
+
+        Workbook workbook = CustomExcelUtils.getWorkbook(file);
+        Sheet worksheet = workbook.getSheetAt(SHEET_INDEX);
+        Row headerRow = worksheet.getRow(HEADER_ROW_INDEX);
+
+//        최종 데이터 담는 리스트
+        List<WaybillExcelFormDto> waybillExcelFormDtos = new ArrayList<>();
+
+//        엑셀 형식 검사 => cell size, header cell name check
+        if (
+                !CustomExcelUtils.getCellCount(worksheet, HEADER_ROW_INDEX).equals(ALLOWED_CELL_SIZE) ||
+                        !CustomExcelUtils.isCheckedHeaderCell(headerRow, HEADER_NAMES)
+        ) {
+            throw new CustomExcelFileUploadException("올바른 양식의 엑셀 파일이 아닙니다.\n올바른 엑셀 파일을 업로드해주세요.");
+        }
+
+//        엑셀 데이터 부분 컨트롤 Row Loop
+        for (int i = DATA_START_ROW_INDEX; i < worksheet.getPhysicalNumberOfRows(); i++) {
+            Row row = worksheet.getRow(i);
+            WaybillExcelFormDto waybillExcelFormDto = new WaybillExcelFormDto();
+
+//            Cell Loop
+            for (int j = 0; j < ALLOWED_CELL_SIZE; j++) {
+                Cell cell = row.getCell(j);
+                CellType cellType = cell.getCellType();
+                Object cellValue = new Object();
+
+//                필수 데이터 셀이 하나라도 비어있게 되면 dto를 Null로 처리하고 break
+                if (REQUIRED_CELL_NUMBERS.contains(j) && cellType.equals(CellType.BLANK)) {
+                    waybillExcelFormDto = null;
+                    break;
+                }
+
+//                cellValue 가져오기
+                cellValue = CustomExcelUtils.getCellValueObject(cell, CustomExcelUtils.NUMERIC_TO_INT);
+//                cellValue dto에 매핑시키기
+                CustomFieldUtils.setFieldValueWithSuper(waybillExcelFormDto, FIELD_NAMES.get(j), cellValue.toString());
+            }
+
+//            dto가 널이 아니라면 리스트에 담는다.
+            if (waybillExcelFormDto != null) {
+                waybillExcelFormDtos.add(waybillExcelFormDto);
+            }
+        }
+
+        return waybillExcelFormDtos;
     }
 }

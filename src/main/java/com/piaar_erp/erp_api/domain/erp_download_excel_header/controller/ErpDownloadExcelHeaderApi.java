@@ -223,4 +223,54 @@ public class ErpDownloadExcelHeaderApi {
             throw new IllegalArgumentException();
         }
     }
+
+    @PostMapping("/waybill-excel-sample/action-download")
+    public void downloadWaybillExcelSample(HttpServletResponse response) {
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet1");
+        Row row = null;
+        Cell cell = null;
+        int rowNum = 0;
+
+        CellStyle blankStyle = workbook.createCellStyle();
+        CellStyle requiredStyle = workbook.createCellStyle();
+
+        Font blankStyleHeaderFont = workbook.createFont();
+        Font requiredStyleHeaderFont = workbook.createFont();
+
+        blankStyleHeaderFont.setColor(IndexedColors.GREY_25_PERCENT.index);
+        requiredStyleHeaderFont.setColor(IndexedColors.RED.index);
+
+        blankStyle.setFont(blankStyleHeaderFont);
+        requiredStyle.setFont(requiredStyleHeaderFont);
+
+        row = sheet.createRow(rowNum++);
+
+        cell = row.createCell(0);
+        cell.setCellValue("수취인명");
+        cell = row.createCell(1);
+        cell.setCellValue("!운송코드");
+        cell = row.createCell(2);
+        cell.setCellValue("운송장 번호");
+        cell = row.createCell(3);
+        cell.setCellValue("배송방식");
+        cell = row.createCell(4);
+        cell.setCellValue("택배사");
+
+
+        for (int i = 0; i < 5; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        response.setContentType("ms-vnd/excel");
+        response.setHeader("Content-Disposition", "attachment;filename=example.xlsx");
+
+        try {
+            workbook.write(response.getOutputStream());
+            workbook.close();
+        } catch (IOException e) {
+            throw new IllegalArgumentException();
+        }
+    }
 }

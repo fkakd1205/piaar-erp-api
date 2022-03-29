@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CustomFieldUtils {
     public static <T> List<Field> getAllFields(T t) {
@@ -17,6 +18,14 @@ public class CustomFieldUtils {
             clazz = clazz.getSuperclass();
         }
         return fields;
+    }
+
+    public static <T> List<String> getAllFieldNames(T t){
+        Objects.requireNonNull(t);
+
+        Field field = null;
+
+        return getAllFields(t).stream().map(r-> r.getName()).collect(Collectors.toList());
     }
 
     public static <T> Field getFieldByName(T t, String fieldName) {
