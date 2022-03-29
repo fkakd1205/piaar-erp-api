@@ -107,6 +107,34 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
         return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
     }
 
+    @Override
+    public Page<ErpOrderItemProj> qfindReleaseItemM2OJByPage(Map<String, Object> params, Pageable pageable) {
+        JPQLQuery customQuery = query.from(qErpOrderItemEntity)
+                .select(Projections.fields(ErpOrderItemProj.class,
+                        qErpOrderItemEntity.as("erpOrderItem"),
+                        qProductEntity.as("product"),
+                        qProductOptionEntity.as("productOption"),
+                        qProductCategoryEntity.as("productCategory")
+                       ))
+                .where(eqSalesYn(params), eqReleaseYn(params))
+                .where(lkSearchCondition(params))
+                .where(withinDateRange(params))
+                .leftJoin(qProductOptionEntity).on(qErpOrderItemEntity.releaseOptionCode.eq(qProductOptionEntity.code))
+                .leftJoin(qProductEntity).on(qProductOptionEntity.productCid.eq(qProductEntity.cid))
+                .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
+      
+        try{
+            this.sortPagedData(customQuery, pageable);
+        } catch(QueryException e) {
+            throw new CustomInvalidDataException(e.getMessage());
+        }
+    
+        QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
+        return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
+    }
+
     private void sortPagedData(JPQLQuery customQuery, Pageable pageable) {
         for(Sort.Order o : pageable.getSort()) {
             PathBuilder erpOrderItemBuilder = new PathBuilder(qErpOrderItemEntity.getType(), qErpOrderItemEntity.getMetadata());
@@ -140,7 +168,6 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                     customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, erpOrderItemBuilder.get(o.getProperty())));
             }
 
-            // customQuery.orderBy(qErpOrderItemEntity.createdAt.desc());
             customQuery.orderBy(qErpOrderItemEntity.cid.desc());
         }
     }
