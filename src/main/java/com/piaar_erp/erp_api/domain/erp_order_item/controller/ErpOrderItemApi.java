@@ -292,7 +292,7 @@ public class ErpOrderItemApi {
         int updatedCount = erpOrderItemBusinessService.changeBatchForWaybill(data, waybillExcelFormDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
-        message.setMemo("운송장 입력된 데이터 총 : " + updatedCount + " 건");
+        message.setMemo("선택된 데이터 : " + data.size() + " 건\n" + "운송장 입력된 데이터 총 : " + updatedCount + " 건");
 
         return new ResponseEntity<>(message, message.getStatus());
     }
