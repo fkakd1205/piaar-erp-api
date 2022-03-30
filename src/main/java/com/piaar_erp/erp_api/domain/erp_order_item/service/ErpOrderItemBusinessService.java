@@ -461,6 +461,52 @@ public class ErpOrderItemBusinessService {
     /**
      * <b>Data Update Related Method</b>
      * <p>
+     * 피아르 엑셀 데이터를 수정한다.
+     *
+     * @param dto : ErpOrderItemDto
+     * @see ErpOrderItemService#searchOne
+     * @see ErpOrderItemService#saveAndModify
+     */
+    public void updateOne(ErpOrderItemDto dto) {
+        ErpOrderItemEntity entity = erpOrderItemService.searchOne(dto.getId());
+
+        entity.setProdName(dto.getProdName()).setOptionName(dto.getOptionName())
+                .setUnit(dto.getUnit()).setReceiver(dto.getReceiver()).setReceiverContact1(dto.getReceiverContact1())
+                .setReceiverContact2(dto.getReceiverContact2())
+                .setDestination(dto.getDestination())
+                .setSalesChannel(dto.getSalesChannel())
+                .setOrderNumber1(dto.getOrderNumber1())
+                .setOrderNumber2(dto.getOrderNumber2())
+                .setChannelProdCode(dto.getChannelProdCode())
+                .setChannelOptionCode(dto.getChannelOptionCode())
+                .setZipCode(dto.getZipCode())
+                .setCourier(dto.getCourier())
+                .setTransportType(dto.getTransportType())
+                .setDeliveryMessage(dto.getDeliveryMessage())
+                .setWaybillNumber(dto.getWaybillNumber())
+                .setPrice(dto.getPrice())
+                .setDeliveryCharge(dto.getDeliveryCharge())
+                .setBarCode(dto.getBarCode())
+                .setProdCode(dto.getProdCode())
+                .setOptionCode(dto.getOptionCode())
+                .setReleaseOptionCode(dto.getReleaseOptionCode())
+                .setManagementMemo1(dto.getManagementMemo1())
+                .setManagementMemo2(dto.getManagementMemo2())
+                .setManagementMemo3(dto.getManagementMemo3())
+                .setManagementMemo4(dto.getManagementMemo4())
+                .setManagementMemo5(dto.getManagementMemo5())
+                .setManagementMemo6(dto.getManagementMemo6())
+                .setManagementMemo7(dto.getManagementMemo7())
+                .setManagementMemo8(dto.getManagementMemo8())
+                .setManagementMemo9(dto.getManagementMemo9())
+                .setManagementMemo10(dto.getManagementMemo10());
+        
+        erpOrderItemService.saveAndModify(entity);
+    }
+
+    /**
+     * <b>Data Update Related Method</b>
+     * <p>
      * 변경 주문 옵션코드를 참고해 주문 옵션코드와 출고 옵션코드를 변경한다.
      *
      * @param itemDtos : List::ErpOrderItemDto::

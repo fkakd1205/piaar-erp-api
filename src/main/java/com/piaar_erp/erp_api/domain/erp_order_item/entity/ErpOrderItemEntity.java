@@ -46,42 +46,55 @@ public class ErpOrderItemEntity {
     @Column(name = "unique_code")
     private String uniqueCode; // 피아르 고유코드
 
+    @Setter
     @Column(name = "prod_name")
     private String prodName; // 상품명 / 필수값
 
+    @Setter
     @Column(name = "option_name")
     private String optionName; // 옵션정보 / 필수값
 
+    @Setter
     @Column(name = "unit")
     private Integer unit; // 수량 / 필수값
 
+    @Setter
     @Column(name = "receiver")
     private String receiver; // 수취인명 / 필수값
 
+    @Setter
     @Column(name = "receiver_contact1")
     private String receiverContact1; // 전화번호1 / 필수값
 
+    @Setter
     @Column(name = "receiver_contact2")
     private String receiverContact2; // 전화번호2
 
+    @Setter
     @Column(name = "destination")
     private String destination; // 주소 / 필수값
 
+    @Setter
     @Column(name = "sales_channel")
     private String salesChannel; // 판매채널
 
+    @Setter
     @Column(name = "order_number1")
     private String orderNumber1; // 판매채널 주문번호1
 
+    @Setter
     @Column(name = "order_number2")
     private String orderNumber2; // 판매채널 주문번호2
 
+    @Setter
     @Column(name = "channel_prod_code")
     private String channelProdCode; // 판매채널 상품코드
 
+    @Setter
     @Column(name = "channel_option_code")
     private String channelOptionCode; // 판매채널 옵션코드
 
+    @Setter
     @Column(name = "zip_code")
     private String zipCode; // 우편번호
 
@@ -93,6 +106,7 @@ public class ErpOrderItemEntity {
     @Column(name = "transport_type")
     private String transportType; // 배송방식
 
+    @Setter
     @Column(name = "delivery_message")
     private String deliveryMessage; // 배송메세지
 
@@ -100,15 +114,19 @@ public class ErpOrderItemEntity {
     @Column(name = "waybill_number")
     private String waybillNumber; // 운송장번호
 
+    @Setter
     @Column(name = "price")
     private Integer price; // 판매금액
 
+    @Setter
     @Column(name = "delivery_charge")
     private Integer deliveryCharge; // 배송비
 
+    @Setter
     @Column(name = "barcode")
     private String barCode; // 바코드
 
+    @Setter
     @Column(name = "prod_code")
     private String prodCode; // 피아르 상품코드
 
@@ -120,33 +138,43 @@ public class ErpOrderItemEntity {
     @Column(name = "release_option_code")
     private String releaseOptionCode; // 출고 옵션코드
 
+    @Setter
     @Column(name = "management_memo1")
     private String managementMemo1; // 관리메모1
 
+    @Setter
     @Column(name = "management_memo2")
     private String managementMemo2; // 관리메모2
 
+    @Setter
     @Column(name = "management_memo3")
     private String managementMemo3; // 관리메모3
 
+    @Setter
     @Column(name = "management_memo4")
     private String managementMemo4; // 관리메모4
 
+    @Setter
     @Column(name = "management_memo5")
     private String managementMemo5; // 관리메모5
 
+    @Setter
     @Column(name = "management_memo6")
     private String managementMemo6; // 관리메모6
 
+    @Setter
     @Column(name = "management_memo7")
     private String managementMemo7; // 관리메모7
 
+    @Setter
     @Column(name = "management_memo8")
     private String managementMemo8; // 관리메모8
 
+    @Setter
     @Column(name = "management_memo9")
     private String managementMemo9; // 관리메모9
 
+    @Setter
     @Column(name = "management_memo10")
     private String managementMemo10; // 관리메모10
 
