@@ -210,7 +210,7 @@ public class ErpOrderItemApi {
      * @see ErpOrderItemBusinessService#updateOne
      */
     @PutMapping("")
-    public ResponseEntity<?> updateOne(@RequestBody ErpOrderItemDto itemDtos) {
+    public ResponseEntity<?> updateOne(@RequestBody @Valid ErpOrderItemDto itemDtos) {
         Message message = new Message();
 
         erpOrderItemBusinessService.updateOne(itemDtos);
