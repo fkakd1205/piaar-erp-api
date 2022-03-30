@@ -201,9 +201,29 @@ public class ErpOrderItemApi {
     }
 
     /**
+     * Update erp order item.
+     * <p>
+     * <b>PUT : API URL => /api/v1/erp-order-items</b>
+     *
+     * @param itemDtos : ErpOrderItemDto
+     * @return ResponseEntity(message, HttpStatus)
+     * @see ErpOrderItemBusinessService#updateOne
+     */
+    @PutMapping("")
+    public ResponseEntity<?> updateOne(@RequestBody @Valid ErpOrderItemDto itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.updateOne(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    /**
      * Change option code and release option code of erp order item.
      * <p>
-     * <b>Pathch : API URL => /api/v1/erp-order-items/batch/option-code/all</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-items/batch/option-code/all</b>
      *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)
@@ -223,7 +243,7 @@ public class ErpOrderItemApi {
     /**
      * Change release option code of erp order item.
      * <p>
-     * <b>Patch : API URL => /api/v1/erp-order-items/batch/release-option-code</b>
+     * <b>PATCH : API URL => /api/v1/erp-order-items/batch/release-option-code</b>
      *
      * @param itemDtos : List::ErpOrderItemDto::
      * @return ResponseEntity(message, HttpStatus)

@@ -3,6 +3,8 @@ package com.piaar_erp.erp_api.domain.erp_order_item.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
@@ -27,27 +29,39 @@ public class ErpOrderItemDto {
     private Integer cid;
     private UUID id;
 
+    @NotNull
+    @NotBlank
     @Size(max = 36)
     private String uniqueCode; // 피아르 고유코드
 
+    @NotNull
+    @NotBlank
     @Size(max = 300)
     private String prodName; // 상품명 / 필수값
 
+    @NotNull
+    @NotBlank
     @Size(max = 300)
     private String optionName; // 옵션정보 / 필수값
 
+    @NotNull
     @PositiveOrZero
     private Integer unit; // 수량 / 필수값
 
+    @NotNull
+    @NotBlank
     @Size(max = 20)
     private String receiver; // 수취인명 / 필수값
 
+    @NotBlank
     @Size(max = 20)
     private String receiverContact1; // 전화번호1 / 필수값
 
     @Size(max = 20)
     private String receiverContact2; // 전화번호2
 
+    @NotNull
+    @NotBlank
     @Size(max = 200)
     private String destination; // 주소 / 필수값
 

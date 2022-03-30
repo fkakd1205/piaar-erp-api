@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -44,6 +45,18 @@ public class GlobalExceptionHandler {
        message.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
        message.setMessage("undefined_error");
        message.setMemo("알 수 없는 에러가 발생했습니다. 관리자에게 문의하세요.");
+
+       return new ResponseEntity<>(message, message.getStatus());
+   }
+
+   @ExceptionHandler({ MethodArgumentNotValidException.class })
+   public ResponseEntity<?> argumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+       log.error("ERROR STACKTRACE => {}", e.getStackTrace());
+
+       Message message = new Message();
+       message.setStatus(HttpStatus.CONFLICT);
+       message.setMessage("data_error");
+       message.setMemo("허용할 수 없는 데이터가 존재합니다.");
 
        return new ResponseEntity<>(message, message.getStatus());
    }
