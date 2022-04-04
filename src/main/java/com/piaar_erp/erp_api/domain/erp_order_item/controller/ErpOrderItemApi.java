@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,11 +26,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/erp-order-items")
 public class ErpOrderItemApi {
-    private ErpOrderItemBusinessService erpOrderItemBusinessService;
+    private final ErpOrderItemBusinessService erpOrderItemBusinessService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public ErpOrderItemApi(ErpOrderItemBusinessService erpOrderItemBusinessService) {
+    public ErpOrderItemApi(
+            ErpOrderItemBusinessService erpOrderItemBusinessService,
+            SimpMessagingTemplate messagingTemplate
+    ) {
         this.erpOrderItemBusinessService = erpOrderItemBusinessService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     /**
