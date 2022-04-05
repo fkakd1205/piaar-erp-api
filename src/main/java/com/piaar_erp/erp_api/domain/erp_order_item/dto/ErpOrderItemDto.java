@@ -29,9 +29,9 @@ public class ErpOrderItemDto {
     private Integer cid;
     private UUID id;
 
-    @NotNull
-    @NotBlank
-    @Size(max = 36)
+//    @NotNull
+//    @NotBlank
+//    @Size(max = 36)
     private String uniqueCode; // 피아르 고유코드
 
     @NotNull

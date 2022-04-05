@@ -30,6 +30,20 @@ public class ErpOrderItemSocket {
         this.messagingTemplate = messagingTemplate;
     }
 
+    @PostMapping("/batch")
+    public ResponseEntity<?> createBatch(@RequestBody @Valid List<ErpOrderItemDto> itemDtos) {
+        Message message = new Message();
+
+        erpOrderItemBusinessService.createBatch(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+        message.setMemo("새로 생성된 데이터가 추가되었습니다.");
+
+        messagingTemplate.convertAndSend("/topic/erp.erp-order-item", message);
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
     @PutMapping("")
     public void updateOne(@RequestBody @Valid ErpOrderItemDto itemDtos) {
         Message message = new Message();
