@@ -329,6 +329,14 @@ public class ErpOrderItemBusinessService {
         return ErpOrderItemVos;
     }
 
+    public List<ErpOrderItemVo> searchBatchByIds(List<UUID> ids, Map<String, Object> params) {
+
+        // 등록된 모든 엑셀 데이터를 조회한다
+        List<ErpOrderItemProj> itemProjs = erpOrderItemService.findAllM2OJ(ids, params);       // 페이징 처리 x
+        // 옵션재고수량 추가
+        List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
+        return ErpOrderItemVos;
+    }
     /**
      * <b>DB Select Related Method</b>
      * <p>
@@ -514,9 +522,9 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#saveListAndModify
      */
     public void changeBatchForAllOptionCode(List<ErpOrderItemDto> itemDtos) {
+        Long logicStartTime = System.currentTimeMillis();
         List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
-
         entities.stream().forEach(entity -> {
             itemDtos.stream().forEach(dto -> {
                 if (entity.getId().equals(dto.getId())) {
@@ -524,7 +532,13 @@ public class ErpOrderItemBusinessService {
                 }
             });
         });
+
+        Long logicEndTime = System.currentTimeMillis();
         erpOrderItemService.saveListAndModify(entities);
+        Long transactionEndTime = System.currentTimeMillis();
+
+        System.out.println(logicEndTime - logicStartTime);
+        System.out.println(transactionEndTime - logicEndTime);
     }
 
     /**

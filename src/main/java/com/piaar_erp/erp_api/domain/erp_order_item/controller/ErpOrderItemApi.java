@@ -1,8 +1,10 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -96,6 +98,19 @@ public class ErpOrderItemApi {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchBatch(params));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @PostMapping("/action-refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, Object> params) {
+        List<String> idsStr = (List<String>) params.get("ids");
+        List<UUID> ids = idsStr.stream().map(r->UUID.fromString(r)).collect(Collectors.toList());
+
+        Message message = new Message();
+        message.setData(erpOrderItemBusinessService.searchBatchByIds(ids, params));
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
 

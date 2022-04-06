@@ -48,10 +48,6 @@ public class ErpOrderItemService {
         erpOrderItemRepository.saveAll(itemEntities);
     }
 
-    public List<ErpOrderItemEntity> saveListAndModifyGet(List<ErpOrderItemEntity> itemEntities) {
-        return erpOrderItemRepository.saveAll(itemEntities);
-    }
-
     /**
      * <b>DB Select Related Method</b>
      * <p>
@@ -63,6 +59,10 @@ public class ErpOrderItemService {
      */
     public List<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params) {
         return erpOrderItemRepository.qfindAllM2OJ(params);
+    }
+
+    public List<ErpOrderItemProj> findAllM2OJ(List<UUID> ids, Map<String, Object> params) {
+        return erpOrderItemRepository.qfindAllM2OJByIdList(ids, params);
     }
 
     /**
@@ -115,7 +115,7 @@ public class ErpOrderItemService {
      * <p>
      * id 값에 대응하는 엑셀 데이터를 모두 삭제한다.
      * 
-     * @param id : List::UUID::
+     * @param ids : List::UUID::
      * @ErpOrderItemRepository#deleteAllById
      */
     public void deleteBatch(List<UUID> ids) {

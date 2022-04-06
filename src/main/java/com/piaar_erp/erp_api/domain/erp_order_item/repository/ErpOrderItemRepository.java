@@ -29,4 +29,9 @@ public interface ErpOrderItemRepository extends JpaRepository<ErpOrderItemEntity
         "WHERE item.id IN :ids"
     )
     void deleteAllById(List<UUID> ids);
+
+//    @Query(
+//            "UPDATE "
+//    )
+//    void updateAll(List<ErpOrderItemEntity> itemEntities);
 }
