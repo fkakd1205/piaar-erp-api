@@ -102,7 +102,7 @@ public class ErpOrderItemDto {
     private Integer deliveryCharge;  // 배송비
 
     @Size(max = 100)
-    private String barCode; // 바코드
+    private String barcode; // 바코드
 
     @Size(max = 20)
     private String prodCode; // 피아르 상품코드
@@ -199,7 +199,7 @@ public class ErpOrderItemDto {
                 .waybillNumber(entity.getWaybillNumber())
                 .price(entity.getPrice())
                 .deliveryCharge(entity.getDeliveryCharge())
-                .barCode(entity.getBarCode())
+                .barcode(entity.getBarcode())
                 .prodCode(entity.getProdCode())
                 .optionCode(entity.getOptionCode())
                 .releaseOptionCode(entity.getReleaseOptionCode())
