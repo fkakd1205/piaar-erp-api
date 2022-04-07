@@ -124,7 +124,7 @@ public class ErpOrderItemEntity {
 
     @Setter
     @Column(name = "barcode")
-    private String barCode; // 바코드
+    private String barcode; // 바코드
 
     @Setter
     @Column(name = "prod_code")
@@ -232,7 +232,7 @@ public class ErpOrderItemEntity {
                 .waybillNumber(dto.getWaybillNumber())
                 .price(dto.getPrice())
                 .deliveryCharge(dto.getDeliveryCharge())
-                .barCode(dto.getBarCode())
+                .barcode(dto.getBarcode())
                 .prodCode(dto.getProdCode())
                 .optionCode(dto.getOptionCode())
                 .releaseOptionCode(dto.getReleaseOptionCode())

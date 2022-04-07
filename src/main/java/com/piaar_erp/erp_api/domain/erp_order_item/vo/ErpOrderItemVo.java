@@ -40,7 +40,7 @@ public class ErpOrderItemVo {
     private String waybillNumber;   // 운송장번호
     private String price;  // 판매금액
     private String deliveryCharge;  // 배송비
-    private String barCode; // 바코드
+    private String barcode; // 바코드
     private String prodCode; // 피아르 상품코드
     private String optionCode; // 피아르 옵션코드
     private String releaseOptionCode;   // 출고 옵션코드
@@ -106,7 +106,7 @@ public class ErpOrderItemVo {
                 .waybillNumber(proj.getErpOrderItem().getWaybillNumber())
                 .price(proj.getErpOrderItem().getPrice() != null ? proj.getErpOrderItem().getPrice().toString() : null)
                 .deliveryCharge(proj.getErpOrderItem().getDeliveryCharge() != null ? proj.getErpOrderItem().getDeliveryCharge().toString() : null)
-                .barCode(proj.getErpOrderItem().getBarCode())
+                .barcode(proj.getErpOrderItem().getBarcode())
                 .prodCode(proj.getErpOrderItem().getProdCode())
                 .optionCode(proj.getErpOrderItem().getOptionCode())
                 .releaseOptionCode(proj.getErpOrderItem().getReleaseOptionCode())
@@ -163,7 +163,7 @@ public class ErpOrderItemVo {
                 .waybillNumber(dto.getWaybillNumber())
                 .price(dto.getPrice() != null ? dto.getPrice().toString() : null)
                 .deliveryCharge(dto.getDeliveryCharge() != null ? dto.getDeliveryCharge().toString() : null)
-                .barCode(dto.getBarCode())
+                .barcode(dto.getBarcode())
                 .prodCode(dto.getProdCode())
                 .optionCode(dto.getOptionCode())
                 .releaseOptionCode(dto.getReleaseOptionCode())
