@@ -1,8 +1,10 @@
 package com.piaar_erp.erp_api.domain.erp_order_item.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -102,6 +104,19 @@ public class ErpOrderItemApi {
         return new ResponseEntity<>(message, message.getStatus());
     }
 
+    @PostMapping("/action-refresh")
+    public ResponseEntity<?> refresh(@RequestBody Map<String, Object> params) {
+        List<String> idsStr = (List<String>) params.get("ids");
+        List<UUID> ids = idsStr.stream().map(r->UUID.fromString(r)).collect(Collectors.toList());
+
+        Message message = new Message();
+        message.setData(erpOrderItemBusinessService.searchBatchByIds(ids, params));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
     /**
      * Search erp order item.
      * Mapping by option code.
@@ -114,7 +129,7 @@ public class ErpOrderItemApi {
      * @see ErpOrderItemBusinessService#searchBatchByPaging
      */
     @GetMapping("/search")
-    public ResponseEntity<?> searchBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+    public ResponseEntity<?> searchBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 300) Pageable pageable) {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchBatchByPaging(params, pageable));
@@ -136,7 +151,7 @@ public class ErpOrderItemApi {
      * @see ErpOrderItemBusinessService#searchBatchByPaging
      */
     @GetMapping("/search/release")
-    public ResponseEntity<?> searchReleaseItemBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+    public ResponseEntity<?> searchReleaseItemBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 300) Pageable pageable) {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchReleaseItemBatchByPaging(params, pageable));

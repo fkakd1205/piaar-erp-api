@@ -11,6 +11,8 @@ public class Message {
     private int statusCode;
     private String statusMessage;
     private String message;
+    private String socketBehavior;
+    private String socketMemo;
     private String memo;
     private Object data;
     private String path;
@@ -22,6 +24,8 @@ public class Message {
         this.statusCode = this.status.value();
         this.statusMessage = this.status.name();
         this.message = null;
+        this.socketBehavior = null;
+        this.socketMemo = null;
         this.memo = null;
         this.data = null;
         this.timestamp = new Date();

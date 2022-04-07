@@ -43,7 +43,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
 
     @Autowired
     public ErpOrderItemRepositoryImpl(
-        JPAQueryFactory query
+            JPAQueryFactory query
     ) {
         this.query = query;
     }
@@ -51,8 +51,8 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
     @Override
     public List<ErpOrderItemEntity> qfindAllByIdList(List<UUID> idList) {
         JPQLQuery customQuery = query.from(qErpOrderItemEntity)
-            .select(qErpOrderItemEntity)
-            .where(qErpOrderItemEntity.id.in(idList));
+                .select(qErpOrderItemEntity)
+                .where(qErpOrderItemEntity.id.in(idList));
 
         QueryResults<ErpOrderItemEntity> result = customQuery.fetchResults();
         return result.getResults();
@@ -66,16 +66,37 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                         qProductEntity.as("product"),
                         qProductOptionEntity.as("productOption"),
                         qProductCategoryEntity.as("productCategory")
-                       ))
+                ))
                 .where(eqSalesYn(params), eqReleaseYn(params))
                 .where(lkSearchCondition(params))
                 .where(withinDateRange(params))
                 .leftJoin(qProductOptionEntity).on(qErpOrderItemEntity.optionCode.eq(qProductOptionEntity.code))
                 .leftJoin(qProductEntity).on(qProductOptionEntity.productCid.eq(qProductEntity.cid))
                 .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid));
-    
+
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
-       
+
+        return result.getResults();
+    }
+
+    @Override
+    public List<ErpOrderItemProj> qfindAllM2OJByIdList(List<UUID> idList, Map<String, Object> params) {
+        JPQLQuery customQuery = query.from(qErpOrderItemEntity)
+                .select(
+                        Projections.fields(ErpOrderItemProj.class,
+                                qErpOrderItemEntity.as("erpOrderItem"),
+                                qProductEntity.as("product"),
+                                qProductOptionEntity.as("productOption"),
+                                qProductCategoryEntity.as("productCategory")
+                        )
+                )
+                .where(qErpOrderItemEntity.id.in(idList))
+                .where(eqSalesYn(params), eqReleaseYn(params))
+                .leftJoin(qProductOptionEntity).on(qErpOrderItemEntity.optionCode.eq(qProductOptionEntity.code))
+                .leftJoin(qProductEntity).on(qProductOptionEntity.productCid.eq(qProductEntity.cid))
+                .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid));
+
+        QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
         return result.getResults();
     }
 
@@ -87,7 +108,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                         qProductEntity.as("product"),
                         qProductOptionEntity.as("productOption"),
                         qProductCategoryEntity.as("productCategory")
-                       ))
+                ))
                 .where(eqSalesYn(params), eqReleaseYn(params))
                 .where(lkSearchCondition(params))
                 .where(withinDateRange(params))
@@ -96,13 +117,13 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                 .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-      
-        try{
+
+        try {
             this.sortPagedData(customQuery, pageable);
-        } catch(QueryException e) {
+        } catch (QueryException e) {
             throw new CustomInvalidDataException(e.getMessage());
         }
-    
+
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
         return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
     }
@@ -115,7 +136,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                         qProductEntity.as("product"),
                         qProductOptionEntity.as("productOption"),
                         qProductCategoryEntity.as("productCategory")
-                       ))
+                ))
                 .where(eqSalesYn(params), eqReleaseYn(params))
                 .where(lkSearchCondition(params))
                 .where(withinDateRange(params))
@@ -124,25 +145,25 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                 .leftJoin(qProductCategoryEntity).on(qProductEntity.productCategoryCid.eq(qProductCategoryEntity.cid))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-      
-        try{
+
+        try {
             this.sortPagedData(customQuery, pageable);
-        } catch(QueryException e) {
+        } catch (QueryException e) {
             throw new CustomInvalidDataException(e.getMessage());
         }
-    
+
         QueryResults<ErpOrderItemProj> result = customQuery.fetchResults();
         return new PageImpl<ErpOrderItemProj>(result.getResults(), pageable, result.getTotal());
     }
 
     private void sortPagedData(JPQLQuery customQuery, Pageable pageable) {
-        for(Sort.Order o : pageable.getSort()) {
+        for (Sort.Order o : pageable.getSort()) {
             PathBuilder erpOrderItemBuilder = new PathBuilder(qErpOrderItemEntity.getType(), qErpOrderItemEntity.getMetadata());
             PathBuilder productBuilder = new PathBuilder(qProductEntity.getType(), qProductEntity.getMetadata());
             PathBuilder productOptionBuilder = new PathBuilder(qProductOptionEntity.getType(), qProductOptionEntity.getMetadata());
             PathBuilder productCategoryBuilder = new PathBuilder(qProductCategoryEntity.getType(), qProductCategoryEntity.getMetadata());
 
-            switch(o.getProperty().toString()) {
+            switch (o.getProperty().toString()) {
                 case "categoryName":
                     customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productCategoryBuilder.get("name")));
                     break;
@@ -162,7 +183,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                     customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, productOptionBuilder.get("stockUnit")));
                     break;
                 default:
-                    if(CustomFieldUtils.getFieldByName(qErpOrderItemEntity, o.getProperty().toString()) == null) {
+                    if (CustomFieldUtils.getFieldByName(qErpOrderItemEntity, o.getProperty().toString()) == null) {
                         throw new QueryException("올바른 데이터가 아닙니다.");
                     }
                     customQuery.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC : Order.DESC, erpOrderItemBuilder.get(o.getProperty())));
@@ -175,7 +196,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
     private BooleanExpression eqSalesYn(Map<String, Object> params) {
         String salesYn = params.get("salesYn") == null ? null : params.get("salesYn").toString();
 
-        if(salesYn == null){
+        if (salesYn == null) {
             return null;
         } else {
             return qErpOrderItemEntity.salesYn.eq(salesYn);
@@ -185,7 +206,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
     private BooleanExpression eqReleaseYn(Map<String, Object> params) {
         String releaseYn = params.get("releaseYn") == null ? null : params.get("releaseYn").toString();
 
-        if(releaseYn == null){
+        if (releaseYn == null) {
             return null;
         } else {
             return qErpOrderItemEntity.releaseYn.eq(releaseYn);
@@ -205,17 +226,17 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
         startDate = LocalDateTime.parse(params.get("startDate").toString(), formatter);
         endDate = LocalDateTime.parse(params.get("endDate").toString(), formatter);
 
-        if(startDate.isAfter(endDate)) {
+        if (startDate.isAfter(endDate)) {
             throw new CustomInvalidDataException("조회기간을 정확히 선택해 주세요.");
         }
 
-        if(periodType.equals("registration")) {
+        if (periodType.equals("registration")) {
             return qErpOrderItemEntity.createdAt.between(startDate, endDate);
         } else if (periodType.equals("sales")) {
             return qErpOrderItemEntity.salesAt.between(startDate, endDate);
         } else if (periodType.equals("release")) {
             return qErpOrderItemEntity.releaseAt.between(startDate, endDate);
-        }else {
+        } else {
             throw new CustomInvalidDataException("상세조건이 올바르지 않습니다.");
         }
     }
@@ -223,11 +244,11 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
     private BooleanExpression lkSearchCondition(Map<String, Object> params) {
         String columnName = params.get("searchColumnName") == null ? null : params.get("searchColumnName").toString();
         String searchQuery = params.get("searchQuery") == null ? null : params.get("searchQuery").toString();
-        if(columnName == null || searchQuery == null){
+        if (columnName == null || searchQuery == null) {
             return null;
         }
 
-        try{
+        try {
             StringPath columnNameStringPath = null;
             switch (columnName) {
                 case "categoryName":
@@ -246,7 +267,7 @@ public class ErpOrderItemRepositoryImpl implements ErpOrderItemRepositoryCustom 
                     columnNameStringPath = CustomFieldUtils.getFieldValue(qProductOptionEntity, "defaultName");
                     break;
                 default:
-                    if(CustomFieldUtils.getFieldByName(qErpOrderItemEntity,columnName) == null) {
+                    if (CustomFieldUtils.getFieldByName(qErpOrderItemEntity, columnName) == null) {
                         throw new QueryException("올바른 데이터가 아닙니다.");
                     }
                     columnNameStringPath = CustomFieldUtils.getFieldValue(qErpOrderItemEntity, columnName);

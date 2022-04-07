@@ -2,15 +2,19 @@ package com.piaar_erp.erp_api.domain.erp_order_item.controller;
 
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.service.ErpOrderItemBusinessService;
+import com.piaar_erp.erp_api.domain.excel_form.waybill.WaybillExcelFormDto;
 import com.piaar_erp.erp_api.domain.message.dto.Message;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @Validated
@@ -37,7 +41,7 @@ public class ErpOrderItemSocket {
         erpOrderItemBusinessService.createBatch(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
-        message.setMemo("새로 생성된 데이터가 추가되었습니다.");
+        message.setSocketMemo("[주문 수집 관리] 에 추가된 데이터가 있습니다.");
 
         messagingTemplate.convertAndSend("/topic/erp.erp-order-item", message);
 
@@ -108,5 +112,22 @@ public class ErpOrderItemSocket {
         message.setMessage("success");
 
         messagingTemplate.convertAndSend("/topic/erp.erp-order-item", message);
+    }
+
+    @PatchMapping(value = "/batch/waybill")
+    public ResponseEntity<?> changeBatchForWaybill(
+            @RequestPart(value = "file") MultipartFile file, @RequestPart(value = "orderItems") List<ErpOrderItemDto> data
+    ) {
+        Message message = new Message();
+
+        List<WaybillExcelFormDto> waybillExcelFormDtos = erpOrderItemBusinessService.readWaybillExcelFile(file);
+        int updatedCount = erpOrderItemBusinessService.changeBatchForWaybill(data, waybillExcelFormDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+        message.setMemo("운송장이 입력된 데이터는 총 : " + updatedCount + " 건 입니다.");
+
+        messagingTemplate.convertAndSend("/topic/erp.erp-order-item", message);
+
+        return new ResponseEntity<>(message, message.getStatus());
     }
 }
