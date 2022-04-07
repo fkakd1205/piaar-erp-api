@@ -129,7 +129,7 @@ public class ErpOrderItemApi {
      * @see ErpOrderItemBusinessService#searchBatchByPaging
      */
     @GetMapping("/search")
-    public ResponseEntity<?> searchBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+    public ResponseEntity<?> searchBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 300) Pageable pageable) {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchBatchByPaging(params, pageable));
@@ -151,7 +151,7 @@ public class ErpOrderItemApi {
      * @see ErpOrderItemBusinessService#searchBatchByPaging
      */
     @GetMapping("/search/release")
-    public ResponseEntity<?> searchReleaseItemBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 10) Pageable pageable) {
+    public ResponseEntity<?> searchReleaseItemBatchByPaging(@RequestParam Map<String, Object> params, @PageableDefault(sort = "cid", direction = Sort.Direction.DESC, size = 300) Pageable pageable) {
         Message message = new Message();
 
         message.setData(erpOrderItemBusinessService.searchReleaseItemBatchByPaging(params, pageable));
