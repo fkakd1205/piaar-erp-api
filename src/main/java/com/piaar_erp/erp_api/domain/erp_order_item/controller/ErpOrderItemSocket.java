@@ -103,6 +103,17 @@ public class ErpOrderItemSocket {
         messagingTemplate.convertAndSend("/topic/erp.erp-order-item", message);
     }
 
+    @PatchMapping("/batch/stock/action-reflect")
+    public ResponseEntity<?> actionReflectStock(@RequestBody List<ErpOrderItemDto> itemDtos){
+        Message message = new Message();
+
+        System.out.println(erpOrderItemBusinessService.actionReflectStock(itemDtos));
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
     @PostMapping("/batch-delete")
     public void deleteBatch(@RequestBody List<ErpOrderItemDto> itemDtos) {
         Message message = new Message();
