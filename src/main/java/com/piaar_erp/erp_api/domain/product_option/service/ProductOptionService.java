@@ -68,6 +68,11 @@ public class ProductOptionService {
         return productOptionGetDtos;
     }
 
+    public List<ProductOptionEntity> searchListByOptionCodes(List<String> optionCodes) {
+        List<ProductOptionEntity> productOptionEntities = productOptionRepository.findAllByCode(optionCodes);
+        return productOptionEntities;
+    }
+
     /**
      * <b>DB Select Related Method</b>
      * <p>

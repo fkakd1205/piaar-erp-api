@@ -26,6 +26,8 @@ import com.piaar_erp.erp_api.domain.exception.CustomExcelFileUploadException;
 import com.piaar_erp.erp_api.domain.product_option.dto.ProductOptionDto;
 import com.piaar_erp.erp_api.domain.product_option.entity.ProductOptionEntity;
 import com.piaar_erp.erp_api.domain.product_option.service.ProductOptionService;
+import com.piaar_erp.erp_api.domain.release_stock.entity.ReleaseStockEntity;
+import com.piaar_erp.erp_api.domain.release_stock.service.ReleaseStockService;
 import com.piaar_erp.erp_api.utils.CustomDateUtils;
 import com.piaar_erp.erp_api.utils.CustomExcelUtils;
 import com.piaar_erp.erp_api.utils.CustomFieldUtils;
@@ -55,6 +57,7 @@ public class ErpOrderItemBusinessService {
     private final ProductOptionService productOptionService;
     private final ErpFirstMergeHeaderService erpFirstMergeHeaderService;
     private final ErpSecondMergeHeaderService erpSecondMergeHeaderService;
+    private final ReleaseStockService releaseStockService;
 
     // Excel file extension.
     private final List<String> EXTENSIONS_EXCEL = Arrays.asList("xlsx", "xls");
@@ -337,6 +340,7 @@ public class ErpOrderItemBusinessService {
         List<ErpOrderItemVo> ErpOrderItemVos = this.setOptionStockUnit(itemProjs);
         return ErpOrderItemVos;
     }
+
     /**
      * <b>DB Select Related Method</b>
      * <p>
@@ -508,7 +512,7 @@ public class ErpOrderItemBusinessService {
                 .setManagementMemo8(dto.getManagementMemo8())
                 .setManagementMemo9(dto.getManagementMemo9())
                 .setManagementMemo10(dto.getManagementMemo10());
-        
+
         erpOrderItemService.saveAndModify(entity);
     }
 
@@ -521,24 +525,20 @@ public class ErpOrderItemBusinessService {
      * @see ErpOrderItemService#findAllByIdList
      * @see ErpOrderItemService#saveListAndModify
      */
+    @Transactional
     public void changeBatchForAllOptionCode(List<ErpOrderItemDto> itemDtos) {
-        Long logicStartTime = System.currentTimeMillis();
-        List<UUID> idList = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
-        List<ErpOrderItemEntity> entities = erpOrderItemService.findAllByIdList(idList);
-        entities.stream().forEach(entity -> {
-            itemDtos.stream().forEach(dto -> {
+        List<ErpOrderItemEntity> entities = erpOrderItemService.getEntities(itemDtos);
+
+        entities.forEach(entity -> {
+            itemDtos.forEach(dto -> {
                 if (entity.getId().equals(dto.getId())) {
-                    entity.setOptionCode(dto.getOptionCode()).setReleaseOptionCode(dto.getOptionCode());
+                    entity.setOptionCode(dto.getOptionCode())
+                            .setReleaseOptionCode(dto.getOptionCode());
                 }
             });
         });
 
-        Long logicEndTime = System.currentTimeMillis();
-        erpOrderItemService.saveListAndModify(entities);
-        Long transactionEndTime = System.currentTimeMillis();
-
-        System.out.println(logicEndTime - logicStartTime);
-        System.out.println(transactionEndTime - logicEndTime);
+//        erpOrderItemService.saveListAndModify(entities);
     }
 
     /**
@@ -850,16 +850,16 @@ public class ErpOrderItemBusinessService {
             });
         });
 
-        List<UUID> ids = erpOrderItemDtos.stream().map(r->r.getId()).collect(Collectors.toList());
+        List<UUID> ids = erpOrderItemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
         List<ErpOrderItemEntity> erpOrderItemEntities = erpOrderItemService.findAllByIdList(ids);
         AtomicInteger updatedCount = new AtomicInteger();
 
-        erpOrderItemEntities.forEach(erpOrderItemEntity->{
+        erpOrderItemEntities.forEach(erpOrderItemEntity -> {
             String matchingData = erpOrderItemEntity.getReceiver() + erpOrderItemEntity.getFreightCode();
-            dismantledWaybillExcelFormDtos.forEach(waybillExcelFormDto->{
+            dismantledWaybillExcelFormDtos.forEach(waybillExcelFormDto -> {
                 String matchedData = waybillExcelFormDto.getReceiver() + waybillExcelFormDto.getFreightCode();
 
-                if(matchingData.equals(matchedData)){
+                if (matchingData.equals(matchedData)) {
                     erpOrderItemEntity.setWaybillNumber(waybillExcelFormDto.getWaybillNumber());
                     erpOrderItemEntity.setTransportType(waybillExcelFormDto.getTransportType());
                     erpOrderItemEntity.setCourier(waybillExcelFormDto.getCourier());
@@ -869,5 +869,50 @@ public class ErpOrderItemBusinessService {
         });
 
         return updatedCount.get();
+    }
+
+    @Transactional
+    public Integer actionReflectStock(List<ErpOrderItemDto> itemDtos) {
+        Set<String> optionCodeSet = new HashSet<>();
+        List<ErpOrderItemEntity> erpOrderItemEntities = erpOrderItemService.getEntities(itemDtos);
+        List<ProductOptionEntity> productOptionEntities = new ArrayList<>();
+        List<ReleaseStockEntity> releaseStockEntities = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger();
+
+        for (ErpOrderItemEntity r : erpOrderItemEntities) {
+            if (!r.getReleaseOptionCode().isEmpty()) {
+                optionCodeSet.add(r.getReleaseOptionCode());
+            }
+        }
+
+        productOptionEntities = productOptionService.searchListByOptionCodes(new ArrayList<>(optionCodeSet));
+
+        if (productOptionEntities.size() <= 0) {
+            return 0;
+        }
+
+        for (ErpOrderItemEntity orderItemEntity : erpOrderItemEntities) {
+            productOptionEntities.forEach(optionEntity -> {
+                if (optionEntity.getCode().equals(orderItemEntity.getReleaseOptionCode()) && orderItemEntity.getStockReflectYn().equals("n")) {
+                    count.getAndIncrement();
+                    ReleaseStockEntity releaseStockEntity = new ReleaseStockEntity();
+
+                    releaseStockEntity.setId(UUID.randomUUID());
+                    releaseStockEntity.setErpOrderItemId(orderItemEntity.getId());
+                    releaseStockEntity.setReleaseUnit(orderItemEntity.getUnit());
+                    releaseStockEntity.setMemo("");
+                    releaseStockEntity.setCreatedAt(CustomDateUtils.getCurrentDateTime());
+                    releaseStockEntity.setCreatedBy(orderItemEntity.getCreatedBy());
+                    releaseStockEntity.setProductOptionCid(optionEntity.getCid());
+                    releaseStockEntity.setProductOptionId(optionEntity.getId());
+
+                    orderItemEntity.setStockReflectYn("y");
+                    releaseStockEntities.add(releaseStockEntity);
+                }
+            });
+        }
+
+        releaseStockService.bulkInsert(releaseStockEntities);
+        return count.get();
     }
 }

@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
 import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
@@ -55,7 +57,6 @@ public class ErpOrderItemService {
      *
      * @return List::ErpOrderItemProj::
      * @see ErpOrderItemRepository#qfindAllM2OJ
-     * 
      */
     public List<ErpOrderItemProj> findAllM2OJ(Map<String, Object> params) {
         return erpOrderItemRepository.qfindAllM2OJ(params);
@@ -72,7 +73,6 @@ public class ErpOrderItemService {
      *
      * @return List::ErpOrderItemProj::
      * @see ErpOrderItemRepository#qfindAllM2OJ
-     * 
      */
     public Page<ErpOrderItemProj> findAllM2OJByPage(Map<String, Object> params, Pageable pageable) {
         return erpOrderItemRepository.qfindAllM2OJByPage(params, pageable);
@@ -86,7 +86,7 @@ public class ErpOrderItemService {
      * <b>DB Select Related Method</b>
      * <p>
      * id 값들과 대응하는 엑셀 데이터를 모두 조회한다.
-     * 
+     *
      * @param idList : List::UUID::
      * @return List::ErpOrderItemEntity::
      * @see ErpOrderItemRepository#qfindAllByIdList
@@ -99,7 +99,7 @@ public class ErpOrderItemService {
      * <b>DB Delete Related Method</b>
      * <p>
      * id 값에 대응하는 엑셀 데이터를 삭제한다.
-     * 
+     *
      * @param id : UUID
      * @ErpOrderItemRepository#findById
      * @ErpOrderItemRepository#delete
@@ -114,7 +114,7 @@ public class ErpOrderItemService {
      * <b>DB Delete Related Method</b>
      * <p>
      * id 값에 대응하는 엑셀 데이터를 모두 삭제한다.
-     * 
+     *
      * @param ids : List::UUID::
      * @ErpOrderItemRepository#deleteAllById
      */
@@ -125,14 +125,20 @@ public class ErpOrderItemService {
     public ErpOrderItemEntity searchOne(UUID id) {
         Optional<ErpOrderItemEntity> entityOpt = erpOrderItemRepository.findById(id);
 
-        if(entityOpt.isPresent()){
+        if (entityOpt.isPresent()) {
             return entityOpt.get();
-        }else{
+        } else {
             throw new CustomNotFoundDataException("존재하지 않는 데이터입니다.");
         }
     }
 
     public List<ErpOrderItemEntity> findDuplicationItems(List<String> orderNumber1, List<String> receiver, List<String> prodName, List<String> optionName, List<Integer> unit) {
         return erpOrderItemRepository.findDuplicationItems(orderNumber1, receiver, prodName, optionName, unit);
+    }
+
+    public List<ErpOrderItemEntity> getEntities(List<ErpOrderItemDto> itemDtos) {
+        List<UUID> ids = itemDtos.stream().map(r -> r.getId()).collect(Collectors.toList());
+        return erpOrderItemRepository.qfindAllByIdList(ids);
+
     }
 }
