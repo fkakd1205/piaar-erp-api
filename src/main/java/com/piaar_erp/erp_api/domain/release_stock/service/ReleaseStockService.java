@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,9 @@ public class ReleaseStockService {
 
     public void bulkInsert(List<ReleaseStockEntity> entities){
         releaseStockCustomJdbc.jdbcBulkInsert(entities);
+    }
+
+    public void deleteByErpOrderItemIds(List<UUID> erpOrderItemIds){
+        releaseStockRepository.deleteByErpOrderItemIds(erpOrderItemIds);
     }
 }
