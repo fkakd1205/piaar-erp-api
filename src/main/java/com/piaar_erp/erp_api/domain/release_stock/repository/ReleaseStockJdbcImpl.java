@@ -39,20 +39,21 @@ public class ReleaseStockJdbcImpl implements ReleaseStockCustomJdbc{
         String sql = "INSERT INTO release_stock" +
                 "(cid, id, release_unit, memo, created_at, created_by, product_option_cid, product_option_id, erp_order_item_id)" +
                 "VALUES" +
-                "(NULL, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 ReleaseStockEntity entity = subItems.get(i);
-                ps.setObject(1, entity.getId().toString());
-                ps.setInt(2, entity.getReleaseUnit());
-                ps.setString(3, entity.getMemo());
-                ps.setObject(4, entity.getCreatedAt());
-                ps.setObject(5, entity.getCreatedBy().toString());
-                ps.setInt(6, entity.getProductOptionCid());
-                ps.setObject(7, entity.getProductOptionId().toString());
-                ps.setObject(8, entity.getErpOrderItemId().toString());
+                ps.setObject(1, entity.getCid());
+                ps.setObject(2, entity.getId().toString());
+                ps.setInt(3, entity.getReleaseUnit());
+                ps.setString(4, entity.getMemo());
+                ps.setObject(5, entity.getCreatedAt());
+                ps.setObject(6, entity.getCreatedBy().toString());
+                ps.setInt(7, entity.getProductOptionCid());
+                ps.setObject(8, entity.getProductOptionId().toString());
+                ps.setObject(9, entity.getErpOrderItemId().toString());
 
             }
 

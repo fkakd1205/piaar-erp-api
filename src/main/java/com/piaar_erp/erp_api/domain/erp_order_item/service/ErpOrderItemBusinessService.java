@@ -267,7 +267,8 @@ public class ErpOrderItemBusinessService {
                     return ErpOrderItemEntity.toEntity(r);
                 }).collect(Collectors.toList());
 
-        erpOrderItemService.saveListAndModify(orderItemEntities);
+//        erpOrderItemService.saveListAndModify(orderItemEntities);
+        erpOrderItemService.bulkInsert(orderItemEntities);
     }
 
     public List<ErpOrderItemDto> itemDuplicationCheck(List<ErpOrderItemDto> dtos) {

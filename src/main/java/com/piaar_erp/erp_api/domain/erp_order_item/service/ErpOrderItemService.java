@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import com.piaar_erp.erp_api.domain.erp_order_item.dto.ErpOrderItemDto;
 import com.piaar_erp.erp_api.domain.erp_order_item.entity.ErpOrderItemEntity;
 import com.piaar_erp.erp_api.domain.erp_order_item.proj.ErpOrderItemProj;
+import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemCustomJdbc;
 import com.piaar_erp.erp_api.domain.erp_order_item.repository.ErpOrderItemRepository;
 import com.piaar_erp.erp_api.domain.exception.CustomNotFoundDataException;
 
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ErpOrderItemService {
     private final ErpOrderItemRepository erpOrderItemRepository;
+    private final ErpOrderItemCustomJdbc erpOrderItemCustomJdbc;
 
     /**
      * <b>DB Insert Or Update Related Method</b>
@@ -48,6 +50,11 @@ public class ErpOrderItemService {
     @Transactional
     public void saveListAndModify(List<ErpOrderItemEntity> itemEntities) {
         erpOrderItemRepository.saveAll(itemEntities);
+    }
+
+    @Transactional
+    public void bulkInsert(List<ErpOrderItemEntity> itemEntities){
+        erpOrderItemCustomJdbc.jdbcBulkInsert(itemEntities);
     }
 
     /**
