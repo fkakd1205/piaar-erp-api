@@ -915,4 +915,21 @@ public class ErpOrderItemBusinessService {
         releaseStockService.bulkInsert(releaseStockEntities);
         return count.get();
     }
+
+    @Transactional
+    public Integer actionCancelStock(List<ErpOrderItemDto> itemDtos) {
+        itemDtos = itemDtos.stream().filter(r -> r.getStockReflectYn().equals("y")).collect(Collectors.toList());
+        List<ErpOrderItemEntity> erpOrderItemEntities = erpOrderItemService.getEntities(itemDtos);
+        List<UUID> erpOrderItemIds = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger();
+
+        for (ErpOrderItemEntity orderItemEntity : erpOrderItemEntities) {
+            count.getAndIncrement();
+            erpOrderItemIds.add(orderItemEntity.getId());
+            orderItemEntity.setStockReflectYn("n");
+        }
+
+        releaseStockService.deleteByErpOrderItemIds(erpOrderItemIds);
+        return count.get();
+    }
 }

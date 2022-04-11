@@ -107,10 +107,25 @@ public class ErpOrderItemSocket {
     public ResponseEntity<?> actionReflectStock(@RequestBody List<ErpOrderItemDto> itemDtos){
         Message message = new Message();
 
-        System.out.println(erpOrderItemBusinessService.actionReflectStock(itemDtos));
+        Integer count = erpOrderItemBusinessService.actionReflectStock(itemDtos);
         message.setStatus(HttpStatus.OK);
         message.setMessage("success");
+        message.setMemo(count + " 건의 데이터가 재고 반영 되었습니다.");
 
+        messagingTemplate.convertAndSend("/topic/erp.erp-order-item", message);
+        return new ResponseEntity<>(message, message.getStatus());
+    }
+
+    @PatchMapping("/batch/stock/action-cancel")
+    public ResponseEntity<?> actionCancelStock(@RequestBody List<ErpOrderItemDto> itemDtos){
+        Message message = new Message();
+
+        Integer count = erpOrderItemBusinessService.actionCancelStock(itemDtos);
+        message.setStatus(HttpStatus.OK);
+        message.setMessage("success");
+        message.setMemo(count + " 건의 데이터가 재고 취소 되었습니다.");
+
+        messagingTemplate.convertAndSend("/topic/erp.erp-order-item", message);
         return new ResponseEntity<>(message, message.getStatus());
     }
 
